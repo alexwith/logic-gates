@@ -1,3 +1,4 @@
+import { useDispatch } from "react-redux";
 import { Pos } from "../../common/types";
 
 interface Props {
@@ -5,11 +6,9 @@ interface Props {
   pos: Pos;
   input: boolean;
   label?: string;
-  global?: boolean;  
+  global?: boolean;
   setIsConnectingPin: (isDragging: boolean) => void;
-  setSelectedPin: (id: string) => void;
-  setLastPin: (id: string | null) => void;
-  toggleActive?: () => void; // only for global pins
+  setLastPin: (id: string | null) => void;  
 }
 
 const PIN_RADIUS = 10;
@@ -19,23 +18,24 @@ export default function Pin({
   pos,
   input,
   label,
-  global,  
+  global,
   setIsConnectingPin,
-  setSelectedPin,
   setLastPin,
-  toggleActive,
 }: Props) {
-  const handleClick = () => {    
+  const dispatch = useDispatch();
+
+  const handleClick = () => {
     if (!global || !input) {
       return;
     }
 
-    toggleActive!();
+    dispatch({ type: "TOGGLE_GLOBAL_PIN", payload: id });    
   };
 
   const handleMouseDown = () => {
     setIsConnectingPin(true);
-    setSelectedPin(id);
+
+    dispatch({ type: "SET_SELECTED_PIN", payload: id });
   };
 
   return (

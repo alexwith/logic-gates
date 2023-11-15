@@ -1,37 +1,17 @@
-import { ChangeEvent, KeyboardEvent, MouseEvent, useRef, useState } from "react";
+import { ChangeEvent, KeyboardEvent, MouseEvent, useRef } from "react";
 import Diagram from "./components/Diagram";
-import { GlobalPinMeta, PortMeta } from "./common/types";
+import { PortMeta } from "./common/types";
 import TruthTable from "./components/TruthTable";
-import { BASE_PORTS } from "./common/constants";
-
-const testGlobalPins: GlobalPinMeta[] = [
-  {
-    id: 0,
-    pos: { x: 100, y: 210 },
-    label: "A",
-    input: true,
-  },
-  {
-    id: 1,
-    pos: { x: 100, y: 250 },
-    label: "B",
-    input: true,
-  },
-  {
-    id: 2,
-    pos: { x: 500, y: 230 },
-    label: "F",
-    input: false,
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { DiagramState } from "./reducers/diagramReducer";
+import PortTypes from "./components/PortTypes";
 
 export default function App() {
-  const [ports, setPorts] = useState<PortMeta[]>(BASE_PORTS);
-  const [globalPins, setGlobalPins] = useState<GlobalPinMeta[]>(testGlobalPins);
-  const [currentTruthTable, setCurrentTruthTable] = useState<boolean[][]>([]);
-  const [addingPort, setAddingPort] = useState<PortMeta | null>(null);
+  const dispatch = useDispatch();
+  const globalPins = useSelector((state: DiagramState) => state.globalPins);
+  const currentTruthTable = useSelector((state: DiagramState) => state.currentTruthTable);
+
   const portNameRef: any = useRef();
-  const diagramRef: any = useRef();
 
   const handlePortNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.target.value = event.target.value.toUpperCase();
@@ -47,11 +27,11 @@ export default function App() {
     const inputs: number = globalPins.filter((pin) => pin.input).length;
     const outputs: number = globalPins.length - inputs;
 
-    const truthTable: Map<string, boolean[]> = new Map();
+    const truthTable: any = {};
     currentTruthTable.forEach((line) => {
       const inputValues = line.slice(0, inputs);
       const outputValues = line.slice(inputs);
-      truthTable.set(inputValues.toString(), outputValues);
+      truthTable[inputValues.toString()] = outputValues;
     });
 
     const { value: name } = portNameRef.current;
@@ -65,11 +45,11 @@ export default function App() {
       outputs,
       truthTable,
     };
-    setPorts([...ports, port]);
+
+    dispatch({ type: "ADD_PORT_TYPE", payload: port });
+    dispatch({ type: "CLEAR_DIAGRAM" });
 
     portNameRef.current.value = "";
-
-    diagramRef.current.clear();
   };
 
   return (
@@ -77,19 +57,7 @@ export default function App() {
       <h1 className="font-black text-3xl p-4">Logic Gates</h1>
       <div className="m-6">
         <div className="mb-4">
-          <div className="flex space-x-2 mb-4">
-            {ports.map((port, i) => (
-              <div
-                className="bg-violet-500 w-fit p-2 font-bold rounded-md select-none"
-                draggable
-                onDragStart={() => {
-                  setAddingPort(port);
-                }}
-              >
-                {port.name}
-              </div>
-            ))}
-          </div>
+          <PortTypes />
           <div className="flex">
             <input
               className="font-bold text-2xl bg-transparent placeholder:text-slate-700 outline-none"
@@ -108,13 +76,7 @@ export default function App() {
           </div>
         </div>
         <div className="flex h-screen">
-          <Diagram
-            ref={diagramRef}
-            globalPins={globalPins}
-            setGlobalPins={setGlobalPins}
-            setTruthTable={setCurrentTruthTable}
-            addingPort={addingPort}
-          />
+          <Diagram />
           <TruthTable pins={globalPins} truthTable={currentTruthTable} />
         </div>
       </div>

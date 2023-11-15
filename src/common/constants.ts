@@ -9,7 +9,9 @@ export const BASE_PORTS: PortMeta[] = [
     width: 30 + 15 * 3,
     inputs: 2,
     outputs: 1,
-    truthTable: new Map().set([true, true].toString(), [true]),
+    truthTable: {
+      "true,true": [true],
+    },
   },
   {
     id: -1,
@@ -19,7 +21,9 @@ export const BASE_PORTS: PortMeta[] = [
     width: 30 + 15 * 3,
     inputs: 1,
     outputs: 1,
-    truthTable: new Map().set([false].toString(), [true]),
+    truthTable: {
+      false: [true],
+    },
   },
   {
     id: -1,
@@ -29,9 +33,12 @@ export const BASE_PORTS: PortMeta[] = [
     width: 30 + 15 * 3,
     inputs: 2,
     outputs: 1,
-    truthTable: new Map()
-      .set([true, false].toString(), [true])
-      .set([false, true].toString(), [true])
-      .set([true, true].toString(), [true]),
+    truthTable: {
+      "true,false": [true],
+      "false,true": [true],
+      "true,true": [true],
+    },
   },
 ];
+
+export const POS_ZERO = { x: 0, y: 0 };

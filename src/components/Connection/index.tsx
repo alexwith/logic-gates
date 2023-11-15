@@ -1,5 +1,4 @@
 import { Pos } from "../../common/types";
-import Pin from "../Pin";
 
 interface Props {
   id: number;
@@ -11,9 +10,6 @@ interface Props {
 export default function Connection({ pos0, pos1, active }: Props) {
   const { x: x0, y: y0 } = pos0;
   const { x: x1, y: y1 } = pos1;
-
-  /*const bad0 = Math.sign(x1 - x0) != 1;
-  const bad1 = Math.sign(x0 - x1) != -1;*/
 
   const lineStyle = `stroke-[4px] ${active ? "stroke-red-500" : "stroke-slate-700"}`;
 
@@ -37,7 +33,7 @@ export default function Connection({ pos0, pos1, active }: Props) {
     );
   };
 
-  const create3Line = (x0: number, y0: number, x1: number, y1: number) => {    
+  const create3Line = (x0: number, y0: number, x1: number, y1: number) => {
     const middleX = (x0 + x1) / 2;
     const minY = Math.min(y0, y1);
     const diffY = Math.abs(y0 - y1);
@@ -52,6 +48,10 @@ export default function Connection({ pos0, pos1, active }: Props) {
   };
 
   const createLine = () => {
+    if (false) {
+      return create4Line(x0, y0, x1, y1);
+    }
+
     return create3Line(x0, y0, x1, y1);
   };
 

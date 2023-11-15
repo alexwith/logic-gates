@@ -6,23 +6,24 @@ interface Props {
 }
 
 export default function TruthTable({ pins, truthTable }: Props) {
-
   return (
     <div className="absolute rounded-lg overflow-x-auto inline-block text-center font-bold w-fit h-fit">
       <table className="w-full h-full">
         <thead className="bg-slate-500">
           <tr>
-            {pins.map((pin) => (
-              <th className="py-1 px-3">{pin.label}</th>
+            {pins.map((pin, i) => (
+              <th className="py-1 px-3" key={i}>
+                {pin.label}
+              </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {truthTable.map((row) => {
+          {truthTable.map((row, i) => {
             return (
-              <tr className="odd:bg-slate-700 even:bg-slate-600">
-                {row.map((value) => (
-                  <td>{value ? 1 : 0}</td>
+              <tr className="odd:bg-slate-700 even:bg-slate-600" key={i}>
+                {row.map((value, j) => (
+                  <td key={j}>{value ? 1 : 0}</td>
                 ))}
               </tr>
             );
