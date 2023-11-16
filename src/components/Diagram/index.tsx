@@ -62,7 +62,7 @@ export default function Diagram() {
 
   const handlePinConnectingEnd = () => {
     setIsConnectingPin(false);
-    if (!lastPin) {
+    if (!lastPin || selectedPinId === lastPin) {
       return;
     }
 
