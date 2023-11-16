@@ -1,27 +1,7 @@
 import { BASE_PORTS } from "../common/constants";
 import { ConnectionMeta, GlobalPinMeta, PortMeta, ReducerAction } from "../common/types";
 import { createTruthTable } from "../libs/truthTable";
-
-const testGlobalPins: GlobalPinMeta[] = [
-  {
-    id: 0,
-    pos: { x: 100, y: 210 },
-    label: "A",
-    input: true,
-  },
-  {
-    id: 1,
-    pos: { x: 100, y: 250 },
-    label: "B",
-    input: true,
-  },
-  {
-    id: 2,
-    pos: { x: 500, y: 230 },
-    label: "F",
-    input: false,
-  },
-];
+import { globalInputPinId, globalOutputPinId } from "../utils/idUtil";
 
 export interface DiagramState {
   portTypes: PortMeta[];
@@ -37,7 +17,7 @@ export interface DiagramState {
 
 const initialState: DiagramState = {
   portTypes: BASE_PORTS,
-  globalPins: [...testGlobalPins],
+  globalPins: [],
   ports: [],
   connections: [],
   selectedPortId: -1,
@@ -52,13 +32,16 @@ export default function Reducer(
   { type, payload }: ReducerAction
 ) {
   switch (type) {
-    case "ADD_PORT":
+    case "ADD_PORT": {
       return { ...state, ports: [...state.ports, payload] };
-    case "SET_SELECTED_PIN":
+    }
+    case "SET_SELECTED_PIN": {
       return { ...state, selectedPinId: payload };
-    case "SET_SELECTED_PORT":
+    }
+    case "SET_SELECTED_PORT": {
       return { ...state, selectedPortId: payload };
-    case "UPDATE_SELECTED_PORT":
+    }
+    case "UPDATE_SELECTED_PORT": {
       const { selectedPortId, ports } = state;
       if (selectedPortId === -1) {
         return { ...state };
@@ -68,24 +51,52 @@ export default function Reducer(
       updatedPorts[selectedPortId] = payload;
 
       return { ...state, ports: updatedPorts };
+    }
     case "UPDATE_CURRENT_TRUTH_TABLE":
       return {
         ...state,
         currentTruthTable: createTruthTable(state.globalPins, state.connections, state.ports),
       };
-    case "ADD_PORT_TYPE":
+    case "ADD_PORT_TYPE": {
       return { ...state, portTypes: [...state.portTypes, payload] };
-    case "ADD_CONNECTION":
+    }
+    case "ADD_CONNECTION": {
       return { ...state, connections: [...state.connections, payload] };
-    case "SET_ADDING_PORT_TYPE":
+    }
+    case "ADD_GLOBAL_PIN": {
+      const input = payload;
+      const nextPinIndex = state.globalPins.filter((pin) => pin.input === input).length;
+
+      const pin: GlobalPinMeta = {
+        id: input ? globalInputPinId(nextPinIndex) : globalOutputPinId(nextPinIndex),
+        name: "?",
+        input,
+      };
+
+      return { ...state, globalPins: [...state.globalPins, pin] };
+    }
+    case "SET_ADDING_PORT_TYPE": {
       return { ...state, addingPortType: payload };
-    case "TOGGLE_GLOBAL_PIN":
-      const activeGlobalPinIds = [...state.activeGlobalPinIds];      
-      const index = activeGlobalPinIds.indexOf(payload);      
+    }
+    case "TOGGLE_GLOBAL_PIN": {
+      const activeGlobalPinIds = [...state.activeGlobalPinIds];
+      const index = activeGlobalPinIds.indexOf(payload);
       index !== -1 ? activeGlobalPinIds.splice(index, 1) : activeGlobalPinIds.push(payload);
 
       return { ...state, activeGlobalPinIds };
-    case "CLEAR_DIAGRAM":
+    }
+    case "SET_GLOBAL_PIN_NAME": {
+      const { id, name } = payload;
+
+      const globalPins = [...state.globalPins];
+      const pinIndex = globalPins.findIndex((pin) => pin.id === id);
+      const pin = { ...globalPins[pinIndex], name };
+
+      globalPins[pinIndex] = pin;
+
+      return { ...state, globalPins };
+    }
+    case "CLEAR_DIAGRAM": {
       return {
         ...state,
         globalPins: [],
@@ -97,6 +108,7 @@ export default function Reducer(
         addingPortType: null,
         activeGlobalPinIds: [],
       };
+    }
     default:
       return state;
   }

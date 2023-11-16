@@ -6,9 +6,10 @@ import Connection from "../Connection";
 import { useDispatch, useSelector } from "react-redux";
 import { DiagramState } from "../../reducers/diagramReducer";
 import { treversePins } from "../../libs/circuit";
-import { globalPinId, inputPinId, outputPinId } from "../../utils/idUtil";
-import { computePinPos } from "../../libs/port";
+import { inputPinId, outputPinId } from "../../utils/idUtil";
+import { computeGlobalEntryPos, computeGlobalPinYPos, computePortPinPos } from "../../libs/pin";
 import useMouse from "../../hooks/useMouse";
+import GlobalPin from "../GlobalPin";
 
 export default function Diagram() {
   const dispatch = useDispatch();
@@ -33,7 +34,7 @@ export default function Diagram() {
   const updateActivity = () => {
     const activePins: string[] = [...activeGlobalPinIds];
     globalPins.forEach((globalPin, _) => {
-      treversePins(globalPinId(globalPin.id), connections, ports, activePins);
+      treversePins(globalPin.id, connections, ports, activePins);
     });
     setActivePins(activePins);
   };
@@ -52,7 +53,7 @@ export default function Diagram() {
   };
 
   const handlePinConnectingMove = () => {
-    const { x, y } = computePinPos(ports, globalPins, selectedPinId);
+    const { x, y } = computePortPinPos(ref, ports, globalPins, selectedPinId);
     setConnectingPinEnd({
       x: Math.abs(mouseDragOffset.x - x),
       y: Math.abs(mouseDragOffset.y - y),
@@ -97,7 +98,7 @@ export default function Diagram() {
   };
 
   const handleDrop = (event: DragEvent) => {
-    if (!addingPortType || !ref || !ref.current) {
+    if (!addingPortType || !ref.current) {
       return;
     }
 
@@ -126,16 +127,27 @@ export default function Diagram() {
 
   return (
     <div
-      className="border-slate-500 border-4 rounded-lg grow"
+      className="relative border-slate-500 border-4 rounded-lg grow"
       ref={ref}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
     >
+      {globalPins.map((pin, i) => {
+        return (
+          <GlobalPin
+            key={i}
+            id={pin.id}
+            yPos={computeGlobalPinYPos(ref, globalPins, pin.id)}
+            input={pin.input}
+            name={pin.name}
+          />
+        );
+      })}
       <svg className="w-full h-full" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
         {isConnectingPin && selectedPinId && connectingPinEnd && (
           <Connection
             id={-1}
-            pos0={computePinPos(ports, globalPins, selectedPinId)}
+            pos0={computePortPinPos(ref, ports, globalPins, selectedPinId)}
             pos1={connectingPinEnd}
             active={false}
           />
@@ -144,8 +156,8 @@ export default function Diagram() {
           <Connection
             key={i}
             id={i}
-            pos0={computePinPos(ports, globalPins, connection.pin0Id)}
-            pos1={computePinPos(ports, globalPins, connection.pin1Id)}
+            pos0={computePortPinPos(ref, ports, globalPins, connection.pin0Id)}
+            pos1={computePortPinPos(ref, ports, globalPins, connection.pin1Id)}
             active={
               activePins.includes(connection.pin0Id) || activePins.includes(connection.pin1Id)
             }
@@ -175,8 +187,7 @@ export default function Diagram() {
                 <Pin
                   key={`in-${j}`}
                   id={id}
-                  pos={computePinPos(ports, globalPins, id)}
-                  input={true}
+                  pos={computePortPinPos(ref, ports, globalPins, id)}
                   setIsConnectingPin={setIsConnectingPin}
                   setLastPin={setLastPin}
                 />
@@ -189,8 +200,7 @@ export default function Diagram() {
                 <Pin
                   key={`out-${j}`}
                   id={id}
-                  pos={computePinPos(ports, globalPins, id)}
-                  input={false}
+                  pos={computePortPinPos(ref, ports, globalPins, id)}
                   setIsConnectingPin={setIsConnectingPin}
                   setLastPin={setLastPin}
                 />
@@ -199,16 +209,11 @@ export default function Diagram() {
           </Fragment>
         ))}
         {globalPins.map((pin, i) => {
-          const id = globalPinId(pin.id);
-
           return (
             <Pin
               key={i}
-              pos={pin.pos}
-              id={id}
-              input={pin.input}
-              label={pin.label}
-              global
+              id={pin.id}
+              pos={computeGlobalEntryPos(ref, globalPins, pin.id)}
               setIsConnectingPin={setIsConnectingPin}
               setLastPin={setLastPin}
             />

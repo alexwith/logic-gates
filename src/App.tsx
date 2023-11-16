@@ -1,10 +1,11 @@
-import { ChangeEvent, KeyboardEvent, MouseEvent, useRef } from "react";
+import { ChangeEvent, KeyboardEvent, useRef } from "react";
 import Diagram from "./components/Diagram";
 import { PortMeta } from "./common/types";
 import TruthTable from "./components/TruthTable";
 import { useDispatch, useSelector } from "react-redux";
 import { DiagramState } from "./reducers/diagramReducer";
 import PortTypes from "./components/PortTypes";
+import DynamicInput from "./components/DynamicInput";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -23,7 +24,7 @@ export default function App() {
     }
   };
 
-  const handleCreateClick = (event: MouseEvent) => {
+  const handleCreateClick = () => {
     const inputs: number = globalPins.filter((pin) => pin.input).length;
     const outputs: number = globalPins.length - inputs;
 
@@ -52,10 +53,14 @@ export default function App() {
     portNameRef.current.value = "";
   };
 
+  const handleAddGlobalClick = (input: boolean) => {
+    dispatch({ type: "ADD_GLOBAL_PIN", payload: input });
+  };
+
   return (
-    <div>
-      <h1 className="font-black text-3xl p-4">Logic Gates</h1>
-      <div className="m-6">
+    <div className="mx-14">
+      <h1 className="font-black text-3xl my-6">Logic Gates</h1>
+      <div className="my-6">
         <div className="mb-4">
           <PortTypes />
           <div className="flex">
@@ -67,15 +72,29 @@ export default function App() {
               onKeyDown={handlePortNameKeydown}
               onChange={handlePortNameChange}
             />
-            <div
-              className="font-bold text-lg bg-cyan-500 w-fit px-2 py-1 rounded-md hover:cursor-pointer ml-auto"
-              onClick={handleCreateClick}
-            >
-              Create
+            <div className="ml-auto flex space-x-2 font-bold text-md ">
+              <div
+                className="bg-cyan-500 w-fit px-2 py-1 rounded-md hover:cursor-pointer"
+                onClick={handleCreateClick}
+              >
+                Create
+              </div>
+              <div
+                className="bg-cyan-500 w-fit px-2 py-1 rounded-md hover:cursor-pointer"
+                onClick={() => handleAddGlobalClick(true)}
+              >
+                Add Input
+              </div>
+              <div
+                className="bg-cyan-500 w-fit px-2 py-1 rounded-md hover:cursor-pointer"
+                onClick={() => handleAddGlobalClick(false)}
+              >
+                Add Output
+              </div>
             </div>
           </div>
         </div>
-        <div className="flex h-screen">
+        <div className="flex h-[700px]">
           <Diagram />
           <TruthTable pins={globalPins} truthTable={currentTruthTable} />
         </div>

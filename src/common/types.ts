@@ -25,8 +25,7 @@ export interface ConnectionMeta {
 }
 
 export interface GlobalPinMeta {
-  id: number;
-  pos: Pos;
-  label: string;
+  id: string;  
+  name: string;
   input: boolean;
 }

@@ -1,5 +1,5 @@
 import { ConnectionMeta, GlobalPinMeta, PortMeta } from "../common/types";
-import { globalPinId } from "../utils/idUtil";
+import { globalInputPinId } from "../utils/idUtil";
 import { treversePins } from "./circuit";
 
 export function createTruthTable(
@@ -27,20 +27,20 @@ export function createTruthTable(
     const globalPinCombination = [];
     for (let i = 0; i < combination.length; i++) {
       if (combination[i]) {
-        globalPinCombination.push(globalPinId(i));
+        globalPinCombination.push(globalInputPinId(i));
       }
     }
 
     const activePins: string[] = [...globalPinCombination];
     globalPins.forEach((globalPin, _) => {
-      treversePins(globalPinId(globalPin.id), connections, ports, activePins);
+      treversePins(globalPin.id, connections, ports, activePins);
     });
 
     const outputValues: boolean[] = [];
     globalPins
       .filter((pin) => !pin.input)
       .forEach((globalOutputPin) => {
-        const id = globalPinId(globalOutputPin.id);
+        const id = globalOutputPin.id;
 
         let matchingPinId: string | null = null;
         for (const connection of connections) {

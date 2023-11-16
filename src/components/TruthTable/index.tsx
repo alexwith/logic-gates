@@ -13,7 +13,7 @@ export default function TruthTable({ pins, truthTable }: Props) {
           <tr>
             {pins.map((pin, i) => (
               <th className="py-1 px-3" key={i}>
-                {pin.label}
+                {pin.name}
               </th>
             ))}
           </tr>
