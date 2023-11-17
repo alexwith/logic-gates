@@ -7,7 +7,7 @@ interface Props {
 
 export default function TruthTable({ pins, truthTable }: Props) {
   return (
-    <div className="absolute rounded-lg overflow-x-auto inline-block text-center font-bold w-fit h-fit">
+    <div className="rounded-lg overflow-x-auto inline-block text-center font-bold w-fit h-fit">      
       <table className="w-full h-full">
         <thead className="bg-slate-500">
           <tr>

@@ -5,7 +5,6 @@ import TruthTable from "./components/TruthTable";
 import { useDispatch, useSelector } from "react-redux";
 import { DiagramState } from "./reducers/diagramReducer";
 import PortTypes from "./components/PortTypes";
-import DynamicInput from "./components/DynamicInput";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -94,9 +93,13 @@ export default function App() {
             </div>
           </div>
         </div>
-        <div className="flex h-[700px]">
-          <Diagram />
-          <TruthTable pins={globalPins} truthTable={currentTruthTable} />
+        <Diagram />
+        <div>
+          <h1 className="font-bold text-2xl mt-4">Circuit Information</h1>
+          <div>
+            <h1 className="font-bold">Truth Table</h1>
+            <TruthTable pins={globalPins} truthTable={currentTruthTable} />
+          </div>
         </div>
       </div>
     </div>

@@ -6,7 +6,7 @@ import Connection from "../Connection";
 import { useDispatch, useSelector } from "react-redux";
 import { DiagramState } from "../../reducers/diagramReducer";
 import { treversePins } from "../../libs/circuit";
-import { inputPinId, outputPinId } from "../../utils/idUtil";
+import { inputPinId, isGlobalPinId, outputPinId } from "../../utils/idUtil";
 import { computeGlobalEntryPos, computeGlobalPinYPos, computePortPinPos } from "../../libs/pin";
 import useMouse from "../../hooks/useMouse";
 import GlobalPin from "../GlobalPin";
@@ -62,7 +62,11 @@ export default function Diagram() {
 
   const handlePinConnectingEnd = () => {
     setIsConnectingPin(false);
-    if (!lastPin || selectedPinId === lastPin) {
+    if (
+      !lastPin ||
+      selectedPinId === lastPin ||
+      (isGlobalPinId(selectedPinId) && isGlobalPinId(lastPin))
+    ) {
       return;
     }
 
@@ -127,7 +131,7 @@ export default function Diagram() {
 
   return (
     <div
-      className="relative border-slate-500 border-4 rounded-lg grow"
+      className="relative border-slate-500 border-4 rounded-lg grow h-[700px]"
       ref={ref}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
