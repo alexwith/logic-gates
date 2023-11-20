@@ -1,19 +1,19 @@
-import { useDispatch, useSelector } from "react-redux";
-import { DiagramState } from "../../reducers/diagramReducer";
+import { DiagramState, useDiagramStore } from "../../store";
 
 export default function PortTypes() {
-  const dispatch = useDispatch();
-  const types = useSelector((state: DiagramState) => state.portTypes);
+  const portTypes = useDiagramStore((state: DiagramState) => state.portTypes);
+
+  const setAddingPortType = useDiagramStore((state: DiagramState) => state.setAddingPortType);
 
   return (
     <div className="flex space-x-2 mb-4">
-      {types.map((type, i) => (
+      {portTypes.map((type, i) => (
         <div
           className="bg-violet-500 w-fit p-2 font-bold rounded-md select-none"
           key={i}
           draggable
           onDragStart={() => {
-            dispatch({ type: "SET_ADDING_PORT_TYPE", payload: type });
+            setAddingPortType(type);
           }}
         >
           {type.name}

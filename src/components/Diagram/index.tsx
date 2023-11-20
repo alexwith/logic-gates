@@ -3,24 +3,14 @@ import { PortMeta, Pos } from "../../common/types";
 import Port from "../Port";
 import Pin from "../Pin";
 import Connection from "../Connection";
-import { useDispatch, useSelector } from "react-redux";
-import { DiagramState } from "../../reducers/diagramReducer";
 import { treversePins } from "../../libs/circuit";
 import { inputPinId, isGlobalPinId, outputPinId } from "../../utils/idUtil";
 import { computeGlobalEntryPos, computeGlobalPinYPos, computePortPinPos } from "../../libs/pin";
 import useMouse from "../../hooks/useMouse";
 import GlobalPin from "../GlobalPin";
+import { DiagramState, useDiagramStore } from "../../store";
 
 export default function Diagram() {
-  const dispatch = useDispatch();
-  const globalPins = useSelector((state: DiagramState) => state.globalPins);
-  const ports = useSelector((state: DiagramState) => state.ports);
-  const connections = useSelector((state: DiagramState) => state.connections);
-  const selectedPortId = useSelector((state: DiagramState) => state.selectedPortId);
-  const selectedPinId = useSelector((state: DiagramState) => state.selectedPinId);
-  const addingPortType = useSelector((state: DiagramState) => state.addingPortType);
-  const activeGlobalPinIds = useSelector((state: DiagramState) => state.activeGlobalPinIds);
-
   const ref = useRef<HTMLDivElement>(null);
   const { mouseDragOffset } = useMouse();
 
@@ -31,9 +21,25 @@ export default function Diagram() {
   const [lastPin, setLastPin] = useState<string | null>("");
   const [activePins, setActivePins] = useState<string[]>([]);
 
+  const globalPins = useDiagramStore((state: DiagramState) => state.globalPins);
+  const ports = useDiagramStore((state: DiagramState) => state.ports);
+  const connections = useDiagramStore((state: DiagramState) => state.connections);
+  const selectedPortId = useDiagramStore((state: DiagramState) => state.selectedPortId);
+  const selectedPinId = useDiagramStore((state: DiagramState) => state.selectedPinId);
+  const addingPortType = useDiagramStore((state: DiagramState) => state.addingPortType);
+  const activeGlobalPinIds = useDiagramStore((state: DiagramState) => state.activeGlobalPinIds);
+
+  const updateSelectedPort = useDiagramStore((state: DiagramState) => state.updateSelectedPort);
+  const addConnection = useDiagramStore((state: DiagramState) => state.addConnection);
+  const updateCurrentTruthTable = useDiagramStore(
+    (state: DiagramState) => state.updateCurrentTruthTable
+  );
+  const addPort = useDiagramStore((state: DiagramState) => state.addPort);
+  const setSelectedPort = useDiagramStore((state: DiagramState) => state.setSelectedPort);
+
   const updateActivity = () => {
     const activePins: string[] = [...activeGlobalPinIds];
-    globalPins.forEach((globalPin, _) => {
+    globalPins.forEach((globalPin) => {
       treversePins(globalPin.id, connections, ports, activePins);
     });
     setActivePins(activePins);
@@ -49,7 +55,7 @@ export default function Diagram() {
       x: Math.abs(mouseDragOffset.x - portOrigin.x),
       y: Math.abs(mouseDragOffset.y - portOrigin.y),
     };
-    dispatch({ type: "UPDATE_SELECTED_PORT", payload: port });
+    updateSelectedPort(port);
   };
 
   const handlePinConnectingMove = () => {
@@ -70,17 +76,11 @@ export default function Diagram() {
       return;
     }
 
-    dispatch({
-      type: "ADD_CONNECTION",
-      payload: {
-        pin0Id: selectedPinId,
-        pin1Id: lastPin,
-      },
+    addConnection({
+      pin0Id: selectedPinId,
+      pin1Id: lastPin,
     });
-
-    dispatch({
-      type: "UPDATE_CURRENT_TRUTH_TABLE",
-    });
+    updateCurrentTruthTable();
   };
 
   const handleMouseMove = () => {
@@ -121,7 +121,7 @@ export default function Diagram() {
       truthTable: addingPortType.truthTable,
     };
 
-    dispatch({ type: "ADD_PORT", payload: port });
+    addPort(port);
   };
 
   const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
@@ -180,7 +180,7 @@ export default function Diagram() {
               outputs={port.outputs}
               setIsDraggingPort={setIsDraggingPort}
               setSelectedPort={(id) => {
-                dispatch({ type: "SET_SELECTED_PORT", payload: id });
+                setSelectedPort(id);
                 setPortOrigin(port.pos);
               }}
             />

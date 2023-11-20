@@ -2,16 +2,18 @@ import { ChangeEvent, KeyboardEvent, useRef } from "react";
 import Diagram from "./components/Diagram";
 import { PortMeta } from "./common/types";
 import TruthTable from "./components/TruthTable";
-import { useDispatch, useSelector } from "react-redux";
-import { DiagramState } from "./reducers/diagramReducer";
 import PortTypes from "./components/PortTypes";
+import { DiagramState, useDiagramStore } from "./store";
 
 export default function App() {
-  const dispatch = useDispatch();
-  const globalPins = useSelector((state: DiagramState) => state.globalPins);
-  const currentTruthTable = useSelector((state: DiagramState) => state.currentTruthTable);
-
   const portNameRef: any = useRef();
+
+  const globalPins = useDiagramStore((state: DiagramState) => state.globalPins);
+  const currentTruthTable = useDiagramStore((state: DiagramState) => state.currentTruthTable);
+
+  const addPortType = useDiagramStore((state: DiagramState) => state.addPortType);
+  const clearDiagram = useDiagramStore((state: DiagramState) => state.clear);
+  const addGlobalPin = useDiagramStore((state: DiagramState) => state.addGlobalPin);
 
   const handlePortNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.target.value = event.target.value.toUpperCase();
@@ -46,14 +48,14 @@ export default function App() {
       truthTable,
     };
 
-    dispatch({ type: "ADD_PORT_TYPE", payload: port });
-    dispatch({ type: "CLEAR_DIAGRAM" });
+    addPortType(port);
+    clearDiagram();
 
     portNameRef.current.value = "";
   };
 
   const handleAddGlobalClick = (input: boolean) => {
-    dispatch({ type: "ADD_GLOBAL_PIN", payload: input });
+    addGlobalPin(input);
   };
 
   return (

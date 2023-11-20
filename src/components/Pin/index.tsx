@@ -1,5 +1,5 @@
-import { useDispatch } from "react-redux";
 import { Pos } from "../../common/types";
+import { DiagramState, useDiagramStore } from "../../store";
 
 interface Props {
   id: string;
@@ -11,12 +11,11 @@ interface Props {
 const PIN_RADIUS = 10;
 
 export default function Pin({ id, pos, setIsConnectingPin, setLastPin }: Props) {
-  const dispatch = useDispatch();
-  
+  const setSelectedPin = useDiagramStore((state: DiagramState) => state.setSelectedPin);
+
   const handleMouseDown = () => {
     setIsConnectingPin(true);
-
-    dispatch({ type: "SET_SELECTED_PIN", payload: id });
+    setSelectedPin(id);
   };
 
   return (

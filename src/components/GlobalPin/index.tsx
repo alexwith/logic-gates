@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
-import { useDispatch } from "react-redux";
 import DynamicInput from "../DynamicInput";
+import { DiagramState, useDiagramStore } from "../../store";
 
 interface Props {
   id: string;
@@ -10,11 +10,12 @@ interface Props {
 }
 
 export default function GlobalPin({ id, yPos, input, name }: Props) {
-  const dispatch = useDispatch();
-
   const [ref, setRef] = useState<any>(null); // we need to rerender for computePos to be correct
   const buttonRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<boolean>(false);
+
+  const toggleGlobalPin = useDiagramStore((state: DiagramState) => state.toggleGlobalPin);
+  const setGlobalPinName = useDiagramStore((state: DiagramState) => state.setGlobalPinName);
 
   const computePos = (): any => {
     if (!ref) {
@@ -49,12 +50,12 @@ export default function GlobalPin({ id, yPos, input, name }: Props) {
       return;
     }
 
-    dispatch({ type: "TOGGLE_GLOBAL_PIN", payload: id });
+    toggleGlobalPin(id);
     setActive(!active);
   };
 
   const handleNameChange = (name: string) => {
-    dispatch({ type: "SET_GLOBAL_PIN_NAME", payload: { id, name } });
+    setGlobalPinName(id, name);
   };
 
   return (
