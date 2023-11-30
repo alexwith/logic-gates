@@ -1,10 +1,10 @@
-import { ConnectionMeta, PortMeta } from "../common/types";
+import { ConnectionMeta, GateMeta } from "../common/types";
 import { inputPinId, isInputPinId, outputPinId } from "../utils/idUtil";
 
 export function treversePins(
   id: string,
   connections: ConnectionMeta[],
-  ports: PortMeta[],
+  gates: GateMeta[],
   activePins: string[]
 ) {
   const nextPins = [];
@@ -26,19 +26,19 @@ export function treversePins(
 
   for (const pinId of nextPins) {
     const args = pinId.split("-");
-    const portId = Number(args[0]);
-    const port = ports.find((port) => port.id === portId)!;
+    const gateId = Number(args[0]);
+    const gate = gates.find((gate) => gate.id === gateId)!;
 
     const inputValues = [];
-    for (let i = 0; i < port.inputs; i++) {
-      inputValues.push(activePins.includes(inputPinId(portId, i)));
+    for (let i = 0; i < gate.inputs; i++) {
+      inputValues.push(activePins.includes(inputPinId(gateId, i)));
     }
 
     const outputValues =
-      port.truthTable[inputValues.toString()] ?? Array(port.outputs).fill(false, 0, port.outputs);
+      gate.truthTable[inputValues.toString()] ?? Array(gate.outputs).fill(false, 0, gate.outputs);
 
-    for (let i = 0; i < port.outputs; i++) {
-      const pinId = outputPinId(portId, i);
+    for (let i = 0; i < gate.outputs; i++) {
+      const pinId = outputPinId(gateId, i);
       const outputValue = outputValues[i];
       if (outputValue) {
         activePins.push(pinId);
@@ -47,7 +47,7 @@ export function treversePins(
         index !== -1 && activePins.splice(index, 1);
       }
 
-      treversePins(pinId, connections, ports, activePins);
+      treversePins(pinId, connections, gates, activePins);
     }
   }
 }

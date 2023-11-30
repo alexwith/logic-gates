@@ -1,11 +1,11 @@
-import { ConnectionMeta, GlobalPinMeta, PortMeta } from "../common/types";
+import { ConnectionMeta, GlobalPinMeta, GateMeta } from "../common/types";
 import { globalInputPinId } from "../utils/idUtil";
 import { treversePins } from "./circuit";
 
 export function createTruthTable(
   globalPins: GlobalPinMeta[],
   connections: ConnectionMeta[],
-  ports: PortMeta[]
+  gates: GateMeta[]
 ): boolean[][] {
   const truthTable: boolean[][] = [];
 
@@ -33,7 +33,7 @@ export function createTruthTable(
 
     const activePins: string[] = [...globalPinCombination];
     globalPins.forEach((globalPin, _) => {
-      treversePins(globalPin.id, connections, ports, activePins);
+      treversePins(globalPin.id, connections, gates, activePins);
     });
 
     const outputValues: boolean[] = [];

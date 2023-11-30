@@ -1,9 +1,9 @@
-export const inputPinId = (portId: number, pinIndex: number): string => {
-  return `${portId}-in-${pinIndex}`;
+export const inputPinId = (gateId: number, pinIndex: number): string => {
+  return `${gateId}-in-${pinIndex}`;
 };
 
-export const outputPinId = (portId: number, pinIndex: number): string => {
-  return `${portId}-out-${pinIndex}`;
+export const outputPinId = (gateId: number, pinIndex: number): string => {
+  return `${gateId}-out-${pinIndex}`;
 };
 
 export const globalInputPinId = (pinIndex: number): string => `in-global-${pinIndex}`;

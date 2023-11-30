@@ -1,10 +1,10 @@
 import { POS_ZERO } from "../common/constants";
-import { GlobalPinMeta, PortMeta, Pos } from "../common/types";
+import { GlobalPinMeta, GateMeta, Pos } from "../common/types";
 import { indexFromPinId, isGlobalPinId, isInputPinId } from "../utils/idUtil";
 
-export const computePortPinPos = (
+export const computeGatePinPos = (
   diagramRef: any,
-  ports: PortMeta[],
+  gates: GateMeta[],
   globalPins: GlobalPinMeta[],
   pinId: string
 ): Pos => {
@@ -16,20 +16,20 @@ export const computePortPinPos = (
     return pin ? computeGlobalEntryPos(diagramRef, globalPins, pinId) : POS_ZERO;
   }
 
-  const portId = Number(args[0]);
+  const gateId = Number(args[0]);
   const input = isInputPinId(args[1]);
 
-  const port = ports.find((port) => port.id === portId);
-  if (!port) {
+  const gate = gates.find((gate) => gate.id === gateId);
+  if (!gate) {
     return POS_ZERO;
   }
 
-  const { x: cx, y: cy } = port.pos;
+  const { x: cx, y: cy } = gate.pos;
 
-  const pins = input ? port.inputs : port.outputs;
-  const spacing = port.height / pins;
+  const pins = input ? gate.inputs : gate.outputs;
+  const spacing = gate.height / pins;
   const offsetY = spacing / 2;
-  const offsetX = input ? 0 : port.width;
+  const offsetX = input ? 0 : gate.width;
 
   return { x: cx + offsetX, y: cy + offsetY + spacing * pinIndex };
 };

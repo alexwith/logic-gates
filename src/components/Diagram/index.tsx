@@ -1,10 +1,10 @@
 import { DragEvent, Fragment, useRef, useState } from "react";
-import { PortMeta, Pos } from "../../common/types";
-import Port from "../Port";
+import { GateMeta, Pos } from "../../common/types";
+import Gate from "../Gate";
 import Pin from "../Pin";
 import Connection from "../Connection";
 import { inputPinId, isGlobalPinId, outputPinId } from "../../utils/idUtil";
-import { computeGlobalEntryPos, computeGlobalPinYPos, computePortPinPos } from "../../libs/pin";
+import { computeGlobalEntryPos, computeGlobalPinYPos, computeGatePinPos } from "../../libs/pin";
 import useMouse from "../../hooks/useMouse";
 import GlobalPin from "../GlobalPin";
 import { DiagramState, useDiagramStore } from "../../store";
@@ -13,40 +13,40 @@ export default function Diagram() {
   const ref = useRef<HTMLDivElement>(null);
   const { mouseDragOffset } = useMouse();
 
-  const [portOrigin, setPortOrigin] = useState<Pos>({ x: 0, y: 0 });
-  const [isDraggingPort, setIsDraggingPort] = useState<boolean>(false);
+  const [gateOrigin, setGateOrigin] = useState<Pos>({ x: 0, y: 0 });
+  const [isDraggingGate, setIsDraggingGate] = useState<boolean>(false);
   const [isConnectingPin, setIsConnectingPin] = useState<boolean>(false);
   const [connectingPinEnd, setConnectingPinEnd] = useState<Pos | null>(null);
   const [lastPin, setLastPin] = useState<string | null>("");
 
   const globalPins = useDiagramStore((state: DiagramState) => state.globalPins);
-  const ports = useDiagramStore((state: DiagramState) => state.ports);
+  const gates = useDiagramStore((state: DiagramState) => state.gates);
   const connections = useDiagramStore((state: DiagramState) => state.connections);
-  const selectedPortId = useDiagramStore((state: DiagramState) => state.selectedPortId);
+  const selectedGateId = useDiagramStore((state: DiagramState) => state.selectedGateId);
   const selectedPinId = useDiagramStore((state: DiagramState) => state.selectedPinId);
-  const addingPortType = useDiagramStore((state: DiagramState) => state.addingPortType);
+  const addingGateType = useDiagramStore((state: DiagramState) => state.addingGateType);
   const activePinIds = useDiagramStore((state: DiagramState) => state.activePinIds);
 
-  const updateSelectedPort = useDiagramStore((state: DiagramState) => state.updateSelectedPort);
+  const updateSelectedGate = useDiagramStore((state: DiagramState) => state.updateSelectedGate);
   const addConnection = useDiagramStore((state: DiagramState) => state.addConnection);
   const updateActivity = useDiagramStore((state: DiagramState) => state.updateActivity);
   const updateCurrentTruthTable = useDiagramStore(
     (state: DiagramState) => state.updateCurrentTruthTable
   );
-  const addPort = useDiagramStore((state: DiagramState) => state.addPort);
-  const setSelectedPort = useDiagramStore((state: DiagramState) => state.setSelectedPort);
+  const addGate = useDiagramStore((state: DiagramState) => state.addGate);
+  const setSelectedGate = useDiagramStore((state: DiagramState) => state.setSelectedGate);
 
-  const handlePortDraggingMove = () => {
-    const port = { ...ports[selectedPortId] };
-    port.pos = {
-      x: Math.abs(mouseDragOffset.x - portOrigin.x),
-      y: Math.abs(mouseDragOffset.y - portOrigin.y),
+  const handleGateDraggingMove = () => {
+    const gate = { ...gates[selectedGateId] };
+    gate.pos = {
+      x: Math.abs(mouseDragOffset.x - gateOrigin.x),
+      y: Math.abs(mouseDragOffset.y - gateOrigin.y),
     };
-    updateSelectedPort(port);
+    updateSelectedGate(gate);
   };
 
   const handlePinConnectingMove = () => {
-    const { x, y } = computePortPinPos(ref, ports, globalPins, selectedPinId);
+    const { x, y } = computeGatePinPos(ref, gates, globalPins, selectedPinId);
     setConnectingPinEnd({
       x: Math.abs(mouseDragOffset.x - x),
       y: Math.abs(mouseDragOffset.y - y),
@@ -72,8 +72,8 @@ export default function Diagram() {
   };
 
   const handleMouseMove = () => {
-    if (isDraggingPort) {
-      handlePortDraggingMove();
+    if (isDraggingGate) {
+      handleGateDraggingMove();
     }
     if (isConnectingPin) {
       handlePinConnectingMove();
@@ -81,8 +81,8 @@ export default function Diagram() {
   };
 
   const handleMouseUp = () => {
-    if (isDraggingPort) {
-      setIsDraggingPort(false);
+    if (isDraggingGate) {
+      setIsDraggingGate(false);
     }
     if (isConnectingPin) {
       handlePinConnectingEnd();
@@ -90,26 +90,26 @@ export default function Diagram() {
   };
 
   const handleDrop = (event: DragEvent) => {
-    if (!addingPortType || !ref.current) {
+    if (!addingGateType || !ref.current) {
       return;
     }
 
     const diagramRect: DOMRect = ref.current.getBoundingClientRect();
-    const port: PortMeta = {
-      id: ports.length,
-      name: addingPortType.name,
+    const gate: GateMeta = {
+      id: gates.length,
+      name: addingGateType.name,
       pos: {
-        x: event.clientX - diagramRect.left - addingPortType.width / 2,
-        y: event.clientY - diagramRect.top - addingPortType.height / 2,
+        x: event.clientX - diagramRect.left - addingGateType.width / 2,
+        y: event.clientY - diagramRect.top - addingGateType.height / 2,
       },
-      height: addingPortType.height,
-      width: addingPortType.width,
-      inputs: addingPortType.inputs,
-      outputs: addingPortType.outputs,
-      truthTable: addingPortType.truthTable,
+      height: addingGateType.height,
+      width: addingGateType.width,
+      inputs: addingGateType.inputs,
+      outputs: addingGateType.outputs,
+      truthTable: addingGateType.truthTable,
     };
 
-    addPort(port);
+    addGate(gate);
   };
 
   const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
@@ -139,7 +139,7 @@ export default function Diagram() {
         {isConnectingPin && selectedPinId && connectingPinEnd && (
           <Connection
             id={-1}
-            pos0={computePortPinPos(ref, ports, globalPins, selectedPinId)}
+            pos0={computeGatePinPos(ref, gates, globalPins, selectedPinId)}
             pos1={connectingPinEnd}
             active={false}
           />
@@ -148,51 +148,51 @@ export default function Diagram() {
           <Connection
             key={i}
             id={i}
-            pos0={computePortPinPos(ref, ports, globalPins, connection.pin0Id)}
-            pos1={computePortPinPos(ref, ports, globalPins, connection.pin1Id)}
+            pos0={computeGatePinPos(ref, gates, globalPins, connection.pin0Id)}
+            pos1={computeGatePinPos(ref, gates, globalPins, connection.pin1Id)}
             active={
               activePinIds.includes(connection.pin0Id) || activePinIds.includes(connection.pin1Id)
             }
           />
         ))}
-        {ports.map((port, i) => (
+        {gates.map((gate, i) => (
           <Fragment key={i}>
-            <Port
+            <Gate
               key={i}
-              id={port.id}
-              name={port.name}
-              pos={port.pos}
-              height={port.height}
-              width={port.width}
-              inputs={port.inputs}
-              outputs={port.outputs}
-              setIsDraggingPort={setIsDraggingPort}
-              setSelectedPort={(id) => {
-                setSelectedPort(id);
-                setPortOrigin(port.pos);
+              id={gate.id}
+              name={gate.name}
+              pos={gate.pos}
+              height={gate.height}
+              width={gate.width}
+              inputs={gate.inputs}
+              outputs={gate.outputs}
+              setIsDraggingGate={setIsDraggingGate}
+              setSelectedGate={(id) => {
+                setSelectedGate(id);
+                setGateOrigin(gate.pos);
               }}
             />
-            {[...Array(port.inputs)].map((_, j) => {
-              const id = inputPinId(port.id, j);
+            {[...Array(gate.inputs)].map((_, j) => {
+              const id = inputPinId(gate.id, j);
 
               return (
                 <Pin
                   key={`in-${j}`}
                   id={id}
-                  pos={computePortPinPos(ref, ports, globalPins, id)}
+                  pos={computeGatePinPos(ref, gates, globalPins, id)}
                   setIsConnectingPin={setIsConnectingPin}
                   setLastPin={setLastPin}
                 />
               );
             })}
-            {[...Array(port.outputs)].map((_, j) => {
-              const id = outputPinId(port.id, j);
+            {[...Array(gate.outputs)].map((_, j) => {
+              const id = outputPinId(gate.id, j);
 
               return (
                 <Pin
                   key={`out-${j}`}
                   id={id}
-                  pos={computePortPinPos(ref, ports, globalPins, id)}
+                  pos={computeGatePinPos(ref, gates, globalPins, id)}
                   setIsConnectingPin={setIsConnectingPin}
                   setLastPin={setLastPin}
                 />

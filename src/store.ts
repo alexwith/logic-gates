@@ -1,30 +1,30 @@
 import { create } from "zustand";
-import { BASE_PORTS } from "./common/constants";
-import { ConnectionMeta, GlobalPinMeta, PortMeta } from "./common/types";
+import { BASE_GATES } from "./common/constants";
+import { ConnectionMeta, GlobalPinMeta, GateMeta } from "./common/types";
 import { createTruthTable } from "./libs/truthTable";
 import { globalInputPinId, globalOutputPinId } from "./utils/idUtil";
 import { treversePins } from "./libs/circuit";
 
 export interface DiagramState {
-  portTypes: PortMeta[];
+  gateTypes: GateMeta[];
   globalPins: GlobalPinMeta[];
-  ports: PortMeta[];
+  gates: GateMeta[];
   connections: ConnectionMeta[];
-  selectedPortId: number;
+  selectedGateId: number;
   selectedPinId: string;
   currentTruthTable: boolean[][];
-  addingPortType: PortMeta | null;
+  addingGateType: GateMeta | null;
   activeGlobalPinIds: string[];
   activePinIds: string[];
-  addPort: (port: PortMeta) => void;
-  setSelectedPin: (portId: string) => void;
-  setSelectedPort: (portId: number) => void;
-  updateSelectedPort: (port: PortMeta) => void;
+  addGate: (gate: GateMeta) => void;
+  setSelectedPin: (gateId: string) => void;
+  setSelectedGate: (gateId: number) => void;
+  updateSelectedGate: (gate: GateMeta) => void;
   updateCurrentTruthTable: () => void;
-  addPortType: (type: PortMeta) => void;
+  addGateType: (type: GateMeta) => void;
   addConnection: (connection: ConnectionMeta) => void;
   addGlobalPin: (isInput: boolean) => void;
-  setAddingPortType: (type: PortMeta) => void;
+  setAddingGateType: (type: GateMeta) => void;
   toggleGlobalPin: (pinId: string) => void;
   setGlobalPinName: (pinId: string, name: string) => void;
   updateActivity: () => void;
@@ -33,19 +33,19 @@ export interface DiagramState {
 
 export const useDiagramStore = create<DiagramState>((set) => {
   return {
-    portTypes: BASE_PORTS,
+    gateTypes: BASE_GATES,
     globalPins: [],
-    ports: [],
+    gates: [],
     connections: [],
-    selectedPortId: -1,
+    selectedGateId: -1,
     selectedPinId: "",
     currentTruthTable: [],
-    addingPortType: null,
+    addingGateType: null,
     activeGlobalPinIds: [],
     activePinIds: [],
-    addPort: (port: PortMeta) => {
+    addGate: (gate: GateMeta) => {
       set((state) => ({
-        ports: [...state.ports, port],
+        gates: [...state.gates, gate],
       }));
     },
     setSelectedPin: (pinId: string) => {
@@ -53,31 +53,31 @@ export const useDiagramStore = create<DiagramState>((set) => {
         selectedPinId: pinId,
       }));
     },
-    setSelectedPort: (portId: number) => {
+    setSelectedGate: (gateId: number) => {
       set(() => ({
-        selectedPortId: portId,
+        selectedGateId: gateId,
       }));
     },
-    updateSelectedPort: (port: PortMeta) => {
+    updateSelectedGate: (gate: GateMeta) => {
       set((state) => {
-        const { selectedPortId, ports } = state;
-        if (selectedPortId === -1) {
+        const { selectedGateId, gates } = state;
+        if (selectedGateId === -1) {
           return {};
         }
 
-        const updatedPorts = [...ports];
-        updatedPorts[selectedPortId] = port;
-        return { ports: updatedPorts };
+        const updatedGates = [...gates];
+        updatedGates[selectedGateId] = gate;
+        return { gates: updatedGates };
       });
     },
     updateCurrentTruthTable: () => {
       set((state) => ({
-        currentTruthTable: createTruthTable(state.globalPins, state.connections, state.ports),
+        currentTruthTable: createTruthTable(state.globalPins, state.connections, state.gates),
       }));
     },
-    addPortType: (type: PortMeta) => {
+    addGateType: (type: GateMeta) => {
       set((state) => ({
-        portTypes: [...state.portTypes, type],
+        gateTypes: [...state.gateTypes, type],
       }));
     },
     addConnection: (connection: ConnectionMeta) => {
@@ -97,9 +97,9 @@ export const useDiagramStore = create<DiagramState>((set) => {
         return { globalPins: [...state.globalPins, pin] };
       });
     },
-    setAddingPortType: (type: PortMeta) => {
+    setAddingGateType: (type: GateMeta) => {
       set(() => ({
-        addingPortType: type,
+        addingGateType: type,
       }));
     },
     toggleGlobalPin: (pinId: string) => {
@@ -125,7 +125,7 @@ export const useDiagramStore = create<DiagramState>((set) => {
       set((state) => {
         const activePinIds: string[] = [...state.activeGlobalPinIds];
         state.globalPins.forEach((globalPin) => {
-          treversePins(globalPin.id, state.connections, state.ports, activePinIds);
+          treversePins(globalPin.id, state.connections, state.gates, activePinIds);
         });
 
         return { activePinIds };
@@ -134,14 +134,14 @@ export const useDiagramStore = create<DiagramState>((set) => {
     clear: () => {
       set(() => ({
         globalPins: [],
-        ports: [],
+        gates: [],
         connections: [],
-        selectedPortId: -1,
+        selectedGateId: -1,
         selectedPinId: "",
         currentTruthTable: [],
-        addingPortType: null,
+        addingGateType: null,
         activeGlobalPinIds: [],
-        activePinIds: []
+        activePinIds: [],
       }));
     },
   };

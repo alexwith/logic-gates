@@ -8,22 +8,22 @@ interface Props {
   width: number;
   inputs: number;
   outputs: number;
-  setIsDraggingPort: (isDragging: boolean) => void;
-  setSelectedPort: (id: number) => void;
+  setIsDraggingGate: (isDragging: boolean) => void;
+  setSelectedGate: (id: number) => void;
 }
 
-export default function Port({
+export default function Gate({
   id,
   name,
   pos,
   height,
   width,
-  setIsDraggingPort,
-  setSelectedPort,
+  setIsDraggingGate,
+  setSelectedGate,
 }: Props) {
   const handleMouseDown = () => {
-    setIsDraggingPort(true);
-    setSelectedPort(id);
+    setIsDraggingGate(true);
+    setSelectedGate(id);
   };
 
   return (

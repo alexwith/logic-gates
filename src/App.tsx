@@ -1,25 +1,25 @@
 import { ChangeEvent, KeyboardEvent, useRef } from "react";
 import Diagram from "./components/Diagram";
-import { PortMeta } from "./common/types";
+import { GateMeta } from "./common/types";
 import TruthTable from "./components/TruthTable";
-import PortTypes from "./components/PortTypes";
+import GateTypes from "./components/GateTypes";
 import { DiagramState, useDiagramStore } from "./store";
 
 export default function App() {
-  const portNameRef: any = useRef();
+  const gateNameRef: any = useRef();
 
   const globalPins = useDiagramStore((state: DiagramState) => state.globalPins);
   const currentTruthTable = useDiagramStore((state: DiagramState) => state.currentTruthTable);
 
-  const addPortType = useDiagramStore((state: DiagramState) => state.addPortType);
+  const addGateType = useDiagramStore((state: DiagramState) => state.addGateType);
   const clearDiagram = useDiagramStore((state: DiagramState) => state.clear);
   const addGlobalPin = useDiagramStore((state: DiagramState) => state.addGlobalPin);
 
-  const handlePortNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleGateNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.target.value = event.target.value.toUpperCase();
   };
 
-  const handlePortNameKeydown = (event: KeyboardEvent) => {
+  const handleGateNameKeydown = (event: KeyboardEvent) => {
     if (/[^A-Za-z0-9]+/.test(event.key)) {
       event.preventDefault();
     }
@@ -36,8 +36,8 @@ export default function App() {
       truthTable[inputValues.toString()] = outputValues;
     });
 
-    const { value: name } = portNameRef.current;
-    const port: PortMeta = {
+    const { value: name } = gateNameRef.current;
+    const gate: GateMeta = {
       id: -1,
       name,
       pos: { x: 0, y: 0 },
@@ -48,10 +48,10 @@ export default function App() {
       truthTable,
     };
 
-    addPortType(port);
+    addGateType(gate);
     clearDiagram();
 
-    portNameRef.current.value = "";
+    gateNameRef.current.value = "";
   };
 
   const handleAddGlobalClick = (input: boolean) => {
@@ -63,15 +63,15 @@ export default function App() {
       <h1 className="font-black text-3xl my-6">Logic Gates</h1>
       <div className="my-6">
         <div className="mb-4">
-          <PortTypes />
+          <GateTypes />
           <div className="flex">
             <input
               className="font-bold text-2xl bg-transparent placeholder:text-slate-700 outline-none"
-              ref={portNameRef}
+              ref={gateNameRef}
               type="text"
               placeholder="NAME"
-              onKeyDown={handlePortNameKeydown}
-              onChange={handlePortNameChange}
+              onKeyDown={handleGateNameKeydown}
+              onChange={handleGateNameChange}
             />
             <div className="ml-auto flex space-x-2 font-bold text-md ">
               <div

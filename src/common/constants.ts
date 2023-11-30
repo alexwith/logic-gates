@@ -1,6 +1,6 @@
-import { PortMeta } from "./types";
+import { GateMeta } from "./types";
 
-export const BASE_PORTS: PortMeta[] = [
+export const BASE_GATES: GateMeta[] = [
   {
     id: -1,
     name: "AND",

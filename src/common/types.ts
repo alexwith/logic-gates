@@ -3,7 +3,7 @@ export interface Pos {
   y: number;
 }
 
-export interface PortMeta {
+export interface GateMeta {
   id: number;
   name: string;
   pos: Pos;
