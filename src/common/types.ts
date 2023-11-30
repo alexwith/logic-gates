@@ -3,11 +3,6 @@ export interface Pos {
   y: number;
 }
 
-export interface ReducerAction {
-  type: string;
-  payload: any;
-}
-
 export interface PortMeta {
   id: number;
   name: string;

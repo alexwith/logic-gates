@@ -3,6 +3,7 @@ import { BASE_PORTS } from "./common/constants";
 import { ConnectionMeta, GlobalPinMeta, PortMeta } from "./common/types";
 import { createTruthTable } from "./libs/truthTable";
 import { globalInputPinId, globalOutputPinId } from "./utils/idUtil";
+import { treversePins } from "./libs/circuit";
 
 export interface DiagramState {
   portTypes: PortMeta[];
@@ -14,6 +15,7 @@ export interface DiagramState {
   currentTruthTable: boolean[][];
   addingPortType: PortMeta | null;
   activeGlobalPinIds: string[];
+  activePinIds: string[];
   addPort: (port: PortMeta) => void;
   setSelectedPin: (portId: string) => void;
   setSelectedPort: (portId: number) => void;
@@ -25,6 +27,7 @@ export interface DiagramState {
   setAddingPortType: (type: PortMeta) => void;
   toggleGlobalPin: (pinId: string) => void;
   setGlobalPinName: (pinId: string, name: string) => void;
+  updateActivity: () => void;
   clear: () => void;
 }
 
@@ -39,6 +42,7 @@ export const useDiagramStore = create<DiagramState>((set) => {
     currentTruthTable: [],
     addingPortType: null,
     activeGlobalPinIds: [],
+    activePinIds: [],
     addPort: (port: PortMeta) => {
       set((state) => ({
         ports: [...state.ports, port],
@@ -94,7 +98,7 @@ export const useDiagramStore = create<DiagramState>((set) => {
       });
     },
     setAddingPortType: (type: PortMeta) => {
-      set((state) => ({
+      set(() => ({
         addingPortType: type,
       }));
     },
@@ -117,6 +121,16 @@ export const useDiagramStore = create<DiagramState>((set) => {
         return { globalPins };
       });
     },
+    updateActivity: () => {
+      set((state) => {
+        const activePinIds: string[] = [...state.activeGlobalPinIds];
+        state.globalPins.forEach((globalPin) => {
+          treversePins(globalPin.id, state.connections, state.ports, activePinIds);
+        });
+
+        return { activePinIds };
+      });
+    },
     clear: () => {
       set(() => ({
         globalPins: [],
@@ -127,6 +141,7 @@ export const useDiagramStore = create<DiagramState>((set) => {
         currentTruthTable: [],
         addingPortType: null,
         activeGlobalPinIds: [],
+        activePinIds: []
       }));
     },
   };

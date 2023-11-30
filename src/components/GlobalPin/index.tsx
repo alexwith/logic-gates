@@ -16,6 +16,7 @@ export default function GlobalPin({ id, yPos, input, name }: Props) {
 
   const toggleGlobalPin = useDiagramStore((state: DiagramState) => state.toggleGlobalPin);
   const setGlobalPinName = useDiagramStore((state: DiagramState) => state.setGlobalPinName);
+  const updateActivity = useDiagramStore((state: DiagramState) => state.updateActivity);
 
   const computePos = (): any => {
     if (!ref) {
@@ -52,6 +53,7 @@ export default function GlobalPin({ id, yPos, input, name }: Props) {
 
     toggleGlobalPin(id);
     setActive(!active);
+    updateActivity();
   };
 
   const handleNameChange = (name: string) => {

@@ -1,9 +1,8 @@
-import { DragEvent, Fragment, useEffect, useRef, useState } from "react";
+import { DragEvent, Fragment, useRef, useState } from "react";
 import { PortMeta, Pos } from "../../common/types";
 import Port from "../Port";
 import Pin from "../Pin";
 import Connection from "../Connection";
-import { treversePins } from "../../libs/circuit";
 import { inputPinId, isGlobalPinId, outputPinId } from "../../utils/idUtil";
 import { computeGlobalEntryPos, computeGlobalPinYPos, computePortPinPos } from "../../libs/pin";
 import useMouse from "../../hooks/useMouse";
@@ -19,7 +18,6 @@ export default function Diagram() {
   const [isConnectingPin, setIsConnectingPin] = useState<boolean>(false);
   const [connectingPinEnd, setConnectingPinEnd] = useState<Pos | null>(null);
   const [lastPin, setLastPin] = useState<string | null>("");
-  const [activePins, setActivePins] = useState<string[]>([]);
 
   const globalPins = useDiagramStore((state: DiagramState) => state.globalPins);
   const ports = useDiagramStore((state: DiagramState) => state.ports);
@@ -27,27 +25,16 @@ export default function Diagram() {
   const selectedPortId = useDiagramStore((state: DiagramState) => state.selectedPortId);
   const selectedPinId = useDiagramStore((state: DiagramState) => state.selectedPinId);
   const addingPortType = useDiagramStore((state: DiagramState) => state.addingPortType);
-  const activeGlobalPinIds = useDiagramStore((state: DiagramState) => state.activeGlobalPinIds);
+  const activePinIds = useDiagramStore((state: DiagramState) => state.activePinIds);
 
   const updateSelectedPort = useDiagramStore((state: DiagramState) => state.updateSelectedPort);
   const addConnection = useDiagramStore((state: DiagramState) => state.addConnection);
+  const updateActivity = useDiagramStore((state: DiagramState) => state.updateActivity);
   const updateCurrentTruthTable = useDiagramStore(
     (state: DiagramState) => state.updateCurrentTruthTable
   );
   const addPort = useDiagramStore((state: DiagramState) => state.addPort);
   const setSelectedPort = useDiagramStore((state: DiagramState) => state.setSelectedPort);
-
-  const updateActivity = () => {
-    const activePins: string[] = [...activeGlobalPinIds];
-    globalPins.forEach((globalPin) => {
-      treversePins(globalPin.id, connections, ports, activePins);
-    });
-    setActivePins(activePins);
-  };
-
-  useEffect(() => {
-    updateActivity();
-  }, [activeGlobalPinIds, connections]);
 
   const handlePortDraggingMove = () => {
     const port = { ...ports[selectedPortId] };
@@ -81,6 +68,7 @@ export default function Diagram() {
       pin1Id: lastPin,
     });
     updateCurrentTruthTable();
+    updateActivity();
   };
 
   const handleMouseMove = () => {
@@ -163,7 +151,7 @@ export default function Diagram() {
             pos0={computePortPinPos(ref, ports, globalPins, connection.pin0Id)}
             pos1={computePortPinPos(ref, ports, globalPins, connection.pin1Id)}
             active={
-              activePins.includes(connection.pin0Id) || activePins.includes(connection.pin1Id)
+              activePinIds.includes(connection.pin0Id) || activePinIds.includes(connection.pin1Id)
             }
           />
         ))}
