@@ -19,7 +19,7 @@ export interface ConnectionMeta {
   pin1Id: string;
 }
 
-export interface GlobalPinMeta {
+export interface TerminalMeta {
   id: string;  
   name: string;
   input: boolean;

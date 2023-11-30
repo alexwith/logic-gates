@@ -1,20 +1,20 @@
-import { ConnectionMeta, GlobalPinMeta, GateMeta } from "../common/types";
-import { globalInputPinId } from "../utils/idUtil";
+import { ConnectionMeta, TerminalMeta, GateMeta } from "../common/types";
+import { inputTerminalId } from "../utils/idUtil";
 import { treversePins } from "./circuit";
 
 export function createTruthTable(
-  globalPins: GlobalPinMeta[],
+  terminals: TerminalMeta[],
   connections: ConnectionMeta[],
   gates: GateMeta[]
 ): boolean[][] {
   const truthTable: boolean[][] = [];
 
-  const globalInputPins = globalPins.filter((pin) => pin.input).length;
-  const combinationAmount = 1 << globalInputPins; // 2^(globalInputPins)
+  const inputTerminals = terminals.filter((pin) => pin.input).length;
+  const combinationAmount = 1 << inputTerminals; // 2^inputTerminals
   const combinations: boolean[][] = [];
   for (let i = 0; i < combinationAmount; i++) {
     combinations.push([]);
-    for (let j = 0; j < globalInputPins; j++) {
+    for (let j = 0; j < inputTerminals; j++) {
       if (((1 << j) & i) > 0) {
         combinations[i][j] = true;
       } else {
@@ -24,23 +24,23 @@ export function createTruthTable(
   }
 
   combinations.forEach((combination, i) => {
-    const globalPinCombination = [];
+    const terminalCombination = [];
     for (let i = 0; i < combination.length; i++) {
       if (combination[i]) {
-        globalPinCombination.push(globalInputPinId(i));
+        terminalCombination.push(inputTerminalId(i));
       }
     }
 
-    const activePins: string[] = [...globalPinCombination];
-    globalPins.forEach((globalPin, _) => {
-      treversePins(globalPin.id, connections, gates, activePins);
+    const activePins: string[] = [...terminalCombination];
+    terminals.forEach((terminal, _) => {
+      treversePins(terminal.id, connections, gates, activePins);
     });
 
     const outputValues: boolean[] = [];
-    globalPins
+    terminals
       .filter((pin) => !pin.input)
-      .forEach((globalOutputPin) => {
-        const id = globalOutputPin.id;
+      .forEach((outputTerminal) => {
+        const id = outputTerminal.id;
 
         let matchingPinId: string | null = null;
         for (const connection of connections) {

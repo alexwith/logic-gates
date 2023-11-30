@@ -1,7 +1,7 @@
-import { GlobalPinMeta } from "../../common/types";
+import { TerminalMeta } from "../../common/types";
 
 interface Props {
-  pins: GlobalPinMeta[];
+  pins: TerminalMeta[];
   truthTable: boolean[][];
 }
 

@@ -3,10 +3,10 @@ import { GateMeta, Pos } from "../../common/types";
 import Gate from "../Gate";
 import Pin from "../Pin";
 import Connection from "../Connection";
-import { inputPinId, isGlobalPinId, outputPinId } from "../../utils/idUtil";
-import { computeGlobalEntryPos, computeGlobalPinYPos, computeGatePinPos } from "../../libs/pin";
+import { inputPinId, isTerminalId, outputPinId } from "../../utils/idUtil";
+import { computeTerminalPos, computeTerminalYPos, computeGatePinPos } from "../../libs/pin";
 import useMouse from "../../hooks/useMouse";
-import GlobalPin from "../GlobalPin";
+import Terminal from "../Terminal";
 import { DiagramState, useDiagramStore } from "../../store";
 
 export default function Diagram() {
@@ -19,7 +19,7 @@ export default function Diagram() {
   const [connectingPinEnd, setConnectingPinEnd] = useState<Pos | null>(null);
   const [lastPin, setLastPin] = useState<string | null>("");
 
-  const globalPins = useDiagramStore((state: DiagramState) => state.globalPins);
+  const terminals = useDiagramStore((state: DiagramState) => state.terminals);
   const gates = useDiagramStore((state: DiagramState) => state.gates);
   const connections = useDiagramStore((state: DiagramState) => state.connections);
   const selectedGateId = useDiagramStore((state: DiagramState) => state.selectedGateId);
@@ -46,7 +46,7 @@ export default function Diagram() {
   };
 
   const handlePinConnectingMove = () => {
-    const { x, y } = computeGatePinPos(ref, gates, globalPins, selectedPinId);
+    const { x, y } = computeGatePinPos(ref, gates, terminals, selectedPinId);
     setConnectingPinEnd({
       x: Math.abs(mouseDragOffset.x - x),
       y: Math.abs(mouseDragOffset.y - y),
@@ -58,7 +58,7 @@ export default function Diagram() {
     if (
       !lastPin ||
       selectedPinId === lastPin ||
-      (isGlobalPinId(selectedPinId) && isGlobalPinId(lastPin))
+      (isTerminalId(selectedPinId) && isTerminalId(lastPin))
     ) {
       return;
     }
@@ -124,12 +124,12 @@ export default function Diagram() {
       onDrop={handleDrop}
       onDragOver={handleDragOver}
     >
-      {globalPins.map((pin, i) => {
+      {terminals.map((pin, i) => {
         return (
-          <GlobalPin
+          <Terminal
             key={i}
             id={pin.id}
-            yPos={computeGlobalPinYPos(ref, globalPins, pin.id)}
+            yPos={computeTerminalYPos(ref, terminals, pin.id)}
             input={pin.input}
             name={pin.name}
           />
@@ -139,7 +139,7 @@ export default function Diagram() {
         {isConnectingPin && selectedPinId && connectingPinEnd && (
           <Connection
             id={-1}
-            pos0={computeGatePinPos(ref, gates, globalPins, selectedPinId)}
+            pos0={computeGatePinPos(ref, gates, terminals, selectedPinId)}
             pos1={connectingPinEnd}
             active={false}
           />
@@ -148,8 +148,8 @@ export default function Diagram() {
           <Connection
             key={i}
             id={i}
-            pos0={computeGatePinPos(ref, gates, globalPins, connection.pin0Id)}
-            pos1={computeGatePinPos(ref, gates, globalPins, connection.pin1Id)}
+            pos0={computeGatePinPos(ref, gates, terminals, connection.pin0Id)}
+            pos1={computeGatePinPos(ref, gates, terminals, connection.pin1Id)}
             active={
               activePinIds.includes(connection.pin0Id) || activePinIds.includes(connection.pin1Id)
             }
@@ -179,7 +179,7 @@ export default function Diagram() {
                 <Pin
                   key={`in-${j}`}
                   id={id}
-                  pos={computeGatePinPos(ref, gates, globalPins, id)}
+                  pos={computeGatePinPos(ref, gates, terminals, id)}
                   setIsConnectingPin={setIsConnectingPin}
                   setLastPin={setLastPin}
                 />
@@ -192,7 +192,7 @@ export default function Diagram() {
                 <Pin
                   key={`out-${j}`}
                   id={id}
-                  pos={computeGatePinPos(ref, gates, globalPins, id)}
+                  pos={computeGatePinPos(ref, gates, terminals, id)}
                   setIsConnectingPin={setIsConnectingPin}
                   setLastPin={setLastPin}
                 />
@@ -200,12 +200,12 @@ export default function Diagram() {
             })}
           </Fragment>
         ))}
-        {globalPins.map((pin, i) => {
+        {terminals.map((terminal, i) => {
           return (
             <Pin
               key={i}
-              id={pin.id}
-              pos={computeGlobalEntryPos(ref, globalPins, pin.id)}
+              id={terminal.id}
+              pos={computeTerminalPos(ref, terminals, terminal.id)}
               setIsConnectingPin={setIsConnectingPin}
               setLastPin={setLastPin}
             />

@@ -8,12 +8,12 @@ import { DiagramState, useDiagramStore } from "./store";
 export default function App() {
   const gateNameRef: any = useRef();
 
-  const globalPins = useDiagramStore((state: DiagramState) => state.globalPins);
+  const terminals = useDiagramStore((state: DiagramState) => state.terminals);
   const currentTruthTable = useDiagramStore((state: DiagramState) => state.currentTruthTable);
 
   const addGateType = useDiagramStore((state: DiagramState) => state.addGateType);
   const clearDiagram = useDiagramStore((state: DiagramState) => state.clear);
-  const addGlobalPin = useDiagramStore((state: DiagramState) => state.addGlobalPin);
+  const addTerminal = useDiagramStore((state: DiagramState) => state.addTerminal);
 
   const handleGateNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.target.value = event.target.value.toUpperCase();
@@ -26,8 +26,8 @@ export default function App() {
   };
 
   const handleCreateClick = () => {
-    const inputs: number = globalPins.filter((pin) => pin.input).length;
-    const outputs: number = globalPins.length - inputs;
+    const inputs: number = terminals.filter((pin) => pin.input).length;
+    const outputs: number = terminals.length - inputs;
 
     const truthTable: any = {};
     currentTruthTable.forEach((line) => {
@@ -54,8 +54,8 @@ export default function App() {
     gateNameRef.current.value = "";
   };
 
-  const handleAddGlobalClick = (input: boolean) => {
-    addGlobalPin(input);
+  const handleAddTerminalClick = (input: boolean) => {
+    addTerminal(input);
   };
 
   return (
@@ -82,13 +82,13 @@ export default function App() {
               </div>
               <div
                 className="bg-cyan-500 w-fit px-2 py-1 rounded-md hover:cursor-pointer"
-                onClick={() => handleAddGlobalClick(true)}
+                onClick={() => handleAddTerminalClick(true)}
               >
                 Add Input
               </div>
               <div
                 className="bg-cyan-500 w-fit px-2 py-1 rounded-md hover:cursor-pointer"
-                onClick={() => handleAddGlobalClick(false)}
+                onClick={() => handleAddTerminalClick(false)}
               >
                 Add Output
               </div>
@@ -100,7 +100,7 @@ export default function App() {
           <h1 className="font-bold text-2xl mt-4">Circuit Information</h1>
           <div>
             <h1 className="font-bold">Truth Table</h1>
-            <TruthTable pins={globalPins} truthTable={currentTruthTable} />
+            <TruthTable pins={terminals} truthTable={currentTruthTable} />
           </div>
         </div>
       </div>

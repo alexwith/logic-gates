@@ -1,20 +1,20 @@
 import { create } from "zustand";
 import { BASE_GATES } from "./common/constants";
-import { ConnectionMeta, GlobalPinMeta, GateMeta } from "./common/types";
+import { ConnectionMeta, TerminalMeta, GateMeta } from "./common/types";
 import { createTruthTable } from "./libs/truthTable";
-import { globalInputPinId, globalOutputPinId } from "./utils/idUtil";
+import { inputTerminalId, outputTerminalId } from "./utils/idUtil";
 import { treversePins } from "./libs/circuit";
 
 export interface DiagramState {
   gateTypes: GateMeta[];
-  globalPins: GlobalPinMeta[];
+  terminals: TerminalMeta[];
   gates: GateMeta[];
   connections: ConnectionMeta[];
   selectedGateId: number;
   selectedPinId: string;
   currentTruthTable: boolean[][];
   addingGateType: GateMeta | null;
-  activeGlobalPinIds: string[];
+  activeTerminalIds: string[];
   activePinIds: string[];
   addGate: (gate: GateMeta) => void;
   setSelectedPin: (gateId: string) => void;
@@ -23,10 +23,10 @@ export interface DiagramState {
   updateCurrentTruthTable: () => void;
   addGateType: (type: GateMeta) => void;
   addConnection: (connection: ConnectionMeta) => void;
-  addGlobalPin: (isInput: boolean) => void;
+  addTerminal: (isInput: boolean) => void;
   setAddingGateType: (type: GateMeta) => void;
-  toggleGlobalPin: (pinId: string) => void;
-  setGlobalPinName: (pinId: string, name: string) => void;
+  toggleTerminal: (pinId: string) => void;
+  setTerminalName: (pinId: string, name: string) => void;
   updateActivity: () => void;
   clear: () => void;
 }
@@ -34,14 +34,14 @@ export interface DiagramState {
 export const useDiagramStore = create<DiagramState>((set) => {
   return {
     gateTypes: BASE_GATES,
-    globalPins: [],
+    terminals: [],
     gates: [],
     connections: [],
     selectedGateId: -1,
     selectedPinId: "",
     currentTruthTable: [],
     addingGateType: null,
-    activeGlobalPinIds: [],
+    activeTerminalIds: [],
     activePinIds: [],
     addGate: (gate: GateMeta) => {
       set((state) => ({
@@ -72,7 +72,7 @@ export const useDiagramStore = create<DiagramState>((set) => {
     },
     updateCurrentTruthTable: () => {
       set((state) => ({
-        currentTruthTable: createTruthTable(state.globalPins, state.connections, state.gates),
+        currentTruthTable: createTruthTable(state.terminals, state.connections, state.gates),
       }));
     },
     addGateType: (type: GateMeta) => {
@@ -85,16 +85,16 @@ export const useDiagramStore = create<DiagramState>((set) => {
         connections: [...state.connections, connection],
       }));
     },
-    addGlobalPin: (isInput: boolean) => {
+    addTerminal: (isInput: boolean) => {
       set((state) => {
-        const nextPinIndex = state.globalPins.filter((pin) => pin.input === isInput).length;
-        const pin: GlobalPinMeta = {
-          id: isInput ? globalInputPinId(nextPinIndex) : globalOutputPinId(nextPinIndex),
+        const nextPinIndex = state.terminals.filter((pin) => pin.input === isInput).length;
+        const pin: TerminalMeta = {
+          id: isInput ? inputTerminalId(nextPinIndex) : outputTerminalId(nextPinIndex),
           name: "?",
           input: isInput,
         };
 
-        return { globalPins: [...state.globalPins, pin] };
+        return { terminals: [...state.terminals, pin] };
       });
     },
     setAddingGateType: (type: GateMeta) => {
@@ -102,30 +102,30 @@ export const useDiagramStore = create<DiagramState>((set) => {
         addingGateType: type,
       }));
     },
-    toggleGlobalPin: (pinId: string) => {
+    toggleTerminal: (pinId: string) => {
       set((state) => {
-        const activeGlobalPinIds = [...state.activeGlobalPinIds];
-        const index = activeGlobalPinIds.indexOf(pinId);
-        index !== -1 ? activeGlobalPinIds.splice(index, 1) : activeGlobalPinIds.push(pinId);
+        const activeTerminalIds = [...state.activeTerminalIds];
+        const index = activeTerminalIds.indexOf(pinId);
+        index !== -1 ? activeTerminalIds.splice(index, 1) : activeTerminalIds.push(pinId);
 
-        return { activeGlobalPinIds };
+        return { activeTerminalIds: activeTerminalIds };
       });
     },
-    setGlobalPinName: (pinId: string, name: string) => {
+    setTerminalName: (pinId: string, name: string) => {
       set((state) => {
-        const globalPins = [...state.globalPins];
-        const pinIndex = globalPins.findIndex((pin) => pin.id === pinId);
-        const pin = { ...globalPins[pinIndex], name };
+        const terminals = [...state.terminals];
+        const pinIndex = terminals.findIndex((pin) => pin.id === pinId);
+        const pin = { ...terminals[pinIndex], name };
 
-        globalPins[pinIndex] = pin;
-        return { globalPins };
+        terminals[pinIndex] = pin;
+        return { terminals: terminals };
       });
     },
     updateActivity: () => {
       set((state) => {
-        const activePinIds: string[] = [...state.activeGlobalPinIds];
-        state.globalPins.forEach((globalPin) => {
-          treversePins(globalPin.id, state.connections, state.gates, activePinIds);
+        const activePinIds: string[] = [...state.activeTerminalIds];
+        state.terminals.forEach((terminal) => {
+          treversePins(terminal.id, state.connections, state.gates, activePinIds);
         });
 
         return { activePinIds };
@@ -133,14 +133,14 @@ export const useDiagramStore = create<DiagramState>((set) => {
     },
     clear: () => {
       set(() => ({
-        globalPins: [],
+        terminals: [],
         gates: [],
         connections: [],
         selectedGateId: -1,
         selectedPinId: "",
         currentTruthTable: [],
         addingGateType: null,
-        activeGlobalPinIds: [],
+        activeTerminalIds: [],
         activePinIds: [],
       }));
     },

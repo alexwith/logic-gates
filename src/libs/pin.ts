@@ -1,23 +1,23 @@
 import { POS_ZERO } from "../common/constants";
-import { GlobalPinMeta, GateMeta, Pos } from "../common/types";
-import { indexFromPinId, isGlobalPinId, isInputPinId } from "../utils/idUtil";
+import { TerminalMeta, GateMeta, Pos } from "../common/types";
+import { indexFromPinId, isTerminalId, isInputPinId } from "../utils/idUtil";
 
 export const computeGatePinPos = (
   diagramRef: any,
   gates: GateMeta[],
-  globalPins: GlobalPinMeta[],
+  terminals: TerminalMeta[],
   pinId: string
 ): Pos => {
   const args = pinId.split("-");
   const pinIndex = Number(args[2]);
-  if (isGlobalPinId(pinId)) {
-    const pin = globalPins.find((pin) => pin.id === pinId);
+  if (isTerminalId(pinId)) {
+    const pin = terminals.find((pin) => pin.id === pinId);
 
-    return pin ? computeGlobalEntryPos(diagramRef, globalPins, pinId) : POS_ZERO;
+    return pin ? computeTerminalPos(diagramRef, terminals, pinId) : POS_ZERO;
   }
 
   const gateId = Number(args[0]);
-  const input = isInputPinId(args[1]);
+  const input = isInputPinId(pinId);
 
   const gate = gates.find((gate) => gate.id === gateId);
   if (!gate) {
@@ -34,9 +34,9 @@ export const computeGatePinPos = (
   return { x: cx + offsetX, y: cy + offsetY + spacing * pinIndex };
 };
 
-export const computeGlobalEntryPos = (
+export const computeTerminalPos = (
   diagramRef: any,
-  globalPins: GlobalPinMeta[],
+  terminals: TerminalMeta[],
   pinId: string
 ): Pos => {
   if (!diagramRef.current) {
@@ -44,17 +44,17 @@ export const computeGlobalEntryPos = (
   }
 
   const diagramRect: DOMRect = diagramRef.current.getBoundingClientRect();
-  const input = isInputPinId(pinId);
+  const input = isInputPinId(pinId);  
 
   return {
     x: input ? 50 : diagramRect.width - 60,
-    y: computeGlobalPinYPos(diagramRef, globalPins, pinId) - 39,
+    y: computeTerminalYPos(diagramRef, terminals, pinId) - 39,
   };
 };
 
-export const computeGlobalPinYPos = (
+export const computeTerminalYPos = (
   diagramRef: any,
-  globalPins: GlobalPinMeta[],
+  terminals: TerminalMeta[],
   pinId: string
 ): number => {
   if (!diagramRef.current) {
@@ -64,7 +64,7 @@ export const computeGlobalPinYPos = (
   const pinIndex = indexFromPinId(pinId);
   const isInput = isInputPinId(pinId);
 
-  const amount = globalPins.filter((pin) => pin.input === isInput).length;
+  const amount = terminals.filter((pin) => pin.input === isInput).length;
 
   const diagramRect: DOMRect = diagramRef.current.getBoundingClientRect();
   const middle = diagramRect.height / 2;
