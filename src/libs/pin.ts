@@ -1,6 +1,6 @@
 import { POS_ZERO } from "../common/constants";
 import { TerminalMeta, GateMeta, Pos } from "../common/types";
-import { indexFromPinId, isTerminalId, isInputPinId } from "../utils/idUtil";
+import { indexFromPinId, isTerminalId, isInputPinId, gateIdFromPinId } from "../utils/idUtil";
 
 export const computeGatePinPos = (
   diagramRef: any,
@@ -8,15 +8,14 @@ export const computeGatePinPos = (
   terminals: TerminalMeta[],
   pinId: string
 ): Pos => {
-  const args = pinId.split("-");
-  const pinIndex = Number(args[2]);
+  const pinIndex = indexFromPinId(pinId);
   if (isTerminalId(pinId)) {
     const pin = terminals.find((pin) => pin.id === pinId);
 
     return pin ? computeTerminalPos(diagramRef, terminals, pinId) : POS_ZERO;
   }
 
-  const gateId = Number(args[0]);
+  const gateId = gateIdFromPinId(pinId);
   const input = isInputPinId(pinId);
 
   const gate = gates.find((gate) => gate.id === gateId);
@@ -44,7 +43,7 @@ export const computeTerminalPos = (
   }
 
   const diagramRect: DOMRect = diagramRef.current.getBoundingClientRect();
-  const input = isInputPinId(pinId);  
+  const input = isInputPinId(pinId);
 
   return {
     x: input ? 50 : diagramRect.width - 60,

@@ -8,6 +8,8 @@ import { computeTerminalPos, computeTerminalYPos, computeGatePinPos } from "../.
 import useMouse from "../../hooks/useMouse";
 import Terminal from "../Terminal";
 import { DiagramState, useDiagramStore } from "../../store";
+import { boundingBoxFromGate, boundingBoxFromTerminal } from "../../utils/boundingBoxUtil";
+import { BoundingBox } from "../../utils/boundingBox";
 
 export default function Diagram() {
   const ref = useRef<HTMLDivElement>(null);
@@ -42,6 +44,8 @@ export default function Diagram() {
       x: Math.abs(mouseDragOffset.x - gateOrigin.x),
       y: Math.abs(mouseDragOffset.y - gateOrigin.y),
     };
+    gate.boundingBox = boundingBoxFromGate(gate);
+
     updateSelectedGate(gate);
   };
 
@@ -110,6 +114,7 @@ export default function Diagram() {
       outputs: addingGateType.outputs,
       truthTable: addingGateType.truthTable,
     };
+    gate.boundingBox = boundingBoxFromGate(gate);
 
     addGate(gate);
   };
@@ -117,6 +122,12 @@ export default function Diagram() {
   const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
+  };
+
+  const createConnectionDefaultBoundingBox = (pinId: string): BoundingBox | undefined => {
+    return isTerminalId(pinId)
+      ? boundingBoxFromTerminal(pinId, computeGatePinPos(ref, gates, terminals, pinId))
+      : undefined;
   };
 
   return (
@@ -137,13 +148,14 @@ export default function Diagram() {
           />
         );
       })}
-      <svg className="w-full h-full" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+      <svg className="w-full h-full" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>    
         {isConnectingPin && selectedPinId && connectingPinEnd && (
           <Connection
             id={-1}
             pos0={computeGatePinPos(ref, gates, terminals, selectedPinId)}
             pos1={connectingPinEnd}
             active={false}
+            pos0BB={createConnectionDefaultBoundingBox(selectedPinId)}
           />
         )}
         {connections.map((connection, i) => (
@@ -155,6 +167,8 @@ export default function Diagram() {
             active={
               activePinIds.includes(connection.pin0Id) || activePinIds.includes(connection.pin1Id)
             }
+            pos0BB={createConnectionDefaultBoundingBox(connection.pin0Id)}
+            pos1BB={createConnectionDefaultBoundingBox(connection.pin1Id)}
           />
         ))}
         {gates.map((gate, i) => (

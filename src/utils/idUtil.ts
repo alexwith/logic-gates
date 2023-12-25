@@ -16,6 +16,11 @@ export const isOutputPinId = (id: string): boolean => id.includes("out-");
 
 export const isTerminalId = (id: string): boolean => id.includes("terminal");
 
+export const gateIdFromPinId = (id: string): number => {
+  const args = id.split("-");
+  return Number(args[0]);
+}
+
 export const indexFromPinId = (id: string): number => {
   const args = id.split("-");
   return Number(args[2]);
