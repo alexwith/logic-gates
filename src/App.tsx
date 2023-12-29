@@ -13,7 +13,6 @@ export default function App() {
 
   const addGateType = useDiagramStore((state: DiagramState) => state.addGateType);
   const clearDiagram = useDiagramStore((state: DiagramState) => state.clear);
-  const addTerminal = useDiagramStore((state: DiagramState) => state.addTerminal);
 
   const handleGateNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.target.value = event.target.value.toUpperCase();
@@ -54,53 +53,36 @@ export default function App() {
     gateNameRef.current.value = "";
   };
 
-  const handleAddTerminalClick = (input: boolean) => {
-    addTerminal(input);
-  };
-
   return (
-    <div className="mx-14">
-      <h1 className="font-black text-3xl my-6">Logic Gates</h1>
-      <div className="my-6">
-        <div className="mb-4">
-          <GateTypes />
-          <div className="flex">
+    <div className="flex flex-col items-center">
+      <div>
+        <h1 className="font-black text-3xl my-6">Logic Gates</h1>
+        <div className="flex space-x-20">
+          <div className="flex flex-col space-y-2 h-[700px] w-[200px] rounded-lg border-slate-700 border-4 font-bold text-md p-2">
             <input
-              className="font-bold text-2xl bg-transparent placeholder:text-slate-700 outline-none"
+              className="font-bold text-xl bg-transparent placeholder:text-slate-700 outline-none"
               ref={gateNameRef}
               type="text"
               placeholder="NAME"
               onKeyDown={handleGateNameKeydown}
               onChange={handleGateNameChange}
             />
-            <div className="ml-auto flex space-x-2 font-bold text-md ">
-              <div
-                className="bg-cyan-500 w-fit px-2 py-1 rounded-md hover:cursor-pointer"
-                onClick={handleCreateClick}
-              >
-                Create
-              </div>
-              <div
-                className="bg-cyan-500 w-fit px-2 py-1 rounded-md hover:cursor-pointer"
-                onClick={() => handleAddTerminalClick(true)}
-              >
-                Add Input
-              </div>
-              <div
-                className="bg-cyan-500 w-fit px-2 py-1 rounded-md hover:cursor-pointer"
-                onClick={() => handleAddTerminalClick(false)}
-              >
-                Add Output
+            <div
+              className="bg-slate-700 px-2 py-1 rounded-md hover:cursor-pointer hover:bg-slate-500"
+              onClick={handleCreateClick}
+            >
+              Create
+            </div>
+            <div>
+              <h1 className="my-2">Truth Table</h1>
+              <div className="overflow-x-scroll">
+                <TruthTable pins={terminals} truthTable={currentTruthTable} />
               </div>
             </div>
           </div>
-        </div>
-        <Diagram />
-        <div>
-          <h1 className="font-bold text-2xl mt-4">Circuit Information</h1>
-          <div>
-            <h1 className="font-bold">Truth Table</h1>
-            <TruthTable pins={terminals} truthTable={currentTruthTable} />
+          <div className="flex flex-col w-[1200px] space-y-2">
+            <Diagram />
+            <GateTypes />
           </div>
         </div>
       </div>

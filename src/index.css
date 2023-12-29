@@ -8,5 +8,15 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;  
   color: white;
+  color-scheme: dark;
   @apply bg-gray-900
+}
+
+::-webkit-scrollbar {
+  height: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 100rem;
+  background: theme(colors.slate.600);
 }

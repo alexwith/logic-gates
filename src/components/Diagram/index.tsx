@@ -10,6 +10,7 @@ import Terminal from "../Terminal";
 import { DiagramState, useDiagramStore } from "../../store";
 import { boundingBoxFromGate, boundingBoxFromTerminal } from "../../utils/boundingBoxUtil";
 import { BoundingBox } from "../../utils/boundingBox";
+import { FaPlus } from "react-icons/fa";
 
 export default function Diagram() {
   const ref = useRef<HTMLDivElement>(null);
@@ -36,6 +37,7 @@ export default function Diagram() {
     (state: DiagramState) => state.updateCurrentTruthTable
   );
   const addGate = useDiagramStore((state: DiagramState) => state.addGate);
+  const addTerminal = useDiagramStore((state: DiagramState) => state.addTerminal);
   const setSelectedGate = useDiagramStore((state: DiagramState) => state.setSelectedGate);
 
   const handleGateDraggingMove = () => {
@@ -132,7 +134,7 @@ export default function Diagram() {
 
   return (
     <div
-      className="relative border-slate-500 border-4 rounded-lg grow h-[700px]"
+      className="relative border-slate-700 border-4 rounded-lg grow h-[700px]"
       ref={ref}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
@@ -148,7 +150,36 @@ export default function Diagram() {
           />
         );
       })}
-      <svg className="w-full h-full" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>    
+      <div className="absolute flex items-center h-full">
+        <div
+          className="absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-slate-500 flex justify-center items-center hover:cursor-pointer hover:border-green-400 left-[-60px]"
+          onClick={() => addTerminal(true)}
+        >
+          <FaPlus color="#94a3b8" />
+        </div>
+      </div>
+      <div className="absolute flex items-center h-full left-full">
+        <div
+          className="absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-slate-500 flex justify-center items-center hover:cursor-pointer hover:border-green-400 right-[-60px]"
+          onClick={() => addTerminal(false)}
+        >
+          <FaPlus color="#94a3b8" />
+        </div>
+      </div>
+      <svg className="w-full h-full" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+        <defs>
+          <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+            <path
+              d="M 25 0 L 0 0 0 25¨"
+              fill="none"
+              stroke="#64748b"
+              strokeWidth="0.5"
+              opacity="0.5"
+            />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)" />
+
         {isConnectingPin && selectedPinId && connectingPinEnd && (
           <Connection
             id={-1}
