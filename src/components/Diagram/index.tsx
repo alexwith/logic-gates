@@ -141,7 +141,7 @@ export default function Diagram() {
     >
       {terminals.map((pin, i) => {
         return (
-          <Terminal
+          <Terminal        
             key={i}
             id={pin.id}
             yPos={computeTerminalYPos(ref, terminals, pin.id)}

@@ -68,7 +68,7 @@ export default function App() {
               onChange={handleGateNameChange}
             />
             <div
-              className="bg-slate-700 px-2 py-1 rounded-md hover:cursor-pointer hover:bg-slate-500"
+              className="bg-violet-500 px-2 py-1 rounded-md hover:cursor-pointer hover:bg-violet-600"
               onClick={handleCreateClick}
             >
               Create

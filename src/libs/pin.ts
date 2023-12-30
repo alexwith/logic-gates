@@ -67,10 +67,11 @@ export const computeTerminalYPos = (
 
   const diagramRect: DOMRect = diagramRef.current.getBoundingClientRect();
   const middle = diagramRect.height / 2;
-  const top = middle - 40 * amount;
-  const bottom = middle + 40 * amount;
-  const length = Math.abs(top - bottom);
+  const top = middle - 32 * amount;
+  const bottom = middle + 32 * amount;
+  const height = Math.abs(top - bottom);
 
-  const interval = amount <= 0 ? 0 : length / amount;
-  return top + interval / 2 + interval * pinIndex;
+  // 32 is the height of a terminal, should do this dynamically in the future by getting the terminals rect
+  const interval = amount <= 0 ? 0 : height / amount;
+  return top + interval / 2 + interval * pinIndex + 32;
 };
