@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { BASE_GATES } from "./common/constants";
-import { ConnectionMeta, TerminalMeta, GateMeta } from "./common/types";
+import { WireMeta, TerminalMeta, GateMeta } from "./common/types";
 import { createTruthTable } from "./libs/truthTable";
 import { inputTerminalId, outputTerminalId } from "./utils/idUtil";
 import { treversePins } from "./libs/circuit";
@@ -9,7 +9,7 @@ export interface DiagramState {
   gateTypes: GateMeta[];
   terminals: TerminalMeta[];
   gates: GateMeta[];
-  connections: ConnectionMeta[];
+  wires: WireMeta[];
   selectedGateId: number;
   selectedPinId: string;
   currentTruthTable: boolean[][];
@@ -22,7 +22,7 @@ export interface DiagramState {
   updateSelectedGate: (gate: GateMeta) => void;
   updateCurrentTruthTable: () => void;
   addGateType: (type: GateMeta) => void;
-  addConnection: (connection: ConnectionMeta) => void;
+  addWire: (wire: WireMeta) => void;
   addTerminal: (isInput: boolean) => void;
   setAddingGateType: (type: GateMeta) => void;
   toggleTerminal: (pinId: string) => void;
@@ -36,7 +36,7 @@ export const useDiagramStore = create<DiagramState>((set) => {
     gateTypes: BASE_GATES,
     terminals: [],
     gates: [],
-    connections: [],
+    wires: [],
     selectedGateId: -1,
     selectedPinId: "",
     currentTruthTable: [],
@@ -72,7 +72,7 @@ export const useDiagramStore = create<DiagramState>((set) => {
     },
     updateCurrentTruthTable: () => {
       set((state) => ({
-        currentTruthTable: createTruthTable(state.terminals, state.connections, state.gates),
+        currentTruthTable: createTruthTable(state.terminals, state.wires, state.gates),
       }));
     },
     addGateType: (type: GateMeta) => {
@@ -80,9 +80,9 @@ export const useDiagramStore = create<DiagramState>((set) => {
         gateTypes: [...state.gateTypes, type],
       }));
     },
-    addConnection: (connection: ConnectionMeta) => {
+    addWire: (wire: WireMeta) => {
       set((state) => ({
-        connections: [...state.connections, connection],
+        wires: [...state.wires, wire],
       }));
     },
     addTerminal: (isInput: boolean) => {
@@ -125,7 +125,7 @@ export const useDiagramStore = create<DiagramState>((set) => {
       set((state) => {
         const activePinIds: string[] = [...state.activeTerminalIds];
         state.terminals.forEach((terminal) => {
-          treversePins(terminal.id, state.connections, state.gates, activePinIds);
+          treversePins(terminal.id, state.wires, state.gates, activePinIds);
         });
 
         return { activePinIds };
@@ -135,7 +135,7 @@ export const useDiagramStore = create<DiagramState>((set) => {
       set(() => ({
         terminals: [],
         gates: [],
-        connections: [],
+        wires: [],
         selectedGateId: -1,
         selectedPinId: "",
         currentTruthTable: [],

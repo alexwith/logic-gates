@@ -1,37 +1,38 @@
-import { DragEvent, Fragment, useRef, useState } from "react";
+import { DragEvent, Fragment, MouseEvent, useRef, useState } from "react";
 import { GateMeta, Pos } from "../../common/types";
 import Gate from "../Gate";
 import Pin from "../Pin";
-import Connection from "../Connection";
+import Wire from "../Wire";
 import { inputPinId, isTerminalId, outputPinId } from "../../utils/idUtil";
 import { computeTerminalPos, computeTerminalYPos, computeGatePinPos } from "../../libs/pin";
 import useMouse from "../../hooks/useMouse";
 import Terminal from "../Terminal";
 import { DiagramState, useDiagramStore } from "../../store";
-import { boundingBoxFromGate, boundingBoxFromTerminal } from "../../utils/boundingBoxUtil";
-import { BoundingBox } from "../../utils/boundingBox";
 import { FaPlus } from "react-icons/fa";
 
 export default function Diagram() {
   const ref = useRef<HTMLDivElement>(null);
   const { mouseDragOffset } = useMouse();
+  const { mouseDragOffset: wiringMouseOffset, updateOrigin: wiringUpdateOrigin } = useMouse(true);
 
   const [gateOrigin, setGateOrigin] = useState<Pos>({ x: 0, y: 0 });
   const [isDraggingGate, setIsDraggingGate] = useState<boolean>(false);
-  const [isConnectingPin, setIsConnectingPin] = useState<boolean>(false);
-  const [connectingPinEnd, setConnectingPinEnd] = useState<Pos | null>(null);
+  const [isWiring, setIsWiring] = useState<boolean>(false);
+  const [wiringEndPoint, setWiringEndPoint] = useState<Pos | null>(null);
+  const [wiringCheckpoints, setWiringCheckpoints] = useState<Pos[]>([]);
   const [lastPin, setLastPin] = useState<string | null>("");
 
   const terminals = useDiagramStore((state: DiagramState) => state.terminals);
   const gates = useDiagramStore((state: DiagramState) => state.gates);
-  const connections = useDiagramStore((state: DiagramState) => state.connections);
+  const wires = useDiagramStore((state: DiagramState) => state.wires);
   const selectedGateId = useDiagramStore((state: DiagramState) => state.selectedGateId);
   const selectedPinId = useDiagramStore((state: DiagramState) => state.selectedPinId);
+  const setSelectedPin = useDiagramStore((state: DiagramState) => state.setSelectedPin);
   const addingGateType = useDiagramStore((state: DiagramState) => state.addingGateType);
   const activePinIds = useDiagramStore((state: DiagramState) => state.activePinIds);
 
   const updateSelectedGate = useDiagramStore((state: DiagramState) => state.updateSelectedGate);
-  const addConnection = useDiagramStore((state: DiagramState) => state.addConnection);
+  const addWire = useDiagramStore((state: DiagramState) => state.addWire);
   const updateActivity = useDiagramStore((state: DiagramState) => state.updateActivity);
   const updateCurrentTruthTable = useDiagramStore(
     (state: DiagramState) => state.updateCurrentTruthTable
@@ -40,51 +41,12 @@ export default function Diagram() {
   const addTerminal = useDiagramStore((state: DiagramState) => state.addTerminal);
   const setSelectedGate = useDiagramStore((state: DiagramState) => state.setSelectedGate);
 
-  const handleGateDraggingMove = () => {
-    const gate = { ...gates[selectedGateId] };
-    gate.pos = {
-      x: Math.abs(mouseDragOffset.x - gateOrigin.x),
-      y: Math.abs(mouseDragOffset.y - gateOrigin.y),
-    };
-    gate.boundingBox = boundingBoxFromGate(gate);
-
-    updateSelectedGate(gate);
-  };
-
-  const handlePinConnectingMove = () => {
-    const { x, y } = computeGatePinPos(ref, gates, terminals, selectedPinId);
-    setConnectingPinEnd({
-      x: Math.abs(mouseDragOffset.x - x),
-      y: Math.abs(mouseDragOffset.y - y),
-    });
-  };
-
-  const handlePinConnectingEnd = () => {
-    setIsConnectingPin(false);
-    setConnectingPinEnd(null);
-
-    if (
-      !lastPin ||
-      selectedPinId === lastPin ||
-      (isTerminalId(selectedPinId) && isTerminalId(lastPin))
-    ) {
-      return;
-    }
-
-    addConnection({
-      pin0Id: selectedPinId,
-      pin1Id: lastPin,
-    });
-    updateCurrentTruthTable();
-    updateActivity();
-  };
-
   const handleMouseMove = () => {
     if (isDraggingGate) {
       handleGateDraggingMove();
     }
-    if (isConnectingPin) {
-      handlePinConnectingMove();
+    if (isWiring) {
+      handleWiringMove();
     }
   };
 
@@ -92,8 +54,30 @@ export default function Diagram() {
     if (isDraggingGate) {
       setIsDraggingGate(false);
     }
-    if (isConnectingPin) {
-      handlePinConnectingEnd();
+  };
+
+  const handleMouseDown = () => {
+    if (isWiring) {
+      if (
+        lastPin &&
+        selectedPinId !== lastPin &&
+        (!isTerminalId(selectedPinId) || !isTerminalId(lastPin))
+      ) {
+        addWire({
+          pin0Id: selectedPinId,
+          pin1Id: lastPin,
+          checkpoints: wiringCheckpoints,
+        });
+        setIsWiring(false);
+        setWiringEndPoint(null);
+        setWiringCheckpoints([]);
+
+        updateCurrentTruthTable();
+        updateActivity();
+        return;
+      }
+
+      setWiringCheckpoints([...wiringCheckpoints, wiringEndPoint!]);
     }
   };
 
@@ -116,7 +100,6 @@ export default function Diagram() {
       outputs: addingGateType.outputs,
       truthTable: addingGateType.truthTable,
     };
-    gate.boundingBox = boundingBoxFromGate(gate);
 
     addGate(gate);
   };
@@ -126,10 +109,28 @@ export default function Diagram() {
     event.dataTransfer.dropEffect = "move";
   };
 
-  const createConnectionDefaultBoundingBox = (pinId: string): BoundingBox | undefined => {
-    return isTerminalId(pinId)
-      ? boundingBoxFromTerminal(pinId, computeGatePinPos(ref, gates, terminals, pinId))
-      : undefined;
+  const handleWiringStart = (event: MouseEvent, pinId: string) => {
+    setIsWiring(true);
+    setSelectedPin(pinId);
+    wiringUpdateOrigin(event);
+  };
+
+  const handleWiringMove = () => {
+    const { x, y } = computeGatePinPos(ref, gates, terminals, selectedPinId);
+    setWiringEndPoint({
+      x: Math.abs(wiringMouseOffset.x - x),
+      y: Math.abs(wiringMouseOffset.y - y),
+    });
+  };
+
+  const handleGateDraggingMove = () => {
+    const gate = { ...gates[selectedGateId] };
+    gate.pos = {
+      x: Math.abs(mouseDragOffset.x - gateOrigin.x),
+      y: Math.abs(mouseDragOffset.y - gateOrigin.y),
+    };
+
+    updateSelectedGate(gate);
   };
 
   return (
@@ -141,7 +142,7 @@ export default function Diagram() {
     >
       {terminals.map((pin, i) => {
         return (
-          <Terminal        
+          <Terminal
             key={i}
             id={pin.id}
             yPos={computeTerminalYPos(ref, terminals, pin.id)}
@@ -166,7 +167,12 @@ export default function Diagram() {
           <FaPlus color="#94a3b8" />
         </div>
       </div>
-      <svg className="w-full h-full" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+      <svg
+        className="w-full h-full"
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseDown={handleMouseDown}
+      >
         <defs>
           <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
             <path
@@ -180,26 +186,27 @@ export default function Diagram() {
         </defs>
         <rect width="100%" height="100%" fill="url(#grid)" />
 
-        {isConnectingPin && selectedPinId && connectingPinEnd && (
-          <Connection
-            id={-1}
-            pos0={computeGatePinPos(ref, gates, terminals, selectedPinId)}
-            pos1={connectingPinEnd}
+        {isWiring && selectedPinId && wiringEndPoint && (
+          <Wire
+            points={[
+              computeGatePinPos(ref, gates, terminals, selectedPinId),
+              ...wiringCheckpoints,
+              wiringEndPoint,
+            ]}
             active={false}
-            pos0BB={createConnectionDefaultBoundingBox(selectedPinId)}
           />
         )}
-        {connections.map((connection, i) => (
-          <Connection
+        {wires.map((wire, i) => (
+          <Wire
             key={i}
-            id={i}
-            pos0={computeGatePinPos(ref, gates, terminals, connection.pin0Id)}
-            pos1={computeGatePinPos(ref, gates, terminals, connection.pin1Id)}
+            points={[
+              computeGatePinPos(ref, gates, terminals, wire.pin0Id),
+              ...wire.checkpoints,
+              computeGatePinPos(ref, gates, terminals, wire.pin1Id),
+            ]}
             active={
-              activePinIds.includes(connection.pin0Id) || activePinIds.includes(connection.pin1Id)
+              activePinIds.includes(wire.pin0Id) || activePinIds.includes(wire.pin1Id)
             }
-            pos0BB={createConnectionDefaultBoundingBox(connection.pin0Id)}
-            pos1BB={createConnectionDefaultBoundingBox(connection.pin1Id)}
           />
         ))}
         {gates.map((gate, i) => (
@@ -227,7 +234,7 @@ export default function Diagram() {
                   key={`in-${j}`}
                   id={id}
                   pos={computeGatePinPos(ref, gates, terminals, id)}
-                  setIsConnectingPin={setIsConnectingPin}
+                  onMouseDown={(event) => handleWiringStart(event, id)}
                   setLastPin={setLastPin}
                 />
               );
@@ -240,7 +247,7 @@ export default function Diagram() {
                   key={`out-${j}`}
                   id={id}
                   pos={computeGatePinPos(ref, gates, terminals, id)}
-                  setIsConnectingPin={setIsConnectingPin}
+                  onMouseDown={(event) => handleWiringStart(event, id)}
                   setLastPin={setLastPin}
                 />
               );
@@ -253,7 +260,7 @@ export default function Diagram() {
               key={i}
               id={terminal.id}
               pos={computeTerminalPos(ref, terminals, terminal.id)}
-              setIsConnectingPin={setIsConnectingPin}
+              onMouseDown={(event) => handleWiringStart(event, terminal.id)}
               setLastPin={setLastPin}
             />
           );

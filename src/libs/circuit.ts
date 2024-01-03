@@ -1,15 +1,15 @@
-import { ConnectionMeta, GateMeta } from "../common/types";
+import { WireMeta, GateMeta } from "../common/types";
 import { inputPinId, isInputPinId, outputPinId } from "../utils/idUtil";
 
 export function treversePins(
   id: string,
-  connections: ConnectionMeta[],
+  wires: WireMeta[],
   gates: GateMeta[],
   activePins: string[]
 ) {
   const nextPins = [];
-  for (const connection of connections) {
-    const { pin0Id, pin1Id } = connection;
+  for (const wire of wires) {
+    const { pin0Id, pin1Id } = wire;
     if (pin0Id === id && isInputPinId(pin1Id)) {
       nextPins.push(pin1Id);
       if (activePins.includes(id)) {
@@ -47,7 +47,7 @@ export function treversePins(
         index !== -1 && activePins.splice(index, 1);
       }
 
-      treversePins(pinId, connections, gates, activePins);
+      treversePins(pinId, wires, gates, activePins);
     }
   }
 }

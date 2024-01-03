@@ -1,5 +1,3 @@
-import { BoundingBox } from "../utils/boundingBox";
-
 export interface Pos {
   x: number;
   y: number;
@@ -11,15 +9,15 @@ export interface GateMeta {
   pos: Pos;
   height: number;
   width: number;
-  boundingBox?: BoundingBox;
   inputs: number;
   outputs: number;
   truthTable: any;
 }
 
-export interface ConnectionMeta {
+export interface WireMeta {
   pin0Id: string;
   pin1Id: string;
+  checkpoints: Pos[];
 }
 
 export interface TerminalMeta {

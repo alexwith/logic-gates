@@ -6394,6 +6394,11 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
+lodash.clonedeep@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
+  integrity sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==
+
 lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
@@ -8731,6 +8736,13 @@ svg-parser@^2.0.2:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/svg-parser/-/svg-parser-2.0.4.tgz#fdc2e29e13951736140b76cb122c8ee6630eb6b5"
   integrity sha512-e4hG1hRwoOdRb37cIMSgzNsxyzKfayW6VOflrwvR+/bzrkyxY/31WkbgnQpgtrNp1SdpJvpUAGTa/ZoiPNDuRQ==
+
+svg-round-corners@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/svg-round-corners/-/svg-round-corners-0.4.1.tgz#ec8c2e48df97912762ec98e34beb9ee55e4fe69b"
+  integrity sha512-7i5TIhFTHNXNtkgVA/mE7BHECTnsnulZjGGYysM4tsyqCkByao5VLmKo1/wrmuM8IjrtZ9LNX3v3P+KDKBp69Q==
+  dependencies:
+    lodash.clonedeep "^4.5.0"
 
 svgo@^1.2.2:
   version "1.3.2"

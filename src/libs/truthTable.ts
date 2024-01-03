@@ -1,10 +1,10 @@
-import { ConnectionMeta, TerminalMeta, GateMeta } from "../common/types";
+import { WireMeta, TerminalMeta, GateMeta } from "../common/types";
 import { inputTerminalId } from "../utils/idUtil";
 import { treversePins } from "./circuit";
 
 export function createTruthTable(
   terminals: TerminalMeta[],
-  connections: ConnectionMeta[],
+  wires: WireMeta[],
   gates: GateMeta[]
 ): boolean[][] {
   const truthTable: boolean[][] = [];
@@ -33,7 +33,7 @@ export function createTruthTable(
 
     const activePins: string[] = [...terminalCombination];
     terminals.forEach((terminal, _) => {
-      treversePins(terminal.id, connections, gates, activePins);
+      treversePins(terminal.id, wires, gates, activePins);
     });
 
     const outputValues: boolean[] = [];
@@ -43,8 +43,8 @@ export function createTruthTable(
         const id = outputTerminal.id;
 
         let matchingPinId: string | null = null;
-        for (const connection of connections) {
-          const { pin0Id, pin1Id } = connection;
+        for (const wire of wires) {
+          const { pin0Id, pin1Id } = wire;
           if (pin0Id === id) {
             matchingPinId = pin1Id;
             break;
