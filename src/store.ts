@@ -5,7 +5,7 @@ import { createTruthTable } from "./libs/truthTable";
 import { inputTerminalId, outputTerminalId } from "./utils/idUtil";
 import { treversePins } from "./libs/circuit";
 
-export interface DiagramState {
+export interface EditorState {
   gateTypes: GateMeta[];
   terminals: TerminalMeta[];
   gates: GateMeta[];
@@ -31,7 +31,7 @@ export interface DiagramState {
   clear: () => void;
 }
 
-export const useDiagramStore = create<DiagramState>((set) => {
+export const useEditorStore = create<EditorState>((set) => {
   return {
     gateTypes: BASE_GATES,
     terminals: [],

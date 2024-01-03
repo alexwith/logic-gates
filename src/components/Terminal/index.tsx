@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import DynamicInput from "../DynamicInput";
-import { DiagramState, useDiagramStore } from "../../store";
+import { EditorState, useEditorStore } from "../../store";
 
 interface Props {
   id: string;
@@ -14,9 +14,9 @@ export default function Terminal({ id, yPos, input, name }: Props) {
   const buttonRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<boolean>(false);
 
-  const toggleTerminal = useDiagramStore((state: DiagramState) => state.toggleTerminal);
-  const setTerminalName = useDiagramStore((state: DiagramState) => state.setTerminalName);
-  const updateActivity = useDiagramStore((state: DiagramState) => state.updateActivity);
+  const toggleTerminal = useEditorStore((state: EditorState) => state.toggleTerminal);
+  const setTerminalName = useEditorStore((state: EditorState) => state.setTerminalName);
+  const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
 
   const computePos = (): any => {
     if (!ref) {
@@ -32,7 +32,7 @@ export default function Terminal({ id, yPos, input, name }: Props) {
     return pos;
   };
 
-  const computeDiagramEntryPos = (): any => {
+  const computeEditorEntryPos = (): any => {
     if (!buttonRef.current) {
       return {};
     }
@@ -69,7 +69,7 @@ export default function Terminal({ id, yPos, input, name }: Props) {
         ref={buttonRef}
         onClick={handleClick}
       />
-      <div className="absolute h-1 w-8 bg-stone-950 -z-10" style={computeDiagramEntryPos()} />
+      <div className="absolute h-1 w-8 bg-stone-950 -z-10" style={computeEditorEntryPos()} />
       <DynamicInput
         className="relative font-bold bg-slate-800 px-2 rounded-md"
         defaultValue={name}

@@ -3,7 +3,7 @@ import { TerminalMeta, GateMeta, Pos } from "../common/types";
 import { indexFromPinId, isTerminalId, isInputPinId, gateIdFromPinId } from "../utils/idUtil";
 
 export const computeGatePinPos = (
-  diagramRef: any,
+  editorRef: any,
   gates: GateMeta[],
   terminals: TerminalMeta[],
   pinId: string
@@ -12,7 +12,7 @@ export const computeGatePinPos = (
   if (isTerminalId(pinId)) {
     const pin = terminals.find((pin) => pin.id === pinId);
 
-    return pin ? computeTerminalPos(diagramRef, terminals, pinId) : POS_ZERO;
+    return pin ? computeTerminalPos(editorRef, terminals, pinId) : POS_ZERO;
   }
 
   const gateId = gateIdFromPinId(pinId);
@@ -34,29 +34,29 @@ export const computeGatePinPos = (
 };
 
 export const computeTerminalPos = (
-  diagramRef: any,
+  editorRef: any,
   terminals: TerminalMeta[],
   pinId: string
 ): Pos => {
-  if (!diagramRef.current) {
+  if (!editorRef.current) {
     return POS_ZERO;
   }
 
-  const diagramRect: DOMRect = diagramRef.current.getBoundingClientRect();
+  const editorRect: DOMRect = editorRef.current.getBoundingClientRect();
   const input = isInputPinId(pinId);
 
   return {
-    x: input ? 50 : diagramRect.width - 60,
-    y: computeTerminalYPos(diagramRef, terminals, pinId) - 39,
+    x: input ? 50 : editorRect.width - 60,
+    y: computeTerminalYPos(editorRef, terminals, pinId) - 39,
   };
 };
 
 export const computeTerminalYPos = (
-  diagramRef: any,
+  editorRef: any,
   terminals: TerminalMeta[],
   pinId: string
 ): number => {
-  if (!diagramRef.current) {
+  if (!editorRef.current) {
     return 0;
   }
 
@@ -65,8 +65,8 @@ export const computeTerminalYPos = (
 
   const amount = terminals.filter((pin) => pin.input === isInput).length;
 
-  const diagramRect: DOMRect = diagramRef.current.getBoundingClientRect();
-  const middle = diagramRect.height / 2;
+  const editorRect: DOMRect = editorRef.current.getBoundingClientRect();
+  const middle = editorRect.height / 2;
   const top = middle - 32 * amount;
   const bottom = middle + 32 * amount;
   const height = Math.abs(top - bottom);

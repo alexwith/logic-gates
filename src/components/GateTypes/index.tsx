@@ -1,9 +1,9 @@
-import { DiagramState, useDiagramStore } from "../../store";
+import { EditorState, useEditorStore } from "../../store";
 
 export default function GateTypes() {
-  const gateTypes = useDiagramStore((state: DiagramState) => state.gateTypes);
+  const gateTypes = useEditorStore((state: EditorState) => state.gateTypes);
 
-  const setAddingGateType = useDiagramStore((state: DiagramState) => state.setAddingGateType);
+  const setAddingGateType = useEditorStore((state: EditorState) => state.setAddingGateType);
 
   return (
     <div className="flex space-x-2 mb-4">

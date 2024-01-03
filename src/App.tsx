@@ -1,18 +1,18 @@
 import { ChangeEvent, KeyboardEvent, useRef } from "react";
-import Diagram from "./components/Diagram";
+import Editor from "./components/Editor";
 import { GateMeta } from "./common/types";
 import TruthTable from "./components/TruthTable";
 import GateTypes from "./components/GateTypes";
-import { DiagramState, useDiagramStore } from "./store";
+import { EditorState, useEditorStore } from "./store";
 
 export default function App() {
   const gateNameRef: any = useRef();
 
-  const terminals = useDiagramStore((state: DiagramState) => state.terminals);
-  const currentTruthTable = useDiagramStore((state: DiagramState) => state.currentTruthTable);
+  const terminals = useEditorStore((state: EditorState) => state.terminals);
+  const currentTruthTable = useEditorStore((state: EditorState) => state.currentTruthTable);
 
-  const addGateType = useDiagramStore((state: DiagramState) => state.addGateType);
-  const clearDiagram = useDiagramStore((state: DiagramState) => state.clear);
+  const addGateType = useEditorStore((state: EditorState) => state.addGateType);
+  const clearEditor = useEditorStore((state: EditorState) => state.clear);
 
   const handleGateNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.target.value = event.target.value.toUpperCase();
@@ -48,7 +48,7 @@ export default function App() {
     };
 
     addGateType(gate);
-    clearDiagram();
+    clearEditor();
 
     gateNameRef.current.value = "";
   };
@@ -81,7 +81,7 @@ export default function App() {
             </div>
           </div>
           <div className="flex flex-col w-[1200px] space-y-2">
-            <Diagram />
+            <Editor />
             <GateTypes />
           </div>
         </div>

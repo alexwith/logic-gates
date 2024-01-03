@@ -7,10 +7,10 @@ import { inputPinId, isTerminalId, outputPinId } from "../../utils/idUtil";
 import { computeTerminalPos, computeTerminalYPos, computeGatePinPos } from "../../libs/pin";
 import useMouse from "../../hooks/useMouse";
 import Terminal from "../Terminal";
-import { DiagramState, useDiagramStore } from "../../store";
+import { EditorState, useEditorStore } from "../../store";
 import { FaPlus } from "react-icons/fa";
 
-export default function Diagram() {
+export default function Editor() {
   const ref = useRef<HTMLDivElement>(null);
   const { mouseDragOffset } = useMouse();
   const { mouseDragOffset: wiringMouseOffset, updateOrigin: wiringUpdateOrigin } = useMouse(true);
@@ -22,24 +22,24 @@ export default function Diagram() {
   const [wiringCheckpoints, setWiringCheckpoints] = useState<Pos[]>([]);
   const [lastPin, setLastPin] = useState<string | null>("");
 
-  const terminals = useDiagramStore((state: DiagramState) => state.terminals);
-  const gates = useDiagramStore((state: DiagramState) => state.gates);
-  const wires = useDiagramStore((state: DiagramState) => state.wires);
-  const selectedGateId = useDiagramStore((state: DiagramState) => state.selectedGateId);
-  const selectedPinId = useDiagramStore((state: DiagramState) => state.selectedPinId);
-  const setSelectedPin = useDiagramStore((state: DiagramState) => state.setSelectedPin);
-  const addingGateType = useDiagramStore((state: DiagramState) => state.addingGateType);
-  const activePinIds = useDiagramStore((state: DiagramState) => state.activePinIds);
+  const terminals = useEditorStore((state: EditorState) => state.terminals);
+  const gates = useEditorStore((state: EditorState) => state.gates);
+  const wires = useEditorStore((state: EditorState) => state.wires);
+  const selectedGateId = useEditorStore((state: EditorState) => state.selectedGateId);
+  const selectedPinId = useEditorStore((state: EditorState) => state.selectedPinId);
+  const setSelectedPin = useEditorStore((state: EditorState) => state.setSelectedPin);
+  const addingGateType = useEditorStore((state: EditorState) => state.addingGateType);
+  const activePinIds = useEditorStore((state: EditorState) => state.activePinIds);
 
-  const updateSelectedGate = useDiagramStore((state: DiagramState) => state.updateSelectedGate);
-  const addWire = useDiagramStore((state: DiagramState) => state.addWire);
-  const updateActivity = useDiagramStore((state: DiagramState) => state.updateActivity);
-  const updateCurrentTruthTable = useDiagramStore(
-    (state: DiagramState) => state.updateCurrentTruthTable
+  const updateSelectedGate = useEditorStore((state: EditorState) => state.updateSelectedGate);
+  const addWire = useEditorStore((state: EditorState) => state.addWire);
+  const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
+  const updateCurrentTruthTable = useEditorStore(
+    (state: EditorState) => state.updateCurrentTruthTable
   );
-  const addGate = useDiagramStore((state: DiagramState) => state.addGate);
-  const addTerminal = useDiagramStore((state: DiagramState) => state.addTerminal);
-  const setSelectedGate = useDiagramStore((state: DiagramState) => state.setSelectedGate);
+  const addGate = useEditorStore((state: EditorState) => state.addGate);
+  const addTerminal = useEditorStore((state: EditorState) => state.addTerminal);
+  const setSelectedGate = useEditorStore((state: EditorState) => state.setSelectedGate);
 
   const handleMouseMove = () => {
     if (isDraggingGate) {
@@ -86,13 +86,13 @@ export default function Diagram() {
       return;
     }
 
-    const diagramRect: DOMRect = ref.current.getBoundingClientRect();
+    const editorRect: DOMRect = ref.current.getBoundingClientRect();
     const gate: GateMeta = {
       id: gates.length,
       name: addingGateType.name,
       pos: {
-        x: event.clientX - diagramRect.left - addingGateType.width / 2,
-        y: event.clientY - diagramRect.top - addingGateType.height / 2,
+        x: event.clientX - editorRect.left - addingGateType.width / 2,
+        y: event.clientY - editorRect.top - addingGateType.height / 2,
       },
       height: addingGateType.height,
       width: addingGateType.width,
