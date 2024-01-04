@@ -9,6 +9,7 @@ import useMouse from "../../hooks/useMouse";
 import Terminal from "../Terminal";
 import { EditorState, useEditorStore } from "../../store";
 import { FaPlus } from "react-icons/fa";
+import EditorSettings from "../EditorSettings";
 
 export default function Editor() {
   const ref = useRef<HTMLDivElement>(null);
@@ -22,6 +23,7 @@ export default function Editor() {
   const [wiringCheckpoints, setWiringCheckpoints] = useState<Pos[]>([]);
   const [lastPin, setLastPin] = useState<string | null>("");
 
+  const settings = useEditorStore((state: EditorState) => state.settings);
   const terminals = useEditorStore((state: EditorState) => state.terminals);
   const gates = useEditorStore((state: EditorState) => state.gates);
   const wires = useEditorStore((state: EditorState) => state.wires);
@@ -167,24 +169,29 @@ export default function Editor() {
           <FaPlus color="#94a3b8" />
         </div>
       </div>
+      <EditorSettings />
       <svg
         className="w-full h-full"
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseDown={handleMouseDown}
       >
-        <defs>
-          <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
-            <path
-              d="M 25 0 L 0 0 0 25¨"
-              fill="none"
-              stroke="#64748b"
-              strokeWidth="0.5"
-              opacity="0.5"
-            />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#grid)" />
+        {settings.grid && (
+          <Fragment>
+            <defs>
+              <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path
+                  d="M 20 0 L 0 0 0 20"
+                  fill="none"
+                  stroke="#64748b"
+                  strokeWidth="0.5"
+                  opacity="0.5"
+                />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+          </Fragment>
+        )}
 
         {isWiring && selectedPinId && wiringEndPoint && (
           <Wire
@@ -204,9 +211,7 @@ export default function Editor() {
               ...wire.checkpoints,
               computeGatePinPos(ref, gates, terminals, wire.pin1Id),
             ]}
-            active={
-              activePinIds.includes(wire.pin0Id) || activePinIds.includes(wire.pin1Id)
-            }
+            active={activePinIds.includes(wire.pin0Id) || activePinIds.includes(wire.pin1Id)}
           />
         ))}
         {gates.map((gate, i) => (

@@ -3,6 +3,10 @@ export interface Pos {
   y: number;
 }
 
+export interface IEditorSettings {
+  grid: boolean;
+}
+
 export interface GateMeta {
   id: number;
   name: string;

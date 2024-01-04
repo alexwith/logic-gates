@@ -1,11 +1,12 @@
 import { create } from "zustand";
 import { BASE_GATES } from "./common/constants";
-import { WireMeta, TerminalMeta, GateMeta } from "./common/types";
+import { WireMeta, TerminalMeta, GateMeta, IEditorSettings } from "./common/types";
 import { createTruthTable } from "./libs/truthTable";
 import { inputTerminalId, outputTerminalId } from "./utils/idUtil";
 import { treversePins } from "./libs/circuit";
 
 export interface EditorState {
+  settings: IEditorSettings;
   gateTypes: GateMeta[];
   terminals: TerminalMeta[];
   gates: GateMeta[];
@@ -16,6 +17,7 @@ export interface EditorState {
   addingGateType: GateMeta | null;
   activeTerminalIds: string[];
   activePinIds: string[];
+  setSettings: (settings: IEditorSettings) => void;
   addGate: (gate: GateMeta) => void;
   setSelectedPin: (gateId: string) => void;
   setSelectedGate: (gateId: number) => void;
@@ -33,6 +35,9 @@ export interface EditorState {
 
 export const useEditorStore = create<EditorState>((set) => {
   return {
+    settings: {
+      grid: true,
+    },
     gateTypes: BASE_GATES,
     terminals: [],
     gates: [],
@@ -43,6 +48,11 @@ export const useEditorStore = create<EditorState>((set) => {
     addingGateType: null,
     activeTerminalIds: [],
     activePinIds: [],
+    setSettings: (settings: IEditorSettings) => {
+      set((gate) => ({
+        settings,
+      }));
+    },
     addGate: (gate: GateMeta) => {
       set((state) => ({
         gates: [...state.gates, gate],
