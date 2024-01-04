@@ -64,14 +64,14 @@ export default function Terminal({ id, yPos, input, name }: Props) {
     <div className="absolute" ref={setRef} style={computePos()}>
       <div
         className={`h-8 w-8 rounded-full border-4 ${input ? "mr-auto" : "ml-auto"} ${
-          active ? "bg-red-500 border-slate-800" : "bg-stone-950 border-slate-500"
+          active ? "bg-red-500 border-zinc-700" : "bg-stone-950 border-zinc-600"
         }`}
         ref={buttonRef}
         onClick={handleClick}
       />
       <div className="absolute h-1 w-8 bg-stone-950 -z-10" style={computeEditorEntryPos()} />
       <DynamicInput
-        className="relative font-bold bg-slate-800 px-2 rounded-md"
+        className="relative font-bold bg-zinc-800 px-2 rounded-md"
         defaultValue={name}
         onChange={handleNameChange}
       />

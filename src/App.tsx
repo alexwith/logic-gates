@@ -4,6 +4,8 @@ import { GateMeta } from "./common/types";
 import TruthTable from "./components/TruthTable";
 import GateTypes from "./components/GateTypes";
 import { EditorState, useEditorStore } from "./store";
+import { PiCircuitryFill as CircuitIcon } from "react-icons/pi";
+import { LuTable2 as TableIcon } from "react-icons/lu";
 
 export default function App() {
   const gateNameRef: any = useRef();
@@ -58,9 +60,9 @@ export default function App() {
       <div>
         <h1 className="font-black text-3xl my-6">Logic Gates</h1>
         <div className="flex space-x-20">
-          <div className="flex flex-col space-y-2 h-[700px] w-[200px] rounded-lg border-slate-700 border-4 font-bold text-md p-2">
+          <div className="flex flex-col space-y-2 h-fit w-[200px] rounded-lg bg-zinc-800 font-medium text-md p-2">
             <input
-              className="font-bold text-xl bg-transparent placeholder:text-slate-700 outline-none"
+              className="font-bold text-xl px-2 bg-transparent placeholder:text-zinc-600 outline-none"
               ref={gateNameRef}
               type="text"
               placeholder="NAME"
@@ -68,14 +70,19 @@ export default function App() {
               onChange={handleGateNameChange}
             />
             <div
-              className="bg-violet-500 px-2 py-1 rounded-md hover:cursor-pointer hover:bg-violet-600"
+              className="flex space-x-1 items-center px-2 py-1 rounded-md hover:cursor-pointer hover:bg-zinc-700"
               onClick={handleCreateClick}
             >
-              Create
-            </div>
-            <div>
-              <h1 className="my-2">Truth Table</h1>
-              <div className="overflow-x-scroll">
+              <CircuitIcon size={20} />
+              <p>Create circuit</p>
+            </div>  
+            <div className="w-full h-[2px] rounded-full bg-zinc-700" />
+            <div className="px-2">
+              <div className="flex space-x-1 items-center">
+                <TableIcon size={20} />
+                <h1 className="my-2">Truth Table</h1>        
+              </div>
+              <div className="overflow-scroll max-h-44">
                 <TruthTable pins={terminals} truthTable={currentTruthTable} />
               </div>
             </div>

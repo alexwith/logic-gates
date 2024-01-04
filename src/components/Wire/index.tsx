@@ -14,7 +14,7 @@ export default function Wire({ points, active }: Props) {
   const [pathStyle, setPathStyle] = useState<string>("");
 
   useEffect(() => {
-    setPathStyle(`stroke-[4px] ${active ? "stroke-red-500" : "stroke-slate-700"}`);
+    setPathStyle(`stroke-[4px] ${active ? "stroke-red-500" : "stroke-zinc-700"}`);
   }, [active]);
 
   useEffect(() => {

@@ -9,15 +9,21 @@ body {
   -moz-osx-font-smoothing: grayscale;  
   color: white;
   color-scheme: dark;
-  @apply bg-gray-900
+  @apply bg-neutral-900
 }
 
 ::-webkit-scrollbar {
-  height: 7px;
-  width: 7px;
+  height: 17px;
+  width: 17px;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 100rem;
-  background: theme(colors.slate.600);
+  background: theme(colors.zinc.700);  
+  background-clip: content-box;
+  border: 5px solid transparent;
 }

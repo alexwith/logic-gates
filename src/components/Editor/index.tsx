@@ -137,7 +137,7 @@ export default function Editor() {
 
   return (
     <div
-      className="relative border-slate-700 border-4 rounded-lg grow h-[700px]"
+      className="relative border-zinc-800 border-4 rounded-lg grow h-[700px]"
       ref={ref}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
@@ -155,7 +155,7 @@ export default function Editor() {
       })}
       <div className="absolute flex items-center h-full">
         <div
-          className="absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-slate-500 flex justify-center items-center hover:cursor-pointer hover:border-green-400 left-[-60px]"
+          className="absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-zinc-600 flex justify-center items-center hover:cursor-pointer hover:border-green-400 left-[-60px]"
           onClick={() => addTerminal(true)}
         >
           <FaPlus color="#94a3b8" />
@@ -163,7 +163,7 @@ export default function Editor() {
       </div>
       <div className="absolute flex items-center h-full left-full">
         <div
-          className="absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-slate-500 flex justify-center items-center hover:cursor-pointer hover:border-green-400 right-[-60px]"
+          className="absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-zinc-600 flex justify-center items-center hover:cursor-pointer hover:border-green-400 right-[-60px]"
           onClick={() => addTerminal(false)}
         >
           <FaPlus color="#94a3b8" />
@@ -183,7 +183,7 @@ export default function Editor() {
                 <path
                   d="M 20 0 L 0 0 0 20"
                   fill="none"
-                  stroke="#64748b"
+                  stroke="#71717a"
                   strokeWidth="0.5"
                   opacity="0.5"
                 />

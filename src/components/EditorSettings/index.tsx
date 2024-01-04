@@ -13,7 +13,7 @@ export default function EditorSettings() {
   };
 
   return (
-    <div className="absolute flex space-x-3 justify-center items-center bg-slate-700 p-2 right-0 bottom-0 m-2 rounded-md [&>*]:hover:cursor-pointer">
+    <div className="absolute flex space-x-3 justify-center items-center bg-zinc-800 p-2 right-0 bottom-0 m-2 rounded-md [&>*]:hover:cursor-pointer">
       <GridIcon size={20} onClick={handleToggleGrid} />
       <ZoomInIcon size={20} />
       <ZoomOutIcon size={20} />
