@@ -102,6 +102,7 @@ export const useEditorStore = create<EditorState>((set) => {
           id: isInput ? inputTerminalId(nextPinIndex) : outputTerminalId(nextPinIndex),
           name: "?",
           input: isInput,
+          yPos: 0,
         };
 
         return { terminals: [...state.terminals, pin] };

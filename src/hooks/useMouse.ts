@@ -32,7 +32,7 @@ export default function useMouse(manualMouseOrigin?: boolean) {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mousedown", handleMouseDown);
     };
-  }, []);
+  }, [manualMouseOrigin]);
 
   return {
     mousePosition,

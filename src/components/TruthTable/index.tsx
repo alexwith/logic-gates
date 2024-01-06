@@ -21,7 +21,7 @@ export default function TruthTable({ pins, truthTable }: Props) {
         <tbody>
           {truthTable.map((row, i) => {
             return (
-              <tr className="odd:bg-zinc-800 even:bg-zinc-600" key={i}>
+              <tr className="odd:bg-zinc-600 even:bg-zinc-700" key={i}>
                 {row.map((value, j) => (
                   <td key={j}>{value ? 1 : 0}</td>
                 ))}

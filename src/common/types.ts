@@ -28,4 +28,5 @@ export interface TerminalMeta {
   id: string;
   name: string;
   input: boolean;
+  yPos: number;
 }

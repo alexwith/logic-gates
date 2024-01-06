@@ -4,7 +4,7 @@ import Gate from "../Gate";
 import Pin from "../Pin";
 import Wire from "../Wire";
 import { inputPinId, isTerminalId, outputPinId } from "../../utils/idUtil";
-import { computeTerminalPos, computeTerminalYPos, computeGatePinPos } from "../../libs/pin";
+import { computeTerminalPos, computeGatePinPos } from "../../libs/pin";
 import useMouse from "../../hooks/useMouse";
 import Terminal from "../Terminal";
 import { EditorState, useEditorStore } from "../../store";
@@ -142,20 +142,12 @@ export default function Editor() {
       onDrop={handleDrop}
       onDragOver={handleDragOver}
     >
-      {terminals.map((pin, i) => {
-        return (
-          <Terminal
-            key={i}
-            id={pin.id}
-            yPos={computeTerminalYPos(ref, terminals, pin.id)}
-            input={pin.input}
-            name={pin.name}
-          />
-        );
+      {terminals.map((terminal, i) => {
+        return <Terminal key={i} id={terminal.id} terminal={terminal} name={terminal.name} />;
       })}
       <div className="absolute flex items-center h-full">
         <div
-          className="absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-zinc-600 flex justify-center items-center hover:cursor-pointer hover:border-green-400 left-[-60px]"
+          className="absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-zinc-600 flex justify-center items-center hover:cursor-pointer hover:border-green-400 left-[-100px]"
           onClick={() => addTerminal(true)}
         >
           <FaPlus color="#94a3b8" />
@@ -163,7 +155,7 @@ export default function Editor() {
       </div>
       <div className="absolute flex items-center h-full left-full">
         <div
-          className="absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-zinc-600 flex justify-center items-center hover:cursor-pointer hover:border-green-400 right-[-60px]"
+          className="absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-zinc-600 flex justify-center items-center hover:cursor-pointer hover:border-green-400 right-[-100px]"
           onClick={() => addTerminal(false)}
         >
           <FaPlus color="#94a3b8" />
@@ -185,7 +177,7 @@ export default function Editor() {
                   fill="none"
                   stroke="#71717a"
                   strokeWidth="0.5"
-                  opacity="0.5"
+                  opacity="0.5"              
                 />
               </pattern>
             </defs>
