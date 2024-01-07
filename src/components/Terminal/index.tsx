@@ -29,7 +29,7 @@ export default function Terminal({ id, terminal, name }: Props) {
       return {};
     }
 
-    const rect = ref.getBoundingClientRect();
+    const rect = ref.getBoundingClientRect();    
     const pos: any = {
       top: terminal.yPos - rect.height,
     };

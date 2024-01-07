@@ -1,4 +1,11 @@
-import { DragEvent, Fragment, MouseEvent, useRef, useState } from "react";
+import {
+  DragEvent,
+  Fragment,
+  MouseEvent as ReactMouseEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { GateMeta, Pos } from "../../common/types";
 import Gate from "../Gate";
 import Pin from "../Pin";
@@ -22,6 +29,8 @@ export default function Editor() {
   const [wiringEndPoint, setWiringEndPoint] = useState<Pos | null>(null);
   const [wiringCheckpoints, setWiringCheckpoints] = useState<Pos[]>([]);
   const [lastPin, setLastPin] = useState<string | null>("");
+  const [terminalAdderY, setTerminalAdderY] = useState<number | null>(null);
+  const [isTerminalAdderInput, setIsTerminalAdderInput] = useState<boolean>(true);
 
   const settings = useEditorStore((state: EditorState) => state.settings);
   const terminals = useEditorStore((state: EditorState) => state.terminals);
@@ -111,7 +120,7 @@ export default function Editor() {
     event.dataTransfer.dropEffect = "move";
   };
 
-  const handleWiringStart = (event: MouseEvent, pinId: string) => {
+  const handleWiringStart = (event: ReactMouseEvent, pinId: string) => {
     setIsWiring(true);
     setSelectedPin(pinId);
     wiringUpdateOrigin(event);
@@ -135,6 +144,41 @@ export default function Editor() {
     updateSelectedGate(gate);
   };
 
+  useEffect(() => {
+    const handleTerminalAdderMove = (event: MouseEvent) => {
+      const rect = ref.current!.getBoundingClientRect();
+      const yPos = event.clientY - rect.top;
+      const isLeft = Math.abs(rect.left - event.clientX) <= 20;
+      const isInsideTerminal =
+        terminals.find((terminal) => {
+          if (terminal.input !== isLeft) {
+            return false;
+          }
+
+          const diff = terminal.yPos - yPos;
+          return diff >= -16 && diff <= 48;
+        }) !== undefined;
+      if (isInsideTerminal) {
+        if (terminalAdderY) {
+          setTerminalAdderY(null);
+        }
+        return;
+      }
+
+      const isRight = Math.abs(rect.right - event.clientX) <= 20;
+      if (isLeft || isRight) {
+        setIsTerminalAdderInput(isLeft);
+        setTerminalAdderY(yPos);
+      } else if (terminalAdderY) {
+        setTerminalAdderY(null);
+      }
+    };
+
+    window.addEventListener("mousemove", handleTerminalAdderMove);
+
+    return () => window.removeEventListener("mousemove", handleTerminalAdderMove);
+  }, [terminalAdderY, terminals]);
+
   return (
     <div
       className="relative border-zinc-800 border-4 rounded-lg grow h-[700px]"
@@ -145,22 +189,22 @@ export default function Editor() {
       {terminals.map((terminal, i) => {
         return <Terminal key={i} id={terminal.id} terminal={terminal} name={terminal.name} />;
       })}
-      <div className="absolute flex items-center h-full">
+      {terminalAdderY && (
         <div
-          className="absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-zinc-600 flex justify-center items-center hover:cursor-pointer hover:border-green-400 left-[-100px]"
-          onClick={() => addTerminal(true)}
+          className={`absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-zinc-600 flex justify-center items-center hover:cursor-pointer hover:border-green-400 ${
+            isTerminalAdderInput ? "left-[-17px]" : "right-[-17px]"
+          }`}
+          style={{
+            top: terminalAdderY - 16,
+          }}
+          onClick={() => {
+            addTerminal(isTerminalAdderInput, terminalAdderY + 16);
+            setTerminalAdderY(null);
+          }}
         >
           <FaPlus color="#94a3b8" />
         </div>
-      </div>
-      <div className="absolute flex items-center h-full left-full">
-        <div
-          className="absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-zinc-600 flex justify-center items-center hover:cursor-pointer hover:border-green-400 right-[-100px]"
-          onClick={() => addTerminal(false)}
-        >
-          <FaPlus color="#94a3b8" />
-        </div>
-      </div>
+      )}
       <EditorSettings />
       <svg
         className="w-full h-full"
@@ -177,7 +221,7 @@ export default function Editor() {
                   fill="none"
                   stroke="#71717a"
                   strokeWidth="0.5"
-                  opacity="0.5"              
+                  opacity="0.5"
                 />
               </pattern>
             </defs>

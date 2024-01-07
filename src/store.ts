@@ -25,7 +25,7 @@ export interface EditorState {
   updateCurrentTruthTable: () => void;
   addGateType: (type: GateMeta) => void;
   addWire: (wire: WireMeta) => void;
-  addTerminal: (isInput: boolean) => void;
+  addTerminal: (isInput: boolean, yPos: number) => void;
   setAddingGateType: (type: GateMeta) => void;
   toggleTerminal: (pinId: string) => void;
   setTerminalName: (pinId: string, name: string) => void;
@@ -95,14 +95,14 @@ export const useEditorStore = create<EditorState>((set) => {
         wires: [...state.wires, wire],
       }));
     },
-    addTerminal: (isInput: boolean) => {
+    addTerminal: (isInput: boolean, yPos: number) => {
       set((state) => {
         const nextPinIndex = state.terminals.filter((pin) => pin.input === isInput).length;
         const pin: TerminalMeta = {
           id: isInput ? inputTerminalId(nextPinIndex) : outputTerminalId(nextPinIndex),
           name: "?",
           input: isInput,
-          yPos: 0,
+          yPos,
         };
 
         return { terminals: [...state.terminals, pin] };
