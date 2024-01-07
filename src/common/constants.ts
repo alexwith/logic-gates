@@ -39,6 +39,20 @@ export const BASE_GATES: GateMeta[] = [
       "true,true": [true],
     },
   },
+  {
+    id: -1,
+    name: "XOR",
+    pos: { x: 0, y: 0 },
+    height: 60,
+    width: 30 + 15 * 3,
+    inputs: 2,
+    outputs: 1,
+    truthTable: {
+      "true,false": [true],
+      "false,true": [true],
+      "true,true": [false],
+    },
+  },
 ];
 
 export const POS_ZERO = { x: 0, y: 0 };
