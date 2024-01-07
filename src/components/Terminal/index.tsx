@@ -86,7 +86,9 @@ export default function Terminal({ id, terminal, name }: Props) {
   return (
     <div className="absolute" ref={setRef} style={computePos()}>
       <DynamicInput
-        className="absolute font-bold bg-zinc-800 px-1 rounded-md left-[70px] top-1 opacity-70"
+        className={`absolute font-bold bg-zinc-800 px-1 rounded-md ${
+          terminal.input ? "left-[70px]" : "right-[70px]"
+        } top-1 opacity-70`}
         defaultValue={name}
         onChange={handleNameChange}
         maxLength={10}
