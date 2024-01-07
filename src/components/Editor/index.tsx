@@ -148,6 +148,13 @@ export default function Editor() {
     const handleTerminalAdderMove = (event: MouseEvent) => {
       const rect = ref.current!.getBoundingClientRect();
       const yPos = event.clientY - rect.top;
+      if (yPos < 0 || event.clientY - rect.bottom > 0) {
+        if (terminalAdderY) {
+          setTerminalAdderY(null);
+        }
+        return;
+      }
+
       const isLeft = Math.abs(rect.left - event.clientX) <= 20;
       const isInsideTerminal =
         terminals.find((terminal) => {
@@ -189,7 +196,7 @@ export default function Editor() {
       {terminals.map((terminal, i) => {
         return <Terminal key={i} id={terminal.id} terminal={terminal} name={terminal.name} />;
       })}
-      {terminalAdderY && (
+      {terminalAdderY ? (
         <div
           className={`absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-zinc-600 flex justify-center items-center hover:cursor-pointer hover:border-green-400 ${
             isTerminalAdderInput ? "left-[-17px]" : "right-[-17px]"
@@ -204,6 +211,8 @@ export default function Editor() {
         >
           <FaPlus color="#94a3b8" />
         </div>
+      ) : (
+        <></>
       )}
       <EditorSettings />
       <svg
