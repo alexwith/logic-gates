@@ -4,9 +4,10 @@ interface Props {
   defaultValue: string;
   onChange: (value: string) => void;
   className?: string;
+  maxLength?: number;
 }
 
-export default function DynamicInput({ defaultValue, onChange, className }: Props) {
+export default function DynamicInput({ defaultValue, onChange, className, maxLength }: Props) {
   const widthRef = useRef<HTMLSpanElement>(null);
   const [content, setContent] = useState<string>(defaultValue);
   const [width, setWidth] = useState<number>(0);
@@ -21,6 +22,10 @@ export default function DynamicInput({ defaultValue, onChange, className }: Prop
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
+    if (maxLength && value.length > maxLength) {
+      event.preventDefault();
+      return;
+    }
 
     setContent(value);
     onChange(value);

@@ -47,7 +47,7 @@ export const computeTerminalPos = (
   const terminal = terminals.find((terminal) => terminal.id === pinId);
 
   return {
-    x: input ? 50 : editorRect.width - 60,
+    x: input ? 40 : editorRect.width - 49,
     y: terminal!.yPos - 15,
   };
 };

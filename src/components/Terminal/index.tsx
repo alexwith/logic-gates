@@ -29,7 +29,7 @@ export default function Terminal({ id, terminal, name }: Props) {
       return {};
     }
 
-    const rect = ref.getBoundingClientRect();    
+    const rect = ref.getBoundingClientRect();
     const pos: any = {
       top: terminal.yPos - rect.height,
     };
@@ -64,7 +64,7 @@ export default function Terminal({ id, terminal, name }: Props) {
     toggleTerminal(id);
     setActive(!active);
     updateActivity();
-  };  
+  };
 
   const handleMouseUp = () => {
     setDragging(false);
@@ -83,17 +83,15 @@ export default function Terminal({ id, terminal, name }: Props) {
     };
   });
 
-  /*
-  <DynamicInput
-        className="relative font-bold bg-zinc-800 px-2 rounded-md"
-        defaultValue={name}
-        onChange={handleNameChange}
-      />
-      */
-
   return (
     <div className="absolute" ref={setRef} style={computePos()}>
-      <div className="absolute h-1 w-8 bg-stone-950" style={computeEditorEntryPos()} />
+      <DynamicInput
+        className="absolute font-bold bg-zinc-800 px-1 rounded-md left-[70px] top-1 opacity-70"
+        defaultValue={name}
+        onChange={handleNameChange}
+        maxLength={10}
+      />
+      <div className="absolute h-1 w-4 bg-stone-950" style={computeEditorEntryPos()} />
       <div onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
         <div
           className={`h-8 w-8 rounded-full border-4 ${terminal.input ? "mr-auto" : "ml-auto"} ${
