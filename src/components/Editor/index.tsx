@@ -145,6 +145,22 @@ export default function Editor() {
   };
 
   useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") {
+        return;
+      }
+
+      setIsWiring(false);
+      setWiringEndPoint(null);
+      setWiringCheckpoints([]);
+    };
+
+    window.addEventListener("keyup", handleEscape);
+
+    return () => window.removeEventListener("keyup", handleEscape);
+  }, []);
+
+  useEffect(() => {
     const handleTerminalAdderMove = (event: MouseEvent) => {
       const rect = ref.current!.getBoundingClientRect();
       const yPos = event.clientY - rect.top;
@@ -193,6 +209,11 @@ export default function Editor() {
       onDrop={handleDrop}
       onDragOver={handleDragOver}
     >
+      {isWiring && (
+        <h1 className="absolute font-medium m-2 -z-10">
+          Press <span className="bg-zinc-800 p-1 rounded-md font-bold">Escape</span> to stop wiring
+        </h1>
+      )}
       {terminals.map((terminal, i) => {
         return <Terminal key={i} id={terminal.id} terminal={terminal} name={terminal.name} />;
       })}
