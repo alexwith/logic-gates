@@ -40,7 +40,7 @@ export default function DynamicInput({ defaultValue, onChange, className, maxLen
         style={{ width }}
         onChange={handleChange}
       />
-      <span className="absolute whitespace-pre opacity-0" ref={widthRef}>
+      <span className="absolute whitespace-pre opacity-0 left-0" ref={widthRef}>
         {content}
       </span>
     </div>
