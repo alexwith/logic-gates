@@ -3,7 +3,7 @@ import { BASE_GATES } from "./common/constants";
 import { WireMeta, TerminalMeta, GateMeta, IEditorSettings } from "./common/types";
 import { createTruthTable } from "./libs/truthTable";
 import { inputTerminalId, outputTerminalId } from "./utils/idUtil";
-import { treversePins } from "./libs/circuit";
+import { simulate } from "./libs/circuit";
 
 export interface EditorState {
   settings: IEditorSettings;
@@ -135,10 +135,7 @@ export const useEditorStore = create<EditorState>((set) => {
     updateActivity: () => {
       set((state) => {
         const activePinIds: string[] = [...state.activeTerminalIds];
-        state.terminals.forEach((terminal) => {
-          treversePins(terminal.id, state.wires, state.gates, activePinIds);
-        });
-
+        simulate(state.terminals, state.wires, state.gates, activePinIds);
         return { activePinIds };
       });
     },

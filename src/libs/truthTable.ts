@@ -1,6 +1,6 @@
 import { WireMeta, TerminalMeta, GateMeta } from "../common/types";
 import { inputTerminalId } from "../utils/idUtil";
-import { treversePins } from "./circuit";
+import { simulate } from "./circuit";
 
 export function createTruthTable(
   terminals: TerminalMeta[],
@@ -10,7 +10,7 @@ export function createTruthTable(
   const truthTable: boolean[][] = [];
 
   const inputTerminals = terminals.filter((pin) => pin.input).length;
-  const combinationAmount = 1 << inputTerminals; // 2^inputTerminals
+  const combinationAmount = 1 << inputTerminals; // 2^inputTerminals cause Math#pow is slow
   const combinations: boolean[][] = [];
   for (let i = 0; i < combinationAmount; i++) {
     combinations.push([]);
@@ -32,9 +32,7 @@ export function createTruthTable(
     }
 
     const activePins: string[] = [...terminalCombination];
-    terminals.forEach((terminal, _) => {
-      treversePins(terminal.id, wires, gates, activePins);
-    });
+    simulate(terminals, wires, gates, activePins);
 
     const outputValues: boolean[] = [];
     terminals
