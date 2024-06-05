@@ -238,7 +238,7 @@ export default function Editor() {
   }
 
   return (
-    <div className={`flex-col space-y-3 w-[${EDITOR_WIDTH}px]`}>
+    <div className="flex-col space-y-3" style={{ width: EDITOR_WIDTH }}>
       <EditorBar />
       <div
         className="relative border-zinc-800 border-4 rounded-lg grow h-[700px]"
