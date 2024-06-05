@@ -69,7 +69,7 @@ export function EditorBar() {
   };
 
   return (
-    <div className="relative flex justify-between mb-3">
+    <div className="relative flex justify-between">
       <input
         className="font-bold text-xl px-2 bg-transparent placeholder:text-zinc-600 outline-none"
         ref={gateNameRef}

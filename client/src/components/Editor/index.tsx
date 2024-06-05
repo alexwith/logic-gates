@@ -16,8 +16,12 @@ import useMouse from "../../hooks/useMouse";
 import Terminal from "../Terminal";
 import { EditorState, useEditorStore } from "../../store";
 import { FaPlus as AddIcon } from "react-icons/fa";
+import { VscArrowBoth as ExpandWidthIcon } from "react-icons/vsc";
 import EditorSettings from "../EditorSettings";
 import { EditorBar } from "../EditorBar";
+import GateTypes from "../GateTypes";
+
+const EDITOR_WIDTH = 1200; //px
 
 export default function Editor() {
   const ref = useRef<HTMLDivElement>(null);
@@ -32,6 +36,7 @@ export default function Editor() {
   const [lastPin, setLastPin] = useState<string | null>("");
   const [terminalAdderY, setTerminalAdderY] = useState<number | null>(null);
   const [isTerminalAdderInput, setIsTerminalAdderInput] = useState<boolean>(true);
+  const [expandWarning, setExpandWarning] = useState<boolean>(false);
 
   const settings = useEditorStore((state: EditorState) => state.settings);
   const terminals = useEditorStore((state: EditorState) => state.terminals);
@@ -203,8 +208,37 @@ export default function Editor() {
     return () => window.removeEventListener("mousemove", handleTerminalAdderMove);
   }, [terminalAdderY, terminals]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (!expandWarning && window.innerWidth < EDITOR_WIDTH) {
+        setExpandWarning(true);
+      }
+
+      if (expandWarning && window.innerWidth > EDITOR_WIDTH) {
+        setExpandWarning(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [expandWarning]);
+
+  if (expandWarning) {
+    return (
+      <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 border-zinc-800 border-4 rounded-lg p-8">
+        <h1 className="text-center font-bold text-2xl">Expand your window</h1>
+        <div className="flex justify-center py-2">
+          <ExpandWidthIcon size={40} className="animate-ping" />
+          <ExpandWidthIcon size={40} className="absolute" />
+        </div>
+        <p className="text-zinc-400">The editor needs a bit more width to fit.</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex-col">
+    <div className={`flex-col space-y-3 w-[${EDITOR_WIDTH}px]`}>
       <EditorBar />
       <div
         className="relative border-zinc-800 border-4 rounded-lg grow h-[700px]"
@@ -342,6 +376,7 @@ export default function Editor() {
           })}
         </svg>
       </div>
+      <GateTypes />
     </div>
   );
 }
