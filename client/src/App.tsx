@@ -7,7 +7,7 @@ export default function App() {
   return (
     <>
       <div className="flex flex-col items-center">
-        <div className="flex h-20 justify-between items-center w-full px-10">
+        <div className="flex h-20 justify-between items-center w-full px-10 max-w-[1500px]">
           <h1 className="font-black text-3xl">Logic Gates</h1>
           <MiniProfile />
         </div>
