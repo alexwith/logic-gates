@@ -1,6 +1,7 @@
 import { ChangeEvent, KeyboardEvent, useRef, useState } from "react";
 import { IoCreateOutline as CreateIcon } from "react-icons/io5";
 import { LuTable2 as TableIcon } from "react-icons/lu";
+import { HiOutlineSave as SaveIcon } from "react-icons/hi";
 import { EditorState, useEditorStore } from "../../store";
 import TruthTable from "../TruthTable";
 import { GateMeta } from "../../common/types";
@@ -80,6 +81,13 @@ export function EditorBar() {
       />
       <div className="flex space-x-2">
         <div
+          onClick={() => {}}
+          className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold bg-violet-500 hover:cursor-pointer"
+        >
+          <SaveIcon size={20} />
+          <p>Save</p>
+        </div>
+        <div
           onClick={handleCreateClick}
           className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold bg-violet-500 hover:cursor-pointer"
         >
@@ -94,12 +102,10 @@ export function EditorBar() {
             <TableIcon size={20} />
             <p>Truth table</p>
           </div>
-          {showTruthTable ? (
+          {showTruthTable && (
             <div className="absolute overflow-scroll max-h-44 no-scrollbar z-10 right-0">
               <TruthTable pins={terminals} truthTable={currentTruthTable} />
             </div>
-          ) : (
-            <></>
           )}
         </div>
       </div>
