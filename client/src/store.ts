@@ -19,12 +19,14 @@ export interface EditorState {
   activePinIds: string[];
   setSettings: (settings: IEditorSettings) => void;
   addGate: (gate: GateMeta) => void;
+  removeGate: (gateId: number) => void;
   setSelectedPin: (gateId: string) => void;
   setSelectedGate: (gateId: number) => void;
   updateSelectedGate: (gate: GateMeta) => void;
   updateCurrentTruthTable: () => void;
   addGateType: (type: GateMeta) => void;
   addWire: (wire: WireMeta) => void;
+  removeWire: (wire: WireMeta) => void;
   addTerminal: (isInput: boolean, yPos: number) => void;
   setAddingGateType: (type: GateMeta) => void;
   toggleTerminal: (pinId: string) => void;
@@ -56,6 +58,11 @@ export const useEditorStore = create<EditorState>((set) => {
     addGate: (gate: GateMeta) => {
       set((state) => ({
         gates: [...state.gates, gate],
+      }));
+    },
+    removeGate: (gateId: number) => {
+      set((state) => ({
+        gates: state.gates.filter((gate) => gate.id !== gateId),
       }));
     },
     setSelectedPin: (pinId: string) => {
@@ -93,6 +100,11 @@ export const useEditorStore = create<EditorState>((set) => {
     addWire: (wire: WireMeta) => {
       set((state) => ({
         wires: [...state.wires, wire],
+      }));
+    },
+    removeWire: (wire: WireMeta) => {
+      set((state) => ({
+        wires: state.wires.filter((value) => value !== wire)
       }));
     },
     addTerminal: (isInput: boolean, yPos: number) => {

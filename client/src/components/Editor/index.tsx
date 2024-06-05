@@ -10,13 +10,14 @@ import { GateMeta, Pos } from "../../common/types";
 import Gate from "../Gate";
 import Pin from "../Pin";
 import Wire from "../Wire";
-import { inputPinId, isTerminalId, outputPinId } from "../../utils/idUtil";
+import { gateIdFromPinId, inputPinId, isTerminalId, outputPinId } from "../../utils/idUtil";
 import { computeTerminalPos, computeGatePinPos } from "../../libs/pin";
 import useMouse from "../../hooks/useMouse";
 import Terminal from "../Terminal";
 import { EditorState, useEditorStore } from "../../store";
 import { FaPlus as AddIcon } from "react-icons/fa";
 import { VscArrowBoth as ExpandWidthIcon } from "react-icons/vsc";
+import { LuTrash2 as TrashIcon } from "react-icons/lu";
 import EditorSettings from "../EditorSettings";
 import { EditorBar } from "../EditorBar";
 import GateTypes from "../GateTypes";
@@ -50,13 +51,15 @@ export default function Editor() {
 
   const updateSelectedGate = useEditorStore((state: EditorState) => state.updateSelectedGate);
   const addWire = useEditorStore((state: EditorState) => state.addWire);
+  const removeWire = useEditorStore((state: EditorState) => state.removeWire);
   const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
+  const addGate = useEditorStore((state: EditorState) => state.addGate);
+  const removeGate = useEditorStore((state: EditorState) => state.removeGate);
+  const addTerminal = useEditorStore((state: EditorState) => state.addTerminal);
+  const setSelectedGate = useEditorStore((state: EditorState) => state.setSelectedGate);
   const updateCurrentTruthTable = useEditorStore(
     (state: EditorState) => state.updateCurrentTruthTable
   );
-  const addGate = useEditorStore((state: EditorState) => state.addGate);
-  const addTerminal = useEditorStore((state: EditorState) => state.addTerminal);
-  const setSelectedGate = useEditorStore((state: EditorState) => state.setSelectedGate);
 
   const handleMouseMove = () => {
     if (isDraggingGate) {
@@ -150,6 +153,21 @@ export default function Editor() {
     updateSelectedGate(gate);
   };
 
+  const deleteDraggingGate = () => {
+    wires.forEach((wire) => {
+      if (
+        gateIdFromPinId(wire.pin0Id) === selectedGateId ||
+        gateIdFromPinId(wire.pin1Id) === selectedGateId
+      ) {
+        removeWire(wire);
+      }
+    });
+
+    removeGate(selectedGateId);
+    setSelectedGate(-1);
+    setIsDraggingGate(false);
+  };
+
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key !== "Escape") {
@@ -241,7 +259,7 @@ export default function Editor() {
     <div className="flex-col space-y-3" style={{ width: EDITOR_WIDTH }}>
       <EditorBar />
       <div
-        className="relative border-zinc-800 border-4 rounded-lg grow h-[700px]"
+        className="relative border-zinc-800 border-4 rounded-lg grow h-[800px]"
         ref={ref}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -257,7 +275,7 @@ export default function Editor() {
         })}
         {terminalAdderY ? (
           <div
-            className={`absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-zinc-600 flex justify-center items-center hover:cursor-pointer hover:border-green-400 ${
+            className={`absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-zinc-600 flex justify-center items-center hover:cursor-pointer hover:border-violet-500 ${
               isTerminalAdderInput ? "left-[-17px]" : "right-[-17px]"
             }`}
             style={{
@@ -273,7 +291,18 @@ export default function Editor() {
         ) : (
           <></>
         )}
+
+        {isDraggingGate && (
+          <div
+            className="absolute bg-zinc-800 p-2 left-0 bottom-0 m-2 rounded-md hover:cursor-pointer hover:text-red-500"
+            onMouseUp={deleteDraggingGate}
+          >
+            <TrashIcon size={20} />
+          </div>
+        )}
+
         <EditorSettings />
+
         <svg
           className="w-full h-full"
           onMouseMove={handleMouseMove}
