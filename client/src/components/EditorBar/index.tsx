@@ -62,8 +62,6 @@ export function EditorBar() {
       id: -1,
       name,
       pos: { x: 0, y: 0 },
-      height: 60,
-      width: 30 + 15 * name.length,
       inputs,
       outputs,
       truthTable,

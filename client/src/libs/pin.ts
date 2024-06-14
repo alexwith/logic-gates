@@ -1,6 +1,7 @@
 import { POS_ZERO } from "../common/constants";
 import { TerminalMeta, GateMeta, Pos } from "../common/types";
 import { indexFromPinId, isTerminalId, isInputPinId, gateIdFromPinId } from "../utils/idUtil";
+import { getGateDimensions } from "./gate";
 
 export const computeGatePinPos = (
   editorRef: any,
@@ -25,10 +26,11 @@ export const computeGatePinPos = (
 
   const { x: cx, y: cy } = gate.pos;
 
-  const pins = input ? gate.inputs : gate.outputs;
-  const spacing = gate.height / pins;
+  const pins = input ? gate.inputs : gate.outputs;  
+  const dimensions = getGateDimensions(gate.name, gate.inputs, gate.outputs);  
+  const spacing = dimensions.height / pins;
   const offsetY = spacing / 2;
-  const offsetX = input ? 0 : gate.width;
+  const offsetX = input ? 0 : dimensions.width;
 
   return { x: cx + offsetX, y: cy + offsetY + spacing * pinIndex };
 };

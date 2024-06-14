@@ -10,9 +10,7 @@ export interface IEditorSettings {
 export interface GateMeta {
   id: number;
   name: string;
-  pos: Pos;
-  height: number;
-  width: number;
+  pos: Pos;  
   inputs: number;
   outputs: number;
   truthTable: any;

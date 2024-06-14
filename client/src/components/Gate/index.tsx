@@ -1,11 +1,10 @@
 import { Pos } from "../../common/types";
+import { getGateDimensions } from "../../libs/gate";
 
 interface Props {
   id: number;
   name: string;
-  pos: Pos;
-  height: number;
-  width: number;
+  pos: Pos;  
   inputs: number;
   outputs: number;
   setIsDraggingGate: (isDragging: boolean) => void;
@@ -15,9 +14,9 @@ interface Props {
 export default function Gate({
   id,
   name,
-  pos,
-  height,
-  width,
+  pos,  
+  inputs,
+  outputs,
   setIsDraggingGate,
   setSelectedGate,
 }: Props) {
@@ -26,22 +25,24 @@ export default function Gate({
     setSelectedGate(id);
   };
 
+  const dimensions = getGateDimensions(name, inputs, outputs);  
+
   return (
     <>
       <rect
         className="fill-violet-500"
         x={pos.x}
         y={pos.y}
-        width={width}
-        height={height}
+        width={dimensions.width}
+        height={dimensions.height}
         rx={5}
         ry={5}
         onMouseDown={handleMouseDown}
       />
       <text
         className="fill-indigo-950 select-none"
-        x={pos.x + width / 2}
-        y={pos.y + height / 2}
+        x={pos.x + dimensions.width / 2}
+        y={pos.y + dimensions.height / 2 + 2}
         dominantBaseline="middle"
         textAnchor="middle"
         fontWeight={"bold"}

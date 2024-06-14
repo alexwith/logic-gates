@@ -21,6 +21,7 @@ import { LuTrash2 as TrashIcon } from "react-icons/lu";
 import EditorSettings from "../EditorSettings";
 import { EditorBar } from "../EditorBar";
 import GateTypes from "../GateTypes";
+import { getGateDimensions } from "../../libs/gate";
 
 const EDITOR_WIDTH = 1200; //px
 
@@ -106,16 +107,16 @@ export default function Editor() {
       return;
     }
 
+    const addingGateDimensions = getGateDimensions(addingGateType.name, addingGateType.inputs, addingGateType.outputs);
+
     const editorRect: DOMRect = ref.current.getBoundingClientRect();
     const gate: GateMeta = {
       id: gates.length,
       name: addingGateType.name,
       pos: {
-        x: event.clientX - editorRect.left - addingGateType.width / 2,
-        y: event.clientY - editorRect.top - addingGateType.height / 2,
-      },
-      height: addingGateType.height,
-      width: addingGateType.width,
+        x: event.clientX - editorRect.left -  addingGateDimensions.width / 2,
+        y: event.clientY - editorRect.top - addingGateDimensions.height / 2,
+      },      
       inputs: addingGateType.inputs,
       outputs: addingGateType.outputs,
       truthTable: addingGateType.truthTable,
@@ -353,9 +354,7 @@ export default function Editor() {
                 key={i}
                 id={gate.id}
                 name={gate.name}
-                pos={gate.pos}
-                height={gate.height}
-                width={gate.width}
+                pos={gate.pos}                
                 inputs={gate.inputs}
                 outputs={gate.outputs}
                 setIsDraggingGate={setIsDraggingGate}

@@ -5,8 +5,6 @@ export const BASE_GATES: GateMeta[] = [
     id: -1,
     name: "AND",
     pos: { x: 0, y: 0 },
-    height: 60,
-    width: 30 + 15 * 3,
     inputs: 2,
     outputs: 1,
     truthTable: {
@@ -17,8 +15,6 @@ export const BASE_GATES: GateMeta[] = [
     id: -1,
     name: "NOT",
     pos: { x: 0, y: 0 },
-    height: 60,
-    width: 30 + 15 * 3,
     inputs: 1,
     outputs: 1,
     truthTable: {
@@ -29,8 +25,6 @@ export const BASE_GATES: GateMeta[] = [
     id: -1,
     name: "OR",
     pos: { x: 0, y: 0 },
-    height: 60,
-    width: 30 + 15 * 3,
     inputs: 2,
     outputs: 1,
     truthTable: {
@@ -43,8 +37,6 @@ export const BASE_GATES: GateMeta[] = [
     id: -1,
     name: "XOR",
     pos: { x: 0, y: 0 },
-    height: 60,
-    width: 30 + 15 * 3,
     inputs: 2,
     outputs: 1,
     truthTable: {
