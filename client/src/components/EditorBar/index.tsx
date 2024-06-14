@@ -12,6 +12,8 @@ export function EditorBar() {
 
   const [showTruthTable, setShowTruthTable] = useState<boolean>(false);
 
+  const gates = useEditorStore((state: EditorState) => state.gates);
+  const wires = useEditorStore((state: EditorState) => state.wires);
   const terminals = useEditorStore((state: EditorState) => state.terminals);
   const currentTruthTable = useEditorStore((state: EditorState) => state.currentTruthTable);
 
@@ -26,6 +28,12 @@ export function EditorBar() {
     if (/[^A-Za-z0-9]+/.test(event.key)) {
       event.preventDefault();
     }
+  };
+
+  const handleSaveClick = () => {
+    console.log(terminals);
+    console.log(gates);
+    console.log(wires);
   };
 
   const handleCreateClick = () => {
@@ -81,7 +89,7 @@ export function EditorBar() {
       />
       <div className="flex space-x-2">
         <div
-          onClick={() => {}}
+          onClick={handleSaveClick}
           className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold bg-violet-500 hover:cursor-pointer"
         >
           <SaveIcon size={20} />
