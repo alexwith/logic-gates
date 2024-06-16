@@ -18,18 +18,16 @@ export const serializeCircuit = (
   terminals: TerminalMeta[],
   wires: WireMeta[]
 ): Buffer => {
-  console.log(wires);
-
-  let size = 9; // see spec
+  let size = 11; // see spec
 
   gateTypes.forEach((gateType) => {
     size +=
-      6 +
+      4 +
       (gateType.name.length + 1) +
-      (gateType.inputs + gateType.outputs) * gateType.truthTable.length; // see spec
+      Math.ceil(((gateType.inputs + gateType.outputs) * gateType.truthTable.length) / 8); // see spec
   });
 
-  gates.forEach((gate) => {
+  gates.forEach(() => {
     size += 8; // see spec
   });
 
@@ -38,7 +36,7 @@ export const serializeCircuit = (
   });
 
   wires.forEach((wire) => {
-    size += 12 + 4 * wire.checkpoints.length; // see spec
+    size += 14 + 4 * wire.checkpoints.length; // see spec
   });
 
   const buffer = new OffsetBuffer(Buffer.alloc(size));
@@ -53,11 +51,25 @@ export const serializeCircuit = (
     buffer.writeUInt8(gateType.outputs);
     buffer.writeUInt16(gateType.truthTable.length);
 
+    let truthValueBitset = 0;
+    let truthValueCounter = 0;
     gateType.truthTable.forEach((valuation) => {
       valuation.forEach((truthValue) => {
-        buffer.writeUInt8(truthValue ? 1 : 0);
+        if (truthValue) {
+          truthValueBitset |= 1 << truthValueCounter;
+        }
+
+        if (++truthValueCounter === 8) {
+          buffer.writeUInt8(truthValueBitset);
+          truthValueBitset = 0;
+          truthValueCounter = 0;
+        }
       });
     });
+
+    if (truthValueBitset !== 0) {
+      buffer.writeUInt8(truthValueBitset);
+    }
   });
 
   buffer.writeUInt16(gates.length);
@@ -130,13 +142,19 @@ export const deserializeCircuit = (
     const valuations = buffer.readUInt16();
 
     const truthTable: boolean[][] = [];
-    for (let j = 0; j < valuations; j++) {
-      const valuation: boolean[] = [];
-      for (let k = 0; k < inputs + outputs; k++) {
-        valuation.push(buffer.readUInt8() === 1);
-      }
 
-      truthTable.push(valuation);
+    const truthValueBitsets = Math.ceil(((inputs + outputs) * valuations) / 8);
+    let valuation: boolean[] = [];
+    for (let i = 0; i < truthValueBitsets; i++) {
+      const truthValueBitset = buffer.readUInt8();
+      for (let j = 0; j < 8; j++) {
+        valuation.push((truthValueBitset & (1 << j)) === 1);
+
+        if (valuation.length === inputs + outputs) {
+          truthTable.push(valuation);
+          valuation = [];
+        }
+      }
     }
 
     gateTypes.push({

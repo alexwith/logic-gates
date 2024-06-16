@@ -6,8 +6,7 @@
     1 byte - input amount
     1 byte - output amount      
     2 bytes - valuations size
-        1 byte - input values
-        1 byte - output values    
+        1 byte - bitset representing valuations, there are ceil((inputs + outputs) * valuations / 8) bitsets
 
 2 bytes - gates size
     2 bytes - id
