@@ -4,9 +4,9 @@ import { LuTable2 as TableIcon } from "react-icons/lu";
 import { HiOutlineSave as SaveIcon, HiOutlineUpload as UploadIcon } from "react-icons/hi";
 import { EditorState, useEditorStore } from "../../store";
 import TruthTable from "../TruthTable";
-import { GateMeta } from "../../common/types";
 import { toast } from "react-toastify";
 import { deserializeCircuit, serializeCircuit } from "../../libs/circuitFile";
+import GateTypeEntity from "../../entities/GateTypeEntity";
 
 export function EditorBar() {
   const gateNameRef: any = useRef<any>(null);
@@ -85,18 +85,10 @@ export function EditorBar() {
       return;
     }
 
-    const inputs: number = terminals.filter((pin) => pin.input).length;
+    const inputs: number = terminals.filter((pin) => pin.io).length;
     const outputs: number = terminals.length - inputs;
 
-    const gate: GateMeta = {
-      id: -1,
-      name,
-      pos: { x: 0, y: 0 },
-      inputs,
-      outputs,
-      truthTable: currentTruthTable,
-    };
-
+    const gate: GateTypeEntity = new GateTypeEntity(name, inputs, outputs, currentTruthTable);
     addGateType(gate);
     clearEditor();
 

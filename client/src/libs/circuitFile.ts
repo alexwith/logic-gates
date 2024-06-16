@@ -1,4 +1,4 @@
-import { GateMeta, Pos, TerminalMeta, WireMeta } from "../common/types";
+import { Pos } from "../common/types";
 import { Buffer } from "buffer";
 import { OffsetBuffer } from "../utils/OffsetBuffer";
 import {
@@ -53,7 +53,7 @@ export const serializeCircuit = (
     buffer.writeUInt16(gateType.truthTable.length);
 
     let truthValueBitset = 0;
-    let truthValueCounter = 0;    
+    let truthValueCounter = 0;
     gateType.truthTable.forEach((valuation) => {
       valuation.forEach((truthValue) => {
         if (truthValue) {
@@ -63,7 +63,7 @@ export const serializeCircuit = (
         if (++truthValueCounter === 8) {
           buffer.writeUInt8(truthValueBitset);
           truthValueBitset = 0;
-          truthValueCounter = 0;          
+          truthValueCounter = 0;
         }
       });
     });

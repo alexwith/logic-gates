@@ -107,16 +107,20 @@ export default function Editor() {
       return;
     }
 
-    const addingGateDimensions = getGateDimensions(addingGateType.name, addingGateType.inputs, addingGateType.outputs);
+    const addingGateDimensions = getGateDimensions(
+      addingGateType.name,
+      addingGateType.inputs,
+      addingGateType.outputs
+    );
 
     const editorRect: DOMRect = ref.current.getBoundingClientRect();
     const gate: GateMeta = {
       id: gates.length,
       name: addingGateType.name,
       pos: {
-        x: event.clientX - editorRect.left -  addingGateDimensions.width / 2,
+        x: event.clientX - editorRect.left - addingGateDimensions.width / 2,
         y: event.clientY - editorRect.top - addingGateDimensions.height / 2,
-      },      
+      },
       inputs: addingGateType.inputs,
       outputs: addingGateType.outputs,
       truthTable: addingGateType.truthTable,
@@ -199,7 +203,7 @@ export default function Editor() {
       const isLeft = Math.abs(rect.left - event.clientX) <= 20;
       const isInsideTerminal =
         terminals.find((terminal) => {
-          if (terminal.input !== isLeft) {
+          if (terminal.io !== isLeft) {
             return false;
           }
 
@@ -272,7 +276,14 @@ export default function Editor() {
           </h1>
         )}
         {terminals.map((terminal, i) => {
-          return <Terminal key={i} id={terminal.id} terminal={terminal} name={terminal.name} />;
+          return (
+            <Terminal
+              key={i}
+              id={terminal.id.toString()}
+              terminal={terminal}
+              name={terminal.name}
+            />
+          );
         })}
         {terminalAdderY ? (
           <div
@@ -353,19 +364,19 @@ export default function Editor() {
               <Gate
                 key={i}
                 id={gate.id}
-                name={gate.name}
-                pos={gate.pos}                
-                inputs={gate.inputs}
-                outputs={gate.outputs}
+                name={gate.type.name}
+                pos={gate.pos}
+                inputs={gate.type.inputs}
+                outputs={gate.type.outputs}
                 setIsDraggingGate={setIsDraggingGate}
                 setSelectedGate={(id) => {
                   setSelectedGate(id);
                   setGateOrigin(gate.pos);
                 }}
               />
-              {[...Array(gate.inputs)].map((_, j) => {
-                const id = inputPinId(gate.id, j);
-
+              {gate.inputPins.map((pin, j) => {
+                const id = inputPinId(gate.id, j);                
+                
                 return (
                   <Pin
                     key={`in-${j}`}
@@ -376,7 +387,7 @@ export default function Editor() {
                   />
                 );
               })}
-              {[...Array(gate.outputs)].map((_, j) => {
+              {[...Array(gate.type.outputs)].map((_, j) => {
                 const id = outputPinId(gate.id, j);
 
                 return (
@@ -391,17 +402,17 @@ export default function Editor() {
               })}
             </Fragment>
           ))}
-          {terminals.map((terminal, i) => {
+          {/*terminals.map((terminal, i) => {
             return (
               <Pin
                 key={i}
-                id={terminal.id}
+                id={terminal.id.toString()}
                 pos={computeTerminalPos(ref, terminals, terminal.id)}
                 onMouseDown={(event) => handleWiringStart(event, terminal.id)}
                 setLastPin={setLastPin}
               />
             );
-          })}
+          })*/}
         </svg>
       </div>
       <GateTypes />
