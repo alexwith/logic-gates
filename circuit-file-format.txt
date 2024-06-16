@@ -1,3 +1,5 @@
+Circuit file format
+
 2 bytes - magic, id file type = 0xC1C0
 1 byte - version = 0x01
 

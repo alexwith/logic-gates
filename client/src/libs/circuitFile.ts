@@ -45,6 +45,7 @@ export const serializeCircuit = (
   buffer.writeUInt8(0x01); // version
 
   buffer.writeUInt16(gateTypes.length);
+
   gateTypes.forEach((gateType) => {
     buffer.writeString(gateType.name);
     buffer.writeUInt8(gateType.inputs);
@@ -52,7 +53,7 @@ export const serializeCircuit = (
     buffer.writeUInt16(gateType.truthTable.length);
 
     let truthValueBitset = 0;
-    let truthValueCounter = 0;
+    let truthValueCounter = 0;    
     gateType.truthTable.forEach((valuation) => {
       valuation.forEach((truthValue) => {
         if (truthValue) {
@@ -62,7 +63,7 @@ export const serializeCircuit = (
         if (++truthValueCounter === 8) {
           buffer.writeUInt8(truthValueBitset);
           truthValueBitset = 0;
-          truthValueCounter = 0;
+          truthValueCounter = 0;          
         }
       });
     });
@@ -142,13 +143,13 @@ export const deserializeCircuit = (
     const valuations = buffer.readUInt16();
 
     const truthTable: boolean[][] = [];
-
     const truthValueBitsets = Math.ceil(((inputs + outputs) * valuations) / 8);
+
     let valuation: boolean[] = [];
     for (let i = 0; i < truthValueBitsets; i++) {
       const truthValueBitset = buffer.readUInt8();
       for (let j = 0; j < 8; j++) {
-        valuation.push((truthValueBitset & (1 << j)) === 1);
+        valuation.push((truthValueBitset & (1 << j)) !== 0);
 
         if (valuation.length === inputs + outputs) {
           truthTable.push(valuation);
