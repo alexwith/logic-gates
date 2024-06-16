@@ -1,0 +1,35 @@
+2 bytes - magic, id file type = 0xC1C0
+1 byte - version = 0x01
+
+2 bytes - gate types size      
+    string - name
+    1 byte - input amount
+    1 byte - output amount      
+    2 bytes - valuations size
+        1 byte - input values
+        1 byte - output values    
+
+2 bytes - gates size
+    2 bytes - id
+    2 bytes - gate type index
+    2 bytes - x position
+    2 bytes - y position
+
+2 bytes - terminals size
+    1 byte - in or out terminal
+    2 bytes - index/id
+    string - name
+    2 bytes - y position
+
+2 bytes - wires size
+    1 byte - is pin0 a terminal
+    1 byte - is pin0 in or out
+    2 bytes - pin0 gate id
+    2 bytes - pin0 pin index
+    1 byte - is pin1 a terminal
+    1 byte - is pin1 in or out
+    2 bytes - pin1 gate id
+    2 bytes - pin1 pin index
+    2 bytes - checkpoints size
+        2 bytes - x position
+        2 bytes - y positon

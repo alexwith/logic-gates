@@ -13,7 +13,7 @@ export function simulate(
       return;
     }
 
-    signalPin(terminal.id, wires, gates, activePins, visitedPins)
+    signalPin(terminal.id, wires, gates, activePins, visitedPins);
   });
 }
 
@@ -50,8 +50,23 @@ function signalPin(
         inputValues.push(activePins.includes(pinId));
       }
 
-      const outputValues =
-        gate.truthTable[inputValues.toString()] ?? Array(gate.outputs).fill(false, 0, gate.outputs);
+      let outputValues;
+      truthTableLoop: for (const valuation of gate.truthTable) {
+        const inputValutation = valuation.slice(0, gate.inputs);
+
+        for (let i = 0; i < inputValutation.length; i++) {
+          if (inputValutation[i] !== inputValues[i]) {
+            continue truthTableLoop;
+          }
+        }
+
+        outputValues = valuation.slice(gate.inputs);
+        break;
+      }
+
+      if (!outputValues) {
+        outputValues = Array(gate.outputs).fill(false, 0, gate.outputs);
+      }
 
       for (let i = 0; i < gate.outputs; i++) {
         const pinId = outputPinId(gateId, i);

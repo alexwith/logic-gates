@@ -18,15 +18,19 @@ export interface EditorState {
   activeTerminalIds: string[];
   activePinIds: string[];
   setSettings: (settings: IEditorSettings) => void;
+  setGates: (gates: GateMeta[]) => void;
   addGate: (gate: GateMeta) => void;
   removeGate: (gateId: number) => void;
   setSelectedPin: (gateId: string) => void;
   setSelectedGate: (gateId: number) => void;
   updateSelectedGate: (gate: GateMeta) => void;
   updateCurrentTruthTable: () => void;
+  setGateTypes: (gateTypes: GateMeta[]) => void;
   addGateType: (type: GateMeta) => void;
+  setWires: (wires: WireMeta[]) => void;
   addWire: (wire: WireMeta) => void;
   removeWire: (wire: WireMeta) => void;
+  setTerminals: (terminals: TerminalMeta[]) => void;
   addTerminal: (isInput: boolean, yPos: number) => void;
   setAddingGateType: (type: GateMeta) => void;
   toggleTerminal: (pinId: string) => void;
@@ -53,6 +57,11 @@ export const useEditorStore = create<EditorState>((set) => {
     setSettings: (settings: IEditorSettings) => {
       set((gate) => ({
         settings,
+      }));
+    },
+    setGates: (gates: GateMeta[]) => {
+      set((state) => ({
+        gates,
       }));
     },
     addGate: (gate: GateMeta) => {
@@ -92,9 +101,19 @@ export const useEditorStore = create<EditorState>((set) => {
         currentTruthTable: createTruthTable(state.terminals, state.wires, state.gates),
       }));
     },
+    setGateTypes: (gateTypes: GateMeta[]) => {
+      set((state) => {
+        return { gateTypes };
+      });
+    },
     addGateType: (type: GateMeta) => {
       set((state) => ({
         gateTypes: [...state.gateTypes, type],
+      }));
+    },
+    setWires: (wires: WireMeta[]) => {
+      set((state) => ({
+        wires,
       }));
     },
     addWire: (wire: WireMeta) => {
@@ -104,7 +123,12 @@ export const useEditorStore = create<EditorState>((set) => {
     },
     removeWire: (wire: WireMeta) => {
       set((state) => ({
-        wires: state.wires.filter((value) => value !== wire)
+        wires: state.wires.filter((value) => value !== wire),
+      }));
+    },
+    setTerminals: (terminals: TerminalMeta[]) => {
+      set((state) => ({
+        terminals,
       }));
     },
     addTerminal: (isInput: boolean, yPos: number) => {

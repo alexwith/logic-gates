@@ -13,7 +13,7 @@ export interface GateMeta {
   pos: Pos;  
   inputs: number;
   outputs: number;
-  truthTable: any;
+  truthTable: boolean[][];
 }
 
 export interface WireMeta {

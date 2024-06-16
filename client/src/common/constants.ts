@@ -7,9 +7,7 @@ export const BASE_GATES: GateMeta[] = [
     pos: { x: 0, y: 0 },
     inputs: 2,
     outputs: 1,
-    truthTable: {
-      "true,true": [true],
-    },
+    truthTable: [[true, true, true]],
   },
   {
     id: -1,
@@ -17,9 +15,7 @@ export const BASE_GATES: GateMeta[] = [
     pos: { x: 0, y: 0 },
     inputs: 1,
     outputs: 1,
-    truthTable: {
-      false: [true],
-    },
+    truthTable: [[false, true]],
   },
   {
     id: -1,
@@ -27,11 +23,11 @@ export const BASE_GATES: GateMeta[] = [
     pos: { x: 0, y: 0 },
     inputs: 2,
     outputs: 1,
-    truthTable: {
-      "true,false": [true],
-      "false,true": [true],
-      "true,true": [true],
-    },
+    truthTable: [
+      [true, false, true],
+      [false, true, true],
+      [true, true, true],
+    ],
   },
   {
     id: -1,
@@ -39,11 +35,10 @@ export const BASE_GATES: GateMeta[] = [
     pos: { x: 0, y: 0 },
     inputs: 2,
     outputs: 1,
-    truthTable: {
-      "true,false": [true],
-      "false,true": [true],
-      "true,true": [false],
-    },
+    truthTable: [
+      [true, false, true],
+      [false, true, true]
+    ],
   },
 ];
 
