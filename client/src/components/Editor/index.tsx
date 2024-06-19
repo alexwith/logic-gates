@@ -22,6 +22,8 @@ import EditorSettings from "../EditorSettings";
 import { EditorBar } from "../EditorBar";
 import GateTypes from "../GateTypes";
 import { getGateDimensions } from "../../libs/gate";
+import PinEntity from "../../entities/PinEntity";
+import GateEntity from "../../entities/GateEntity";
 
 const EDITOR_WIDTH = 1200; //px
 
@@ -45,7 +47,7 @@ export default function Editor() {
   const gates = useEditorStore((state: EditorState) => state.gates);
   const wires = useEditorStore((state: EditorState) => state.wires);
   const selectedGateId = useEditorStore((state: EditorState) => state.selectedGateId);
-  const selectedPinId = useEditorStore((state: EditorState) => state.selectedPinId);
+  const selectedPin = useEditorStore((state: EditorState) => state.selectedPin);
   const setSelectedPin = useEditorStore((state: EditorState) => state.setSelectedPin);
   const addingGateType = useEditorStore((state: EditorState) => state.addingGateType);
   const activePinIds = useEditorStore((state: EditorState) => state.activePinIds);
@@ -81,11 +83,11 @@ export default function Editor() {
     if (isWiring) {
       if (
         lastPin &&
-        selectedPinId !== lastPin &&
-        (!isTerminalId(selectedPinId) || !isTerminalId(lastPin))
+        selectedPin !== lastPin &&
+        (!isTerminalId(selectedPin) || !isTerminalId(lastPin))
       ) {
         addWire({
-          pin0Id: selectedPinId,
+          pin0Id: selectedPin,
           pin1Id: lastPin,
           checkpoints: wiringCheckpoints,
         });
@@ -134,14 +136,14 @@ export default function Editor() {
     event.dataTransfer.dropEffect = "move";
   };
 
-  const handleWiringStart = (event: ReactMouseEvent, pinId: string) => {
+  const handleWiringStart = (event: ReactMouseEvent, pin: PinEntity) => {
     setIsWiring(true);
-    setSelectedPin(pinId);
+    setSelectedPin(pin);
     wiringUpdateOrigin(event);
   };
 
   const handleWiringMove = () => {
-    const { x, y } = computeGatePinPos(ref, gates, terminals, selectedPinId);
+    const { x, y } = computeGatePinPos(ref, gates, terminals, selectedPin);
     setWiringEndPoint({
       x: Math.abs(wiringMouseOffset.x - x),
       y: Math.abs(wiringMouseOffset.y - y),
@@ -338,10 +340,10 @@ export default function Editor() {
             </Fragment>
           )}
 
-          {isWiring && selectedPinId && wiringEndPoint && (
+          {isWiring && selectedPin && wiringEndPoint && (
             <Wire
               points={[
-                computeGatePinPos(ref, gates, terminals, selectedPinId),
+                computeGatePinPos(ref, gates, terminals, selectedPin),
                 ...wiringCheckpoints,
                 wiringEndPoint,
               ]}
@@ -359,7 +361,7 @@ export default function Editor() {
               active={activePinIds.includes(wire.pin0Id) || activePinIds.includes(wire.pin1Id)}
             />
           ))}
-          {gates.map((gate, i) => (
+          {gates.map((gate: GateEntity, i) => (
             <Fragment key={i}>
               <Gate
                 key={i}
@@ -375,44 +377,40 @@ export default function Editor() {
                 }}
               />
               {gate.inputPins.map((pin, j) => {
-                const id = inputPinId(gate.id, j);                
-                
                 return (
                   <Pin
                     key={`in-${j}`}
-                    id={id}
-                    pos={computeGatePinPos(ref, gates, terminals, id)}
-                    onMouseDown={(event) => handleWiringStart(event, id)}
+                    id={pin.id}
+                    pos={gate.getPinPos(pin)}
+                    onMouseDown={(event) => handleWiringStart(event, pin)}
                     setLastPin={setLastPin}
                   />
                 );
               })}
-              {[...Array(gate.type.outputs)].map((_, j) => {
-                const id = outputPinId(gate.id, j);
-
+              {gate.outputPins.map((pin, j) => {
                 return (
                   <Pin
                     key={`out-${j}`}
-                    id={id}
-                    pos={computeGatePinPos(ref, gates, terminals, id)}
-                    onMouseDown={(event) => handleWiringStart(event, id)}
+                    id={pin.id}
+                    pos={gate.getPinPos(pin)}
+                    onMouseDown={(event) => handleWiringStart(event, pin)}
                     setLastPin={setLastPin}
                   />
                 );
               })}
             </Fragment>
           ))}
-          {/*terminals.map((terminal, i) => {
+          {terminals.map((terminal, i) => {
             return (
               <Pin
                 key={i}
-                id={terminal.id.toString()}
-                pos={computeTerminalPos(ref, terminals, terminal.id)}
-                onMouseDown={(event) => handleWiringStart(event, terminal.id)}
+                id={terminal.id}
+                pos={terminal.getPinPos(ref)}
+                onMouseDown={(event) => handleWiringStart(event, terminal.pin)}
                 setLastPin={setLastPin}
               />
             );
-          })*/}
+          })}
         </svg>
       </div>
       <GateTypes />

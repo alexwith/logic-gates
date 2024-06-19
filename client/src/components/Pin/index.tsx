@@ -2,7 +2,7 @@ import { MouseEvent } from "react";
 import { Pos } from "../../common/types";
 
 interface Props {
-  id: string;
+  id: number;
   pos: Pos;
   onMouseDown: (event: MouseEvent) => void;
   setLastPin: (id: string | null) => void;

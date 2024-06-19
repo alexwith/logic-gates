@@ -6,6 +6,8 @@ class GateEntity {
   id: number;
   pos: Pos;
   type: GateTypeEntity;
+  height: number;
+  width: number;
   inputPins: PinEntity[];
   outputPins: PinEntity[];
 
@@ -19,8 +21,20 @@ class GateEntity {
     this.id = id || GateEntity.idCounter++;
     this.pos = pos;
     this.type = type;
+    this.height = 32 + Math.max(this.type.inputs, this.type.outputs) * 16;
+    this.width = 30 + 15 * this.type.name.length;
     this.inputPins = this.populatePins(IO.Input);
     this.outputPins = this.populatePins(IO.Output);
+  }
+
+  getPinPos(pin: PinEntity): Pos {
+    const { x: cx, y: cy } = this.pos;
+    const pins = pin.io === IO.Input ? this.type.inputs : this.type.outputs;
+    const spacing = this.height / pins;
+    const offsetY = spacing / 2;
+    const offsetX = pin.io === IO.Input ? 0 : this.width;
+
+    return { x: cx + offsetX, y: cy + offsetY + spacing * pin.index };
   }
 
   private populatePins(io: IO): PinEntity[] {
