@@ -1,17 +1,14 @@
 import { Pos } from "../common/types";
+import PinEntity from "./PinEntity";
 
 class WireEntity {
-  startId: number;
-  startIndex: number;
-  endId: number;
-  endIndex: number;
+  startPin: PinEntity;
+  endPin: PinEntity;
   checkpoints: Pos[];
 
-  constructor(startId: number, startIndex: number, endId: number, endIndex: number, checkpoints: Pos[]) {
-    this.startId = startId;
-    this.startIndex = startIndex;
-    this.endId = endId;
-    this.endIndex = endIndex;
+  constructor(startPin: PinEntity, endPin: PinEntity, checkpoints: Pos[]) {
+    this.startPin = startPin;
+    this.endPin = endPin;
     this.checkpoints = checkpoints;
   }
 }

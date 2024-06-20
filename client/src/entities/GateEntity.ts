@@ -27,20 +27,10 @@ class GateEntity {
     this.outputPins = this.populatePins(IO.Output);
   }
 
-  getPinPos(pin: PinEntity): Pos {
-    const { x: cx, y: cy } = this.pos;
-    const pins = pin.io === IO.Input ? this.type.inputs : this.type.outputs;
-    const spacing = this.height / pins;
-    const offsetY = spacing / 2;
-    const offsetX = pin.io === IO.Input ? 0 : this.width;
-
-    return { x: cx + offsetX, y: cy + offsetY + spacing * pin.index };
-  }
-
   private populatePins(io: IO): PinEntity[] {
     const pins: PinEntity[] = [];
     for (let i = 0; i < (io === IO.Input ? this.type.inputs : this.type.outputs); i++) {
-      pins.push(new PinEntity(this.id, i, io));
+      pins.push(new PinEntity(this, i, io));
     }
 
     return pins;

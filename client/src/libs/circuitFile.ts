@@ -1,24 +1,17 @@
-import { Pos } from "../common/types";
 import { Buffer } from "buffer";
 import { OffsetBuffer } from "../utils/OffsetBuffer";
-import {
-  gateIdFromPinId,
-  indexFromPinId,
-  inputPinId,
-  inputTerminalId,
-  isInputPinId,
-  isTerminalId,
-  outputPinId,
-  outputTerminalId,
-} from "../utils/idUtil";
+import GateEntity from "../entities/GateEntity";
+import GateTypeEntity from "../entities/GateTypeEntity";
+import TerminalEntity from "../entities/TerminalEntity";
+import WireEntity from "../entities/WireEntity";
 
 export const serializeCircuit = (
-  gateTypes: GateMeta[],
-  gates: GateMeta[],
-  terminals: TerminalMeta[],
-  wires: WireMeta[]
+  gateTypes: GateTypeEntity[],
+  gates: GateEntity[],
+  terminals: TerminalEntity[],
+  wires: WireEntity[]
 ): Buffer => {
-  let size = 11; // see spec
+  /*let size = 11; // see spec
 
   gateTypes.forEach((gateType) => {
     size +=
@@ -112,12 +105,14 @@ export const serializeCircuit = (
     });
   });
 
-  return buffer.buffer;
+  return buffer.buffer;*/
+
+  return new OffsetBuffer(Buffer.alloc(0)).buffer;
 };
 
 export const deserializeCircuit = (
   data: ArrayBuffer
-): [GateMeta[], GateMeta[], TerminalMeta[], WireMeta[]] | null => {
+): [GateTypeEntity[], GateEntity[], TerminalEntity[], WireEntity[]] | null => {
   const buffer = new OffsetBuffer(Buffer.from(data));
 
   const magic = buffer.readUInt16();
@@ -134,7 +129,7 @@ export const deserializeCircuit = (
     return null;
   }
 
-  const gateTypesSize = buffer.readUInt16();
+  /*const gateTypesSize = buffer.readUInt16();
   const gateTypes: GateMeta[] = [];
   for (let i = 0; i < gateTypesSize; i++) {
     const name = buffer.readString();
@@ -248,5 +243,6 @@ export const deserializeCircuit = (
     });
   }
 
-  return [gateTypes, gates, terminals, wires];
+  return [gateTypes, gates, terminals, wires];*/
+  return null;
 };

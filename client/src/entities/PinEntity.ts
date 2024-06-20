@@ -1,3 +1,4 @@
+import { EDITOR_WIDTH } from "../common/constants";
 import { IO, Pos } from "../common/types";
 import GateEntity from "./GateEntity";
 import TerminalEntity from "./TerminalEntity";
@@ -22,11 +23,22 @@ class PinEntity {
   }
 
   getPos(): Pos {
-    if (this.attached instanceof PinEntity)
-    return {    
-      x: this.io == IO.Input ? 40 : 600 - 49,
-      y: this.yPos - 15,
-    };
+    if (this.attached instanceof TerminalEntity) {
+      return {
+        x: this.io === IO.Input ? 40 : EDITOR_WIDTH - 49,
+        y: this.attached.yPos - 15,
+      };
+    } else if (this.attached instanceof GateEntity) {
+      const { x: cx, y: cy } = this.attached.pos;
+      const pins = this.io === IO.Input ? this.attached.type.inputs : this.attached.type.outputs;
+      const spacing = this.attached.height / pins;
+      const offsetY = spacing / 2;
+      const offsetX = this.io === IO.Input ? 0 : this.attached.width;
+
+      return { x: cx + offsetX, y: cy + offsetY + spacing * this.index };
+    }
+
+    return { x: 0, y: 0 };
   }
 }
 

@@ -1,24 +1,23 @@
-import { TerminalMeta } from "../../common/types";
+import TerminalEntity from "../../entities/TerminalEntity";
 
 interface Props {
-  pins: TerminalMeta[];
+  terminals: TerminalEntity[];
   truthTable: boolean[][];
 }
 
-export default function TruthTable({ pins, truthTable }: Props) {
-  
-  if (pins.length === 0) {
-    return <h1 className="font-bold">Empty truth table</h1>
+export default function TruthTable({ terminals, truthTable }: Props) {
+  if (terminals.length === 0) {
+    return <h1 className="font-bold">Empty truth table</h1>;
   }
 
   return (
-    <div className="rounded-lg overflow-auto inline-block text-center font-bold w-fit h-fit">      
+    <div className="rounded-lg overflow-auto inline-block text-center font-bold w-fit h-fit">
       <table className="w-full h-full">
         <thead className="bg-zinc-700">
           <tr>
-            {pins.map((pin, i) => (
+            {terminals.map((terminal, i) => (
               <th className="py-1 px-3" key={i}>
-                {pin.name}
+                {terminal.name}
               </th>
             ))}
           </tr>

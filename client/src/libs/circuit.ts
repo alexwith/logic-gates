@@ -1,58 +1,54 @@
-import { WireMeta, GateMeta, TerminalMeta } from "../common/types";
-import { gateIdFromPinId, inputPinId, outputPinId } from "../utils/idUtil";
+import { IO } from "../common/types";
+import GateEntity from "../entities/GateEntity";
+import PinEntity from "../entities/PinEntity";
+import TerminalEntity from "../entities/TerminalEntity";
+import WireEntity from "../entities/WireEntity";
 
-export function simulate(
-  terminals: TerminalMeta[],
-  wires: WireMeta[],
-  gates: GateMeta[],
-  activePins: string[]
-) {
-  const visitedPins: string[] = [];
+export function simulate(terminals: TerminalEntity[], wires: WireEntity[], activePins: number[]) {
+  const visitedPins: number[] = [];
   terminals.forEach((terminal) => {
-    if (!terminal.input) {
+    if (terminal.io !== IO.Input) {
       return;
     }
 
-    signalPin(terminal.id, wires, gates, activePins, visitedPins);
+    signalPin(terminal.pin, wires, activePins, visitedPins);
   });
 }
 
 function signalPin(
-  pinId: string,
-  wires: WireMeta[],
-  gates: GateMeta[],
-  activePins: string[],
-  visitedPins: string[]
+  pin: PinEntity,
+  wires: WireEntity[],
+  activePins: number[],
+  visitedPins: number[]
 ) {
   wires
-    .filter((wire) => wire.pin0Id === pinId || wire.pin1Id === pinId)
+    .filter((wire) => wire.startPin === pin || wire.endPin === pin)
     .forEach((wire) => {
-      const entryPinId = pinId === wire.pin0Id ? wire.pin1Id : wire.pin0Id;
-      visitedPins.push(entryPinId);
+      const entryPin = pin === wire.startPin ? wire.endPin : wire.startPin;
+      visitedPins.push(entryPin.id);
 
-      if (activePins.includes(pinId)) {
-        activePins.push(entryPinId);
+      if (activePins.includes(pin.id)) {
+        activePins.push(entryPin.id);
       }
 
-      const gateId = gateIdFromPinId(entryPinId);
-      const gate = gates.find((gate) => gate.id === gateId);
-      if (!gate) {
+      if (!(pin.attached instanceof GateEntity)) {
         return;
       }
 
+      const gate = pin.attached;
+
       const inputValues = [];
-      for (let i = 0; i < gate.inputs; i++) {
-        const pinId = inputPinId(gateId, i);
-        if (!visitedPins.includes(pinId)) {
+      for (const pin of gate.inputPins) {
+        if (!visitedPins.includes(pin.id)) {
           return;
         }
 
-        inputValues.push(activePins.includes(pinId));
+        inputValues.push(activePins.includes(pin.id));
       }
 
-      let outputValues;
-      truthTableLoop: for (const valuation of gate.truthTable) {
-        const inputValutation = valuation.slice(0, gate.inputs);
+      let outputValues: boolean[] | undefined;
+      truthTableLoop: for (const valuation of gate.type.truthTable) {
+        const inputValutation = valuation.slice(0, gate.type.inputs);
 
         for (let i = 0; i < inputValutation.length; i++) {
           if (inputValutation[i] !== inputValues[i]) {
@@ -60,22 +56,21 @@ function signalPin(
           }
         }
 
-        outputValues = valuation.slice(gate.inputs);
+        outputValues = valuation.slice(gate.type.inputs);
         break;
       }
 
       if (!outputValues) {
-        outputValues = Array(gate.outputs).fill(false, 0, gate.outputs);
+        outputValues = Array(gate.type.outputs).fill(false, 0, gate.type.outputs);
       }
 
-      for (let i = 0; i < gate.outputs; i++) {
-        const pinId = outputPinId(gateId, i);
-        const outputValue = outputValues[i];
+      gate.outputPins.forEach((pin, i) => {
+        const outputValue = outputValues![i];
         if (outputValue) {
-          activePins.push(pinId);
+          activePins.push(pin.id);
         }
 
-        signalPin(pinId, wires, gates, activePins, visitedPins);
-      }
+        signalPin(pin, wires, activePins, visitedPins);
+      });
     });
 }

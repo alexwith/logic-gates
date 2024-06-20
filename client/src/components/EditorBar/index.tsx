@@ -147,7 +147,7 @@ export function EditorBar() {
           </div>
           {showTruthTable && (
             <div className="absolute overflow-scroll max-h-44 no-scrollbar z-10 right-0">
-              <TruthTable pins={terminals} truthTable={currentTruthTable} />
+              <TruthTable terminals={terminals} truthTable={currentTruthTable} />
             </div>
           )}
         </div>
