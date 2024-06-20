@@ -31,11 +31,11 @@ function signalPin(
         activePins.push(entryPin.id);
       }
 
-      if (!(pin.attached instanceof GateEntity)) {
+      if (!(entryPin.attached instanceof GateEntity)) {
         return;
       }
 
-      const gate = pin.attached;
+      const gate = entryPin.attached;
 
       const inputValues = [];
       for (const pin of gate.inputPins) {
