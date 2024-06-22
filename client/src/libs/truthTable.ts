@@ -21,15 +21,14 @@ export function createTruthTable(terminals: TerminalEntity[], wires: WireEntity[
     }
   }
 
-  combinations.forEach((combination, i) => {
-    const terminalCombination = [];
+  combinations.forEach((combination) => {
+    const activePins: number[] = [];
     for (let i = 0; i < combination.length; i++) {
       if (combination[i]) {
-        terminalCombination.push(i); // TODO not sure about this, previously inputTerminalId(i)
+        activePins.push(terminals[i].pin.id);
       }
     }
 
-    const activePins: number[] = [...terminalCombination];
     simulate(terminals, wires, activePins);
 
     const outputValues: boolean[] = [];
