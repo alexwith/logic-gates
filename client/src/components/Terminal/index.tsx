@@ -20,8 +20,7 @@ export default function Terminal({ terminal, editorRect }: Props) {
 
   const { mouseDragOffset } = useMouse();
 
-  const toggleTerminal = useEditorStore((state: EditorState) => state.toggleTerminal);
-  const setTerminalName = useEditorStore((state: EditorState) => state.setTerminalName);
+  const toggleTerminal = useEditorStore((state: EditorState) => state.toggleTerminal);  
   const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
 
   const computePos = (): any => {
@@ -53,7 +52,7 @@ export default function Terminal({ terminal, editorRect }: Props) {
   };
 
   const handleNameChange = (name: string) => {
-    setTerminalName(terminal.id, name);
+    terminal.name = name;    
   };
 
   const handleClick = () => {
