@@ -196,7 +196,7 @@ export default function Editor() {
           setTerminalAdderY(null);
         }
         return;
-      }      
+      }
 
       const isLeft = Math.abs(rect.left - event.clientX) <= 20;
       const isInsideTerminal =
@@ -274,7 +274,7 @@ export default function Editor() {
           </h1>
         )}
         {terminals.map((terminal, i) => {
-          return <Terminal key={i} terminal={terminal} name={terminal.name} />;
+          return <Terminal key={i} terminal={terminal} />;
         })}
         {terminalAdderY ? (
           <div

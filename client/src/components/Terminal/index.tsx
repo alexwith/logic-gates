@@ -7,10 +7,9 @@ import { IO } from "../../common/types";
 
 interface Props {
   terminal: TerminalEntity;
-  name: string;
 }
 
-export default function Terminal({ terminal, name }: Props) {
+export default function Terminal({ terminal }: Props) {
   const [ref, setRef] = useState<any>(null); // we need to rerender for computePos to be correct
   const buttonRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<boolean>(false);
@@ -66,10 +65,6 @@ export default function Terminal({ terminal, name }: Props) {
     updateActivity();
   };
 
-  const handleMouseUp = () => {
-    setDragging(false);
-  };
-
   useEffect(() => {
     if (dragging) {
       terminal.yPos = originY - mouseDragOffset.y;
@@ -77,11 +72,16 @@ export default function Terminal({ terminal, name }: Props) {
   }, [dragging, mouseDragOffset, originY, terminal]);
 
   useEffect(() => {
-    window.addEventListener("mouseup", handleMouseUp);
-    return () => {
-      window.removeEventListener("mouseup", handleMouseUp);
+    const handleMouseUp = () => {
+      setDragging(false);
     };
-  });
+
+    // we need to use document.body so this event is called before the useMouse's mouseup event
+    document.body.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      document.body.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
 
   return (
     <div className="absolute" ref={setRef} style={computePos()}>
@@ -89,7 +89,7 @@ export default function Terminal({ terminal, name }: Props) {
         className={`absolute font-bold bg-zinc-800 px-1 rounded-md ${
           terminal.io === IO.Input ? "left-[70px]" : "right-[70px]"
         } top-1 opacity-70`}
-        defaultValue={name}
+        defaultValue={terminal.name}
         onChange={handleNameChange}
         maxLength={10}
       />
@@ -116,7 +116,6 @@ export default function Terminal({ terminal, name }: Props) {
               setDragging(true);
               setOriginY(terminal.yPos);
             }}
-            onMouseUp={() => setDragging(false)}
           />
         )}
       </div>
