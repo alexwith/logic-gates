@@ -2,7 +2,7 @@ import { MouseEvent as ReactMouseEvent, useEffect, useState } from "react";
 import { Pos } from "../common/types";
 
 export default function useMouse(manualMouseOrigin?: boolean) {
-  const [mouseOrigin, setMouseOrigin] = useState<Pos>({ x: 0, y: 0 });
+  const [mouseOrigin, setMouseOrigin] = useState<Pos | null>(null);
   const [mousePosition, setMousePosition] = useState<Pos>({
     x: 0,
     y: 0,
@@ -13,7 +13,7 @@ export default function useMouse(manualMouseOrigin?: boolean) {
   };
 
   useEffect(() => {
-    const handleMouseMove = (event: any) => {
+    const handleMouseMove = (event: MouseEvent) => {
       setMousePosition({ x: event.clientX, y: event.clientY });
     };
 
@@ -25,12 +25,18 @@ export default function useMouse(manualMouseOrigin?: boolean) {
       setMouseOrigin({ x: event.clientX, y: event.clientY });
     };
 
+    const handleMouseUp = () => {
+      setMouseOrigin(null);
+    };
+
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mousedown", handleMouseDown);
+    window.addEventListener("mouseup", handleMouseUp);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [manualMouseOrigin]);
 
@@ -38,8 +44,8 @@ export default function useMouse(manualMouseOrigin?: boolean) {
     mousePosition,
     updateOrigin,
     mouseDragOffset: {
-      x: mouseOrigin.x - mousePosition.x,
-      y: mouseOrigin.y - mousePosition.y,
+      x: !mouseOrigin ? 0 : mouseOrigin.x - mousePosition.x,
+      y: !mouseOrigin ? 0 : mouseOrigin.y - mousePosition.y,
     },
   };
 }

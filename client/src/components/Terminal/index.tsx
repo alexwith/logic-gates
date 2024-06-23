@@ -72,7 +72,7 @@ export default function Terminal({ terminal, name }: Props) {
 
   useEffect(() => {
     if (dragging) {
-      terminal.yPos = Math.abs(mouseDragOffset.y - originY);
+      terminal.yPos = originY - mouseDragOffset.y;
     }
   }, [dragging, mouseDragOffset, originY, terminal]);
 
