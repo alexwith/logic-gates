@@ -165,17 +165,20 @@ export const useEditorStore = create<EditorState>((set) => {
       });
     },
     clear: () => {
-      /*set(() => ({
+      TerminalEntity.idCounter = 0;
+      GateEntity.idCounter = 0;
+
+      set(() => ({
         terminals: [],
         gates: [],
         wires: [],
-        selectedGateId: -1,
-        selectedPinId: "",
+        selectedGate: null,
+        selectedPin: null,
         currentTruthTable: [],
         addingGateType: null,
         activeTerminalIds: [],
         activePinIds: [],
-      }));*/
+      }));
     },
   };
 });
