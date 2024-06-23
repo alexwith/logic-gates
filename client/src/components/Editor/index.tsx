@@ -274,7 +274,13 @@ export default function Editor() {
           </h1>
         )}
         {terminals.map((terminal, i) => {
-          return <Terminal key={i} terminal={terminal} />;
+          return (
+            <Terminal
+              key={i}
+              terminal={terminal}
+              editorRect={ref.current?.getBoundingClientRect()}
+            />
+          );
         })}
         {terminalAdderY ? (
           <div

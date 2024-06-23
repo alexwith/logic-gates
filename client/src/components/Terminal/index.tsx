@@ -7,9 +7,10 @@ import { IO } from "../../common/types";
 
 interface Props {
   terminal: TerminalEntity;
+  editorRect: DOMRect | undefined;
 }
 
-export default function Terminal({ terminal }: Props) {
+export default function Terminal({ terminal, editorRect }: Props) {
   const [ref, setRef] = useState<any>(null); // we need to rerender for computePos to be correct
   const buttonRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<boolean>(false);
@@ -67,9 +68,12 @@ export default function Terminal({ terminal }: Props) {
 
   useEffect(() => {
     if (dragging) {
-      terminal.yPos = originY - mouseDragOffset.y;
+      terminal.yPos = Math.min(
+        Math.max(originY - mouseDragOffset.y, ref?.getBoundingClientRect().height || 0),
+        editorRect?.height || Number.MAX_SAFE_INTEGER
+      );
     }
-  }, [dragging, mouseDragOffset, originY, terminal]);
+  }, [dragging, mouseDragOffset, originY, terminal, editorRect?.height, ref]);
 
   useEffect(() => {
     const handleMouseUp = () => {
