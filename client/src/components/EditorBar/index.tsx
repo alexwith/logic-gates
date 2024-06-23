@@ -7,6 +7,7 @@ import TruthTable from "../TruthTable";
 import { toast } from "react-toastify";
 import { deserializeCircuit, serializeCircuit } from "../../libs/circuitFile";
 import GateTypeEntity from "../../entities/GateTypeEntity";
+import { IO } from "../../common/types";
 
 export function EditorBar() {
   const gateNameRef: any = useRef<any>(null);
@@ -85,11 +86,11 @@ export function EditorBar() {
       return;
     }
 
-    const inputs: number = terminals.filter((pin) => pin.io).length;
+    const inputs: number = terminals.filter((pin) => pin.io === IO.Input).length;
     const outputs: number = terminals.length - inputs;
 
-    const gate: GateTypeEntity = new GateTypeEntity(name, inputs, outputs, currentTruthTable);
-    addGateType(gate);
+    const gateType: GateTypeEntity = new GateTypeEntity(name, inputs, outputs, currentTruthTable);
+    addGateType(gateType);
     clearEditor();
 
     gateNameRef.current.value = "";
