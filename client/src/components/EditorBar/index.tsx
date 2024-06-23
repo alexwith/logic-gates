@@ -25,6 +25,7 @@ export function EditorBar() {
   const setTerminals = useEditorStore((state: EditorState) => state.setTerminals);
   const setWires = useEditorStore((state: EditorState) => state.setWires);
   const addGateType = useEditorStore((state: EditorState) => state.addGateType);
+  const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
   const clearEditor = useEditorStore((state: EditorState) => state.clear);
 
   const handleGateNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -54,6 +55,7 @@ export function EditorBar() {
       setGates(gates);
       setTerminals(terminals);
       setWires(wires);
+      updateActivity();
     };
 
     reader.readAsArrayBuffer(file);

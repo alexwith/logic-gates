@@ -156,6 +156,7 @@ export const useEditorStore = create<EditorState>((set) => {
     clear: () => {
       TerminalEntity.idCounter = 0;
       GateEntity.idCounter = 0;
+      PinEntity.idCounter = 0;
 
       set(() => ({
         terminals: [],

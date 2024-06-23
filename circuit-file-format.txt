@@ -17,20 +17,20 @@ Circuit file format
     2 bytes - y position
 
 2 bytes - terminals size
+    2 bytes - id
     1 byte - in or out terminal
-    2 bytes - index/id
     string - name
     2 bytes - y position
 
 2 bytes - wires size
-    1 byte - is pin0 a terminal
-    1 byte - is pin0 in or out
-    2 bytes - pin0 gate id
-    2 bytes - pin0 pin index
-    1 byte - is pin1 a terminal
-    1 byte - is pin1 in or out
-    2 bytes - pin1 gate id
-    2 bytes - pin1 pin index
+    1 byte - start pin type
+    2 byte - start attached entity index
+    1 byte - start pin index
+    1 byte - start io
+    1 byte - end pin type
+    2 byte - end attached entity index
+    1 byte - end pin index
+    1 byte - end io
     2 bytes - checkpoints size
         2 bytes - x position
         2 bytes - y positon
