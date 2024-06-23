@@ -19,7 +19,7 @@ export interface EditorState {
   selectedPin: PinEntity | null;
   currentTruthTable: boolean[][];
   addingGateType: GateTypeEntity | null;
-  activeTerminalIds: number[];
+  activeTerminalPinIds: number[];
   activePinIds: number[];
   setSettings: (settings: IEditorSettings) => void;
   setGates: (gates: GateEntity[]) => void;
@@ -36,7 +36,7 @@ export interface EditorState {
   setTerminals: (terminals: TerminalEntity[]) => void;
   addTerminal: (isInput: boolean, yPos: number) => void;
   setAddingGateType: (type: GateTypeEntity) => void;
-  toggleTerminal: (pinId: number) => void;
+  toggleTerminal: (terminal: TerminalEntity) => void;
   setTerminalName: (terminalId: number, name: string) => void;
   updateActivity: () => void;
   clear: () => void;
@@ -55,7 +55,7 @@ export const useEditorStore = create<EditorState>((set) => {
     selectedPin: null,
     currentTruthTable: [],
     addingGateType: null,
-    activeTerminalIds: [],
+    activeTerminalPinIds: [],
     activePinIds: [],
     setSettings: (settings: IEditorSettings) => {
       set(() => ({
@@ -138,13 +138,13 @@ export const useEditorStore = create<EditorState>((set) => {
         addingGateType: type,
       }));
     },
-    toggleTerminal: (pinId: number) => {
+    toggleTerminal: (terminal: TerminalEntity) => {
       set((state) => {
-        const activeTerminalIds = [...state.activeTerminalIds];
-        const index = activeTerminalIds.indexOf(pinId);
-        index !== -1 ? activeTerminalIds.splice(index, 1) : activeTerminalIds.push(pinId);
+        const activeTerminalIds = [...state.activeTerminalPinIds];
+        const index = activeTerminalIds.indexOf(terminal.pin.id);
+        index !== -1 ? activeTerminalIds.splice(index, 1) : activeTerminalIds.push(terminal.pin.id);
 
-        return { activeTerminalIds: activeTerminalIds };
+        return { activeTerminalPinIds: activeTerminalIds };
       });
     },
     setTerminalName: (terminalId: number, name: string) => {
@@ -159,7 +159,7 @@ export const useEditorStore = create<EditorState>((set) => {
     },
     updateActivity: () => {
       set((state) => {
-        const activePinIds: number[] = [...state.activeTerminalIds];
+        const activePinIds: number[] = [...state.activeTerminalPinIds];        
         simulate(state.terminals, state.wires, activePinIds);
         return { activePinIds };
       });
@@ -176,7 +176,7 @@ export const useEditorStore = create<EditorState>((set) => {
         selectedPin: null,
         currentTruthTable: [],
         addingGateType: null,
-        activeTerminalIds: [],
+        activeTerminalPinIds: [],
         activePinIds: [],
       }));
     },

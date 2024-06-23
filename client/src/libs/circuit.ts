@@ -23,7 +23,7 @@ function signalPin(
 ) {
   wires
     .filter((wire) => wire.startPin === pin || wire.endPin === pin)
-    .forEach((wire) => {
+    .forEach((wire) => {      
       const entryPin = pin === wire.startPin ? wire.endPin : wire.startPin;
       visitedPins.push(entryPin.id);
 

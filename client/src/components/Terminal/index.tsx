@@ -61,7 +61,7 @@ export default function Terminal({ terminal, editorRect }: Props) {
       return;
     }
 
-    toggleTerminal(terminal.id);
+    toggleTerminal(terminal);
     setActive(!active);
     updateActivity();
   };
