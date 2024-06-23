@@ -1,7 +1,7 @@
 import { MouseEvent as ReactMouseEvent, useEffect, useState } from "react";
 import { Pos } from "../common/types";
 
-export default function useMouse(manualMouseOrigin?: boolean) {
+export default function useMouse(manualMouseOrigin?: boolean, ignoreMouseUp?: boolean) {
   const [mouseOrigin, setMouseOrigin] = useState<Pos | null>(null);
   const [mousePosition, setMousePosition] = useState<Pos>({
     x: 0,
@@ -31,14 +31,20 @@ export default function useMouse(manualMouseOrigin?: boolean) {
 
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mousedown", handleMouseDown);
-    window.addEventListener("mouseup", handleMouseUp);
+
+    if (!ignoreMouseUp) {
+      window.addEventListener("mouseup", handleMouseUp);
+    }
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mousedown", handleMouseDown);
-      window.removeEventListener("mouseup", handleMouseUp);
+
+      if (!ignoreMouseUp) {
+        window.removeEventListener("mouseup", handleMouseUp);
+      }
     };
-  }, [manualMouseOrigin]);
+  }, [manualMouseOrigin, ignoreMouseUp]);
 
   return {
     mousePosition,

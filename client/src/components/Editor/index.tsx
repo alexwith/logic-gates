@@ -28,7 +28,7 @@ import { EDITOR_WIDTH } from "../../common/constants";
 export default function Editor() {
   const ref = useRef<HTMLDivElement>(null);
   const { mouseDragOffset } = useMouse();
-  const { mouseDragOffset: wiringMouseOffset, updateOrigin: wiringUpdateOrigin } = useMouse(true);
+  const { mouseDragOffset: wiringMouseOffset, updateOrigin: wiringUpdateOrigin } = useMouse(true, true);
 
   const [gateOrigin, setGateOrigin] = useState<Pos>({ x: 0, y: 0 });
   const [isDraggingGate, setIsDraggingGate] = useState<boolean>(false);
