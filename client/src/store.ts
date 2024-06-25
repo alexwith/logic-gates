@@ -32,6 +32,7 @@ export interface EditorState {
   removeWire: (wire: WireEntity) => void;
   setTerminals: (terminals: TerminalEntity[]) => void;
   addTerminal: (isInput: boolean, yPos: number) => void;
+  updateTerminal: (terminal: TerminalEntity) => void;
   setSelectedPin: (pin: PinEntity | null) => void;
   setSelectedGate: (gate: GateEntity | null) => void;
   setAddingGateType: (type: GateTypeEntity) => void;
@@ -117,6 +118,15 @@ export const useEditorStore = create<EditorState>((set) => {
         return { terminals: [...state.terminals, terminal] };
       });
     },
+    updateTerminal: (terminal: TerminalEntity) => {
+      set((state) => {
+        const terminals = [...state.terminals];
+        const index = terminals.findIndex((otherTerminal) => otherTerminal.id === terminal.id);
+        terminals[index] = terminal;
+
+        return { terminals };
+      });
+    },
     setSelectedPin: (pin: PinEntity | null) => {
       set(() => ({
         selectedPin: pin,
@@ -126,7 +136,7 @@ export const useEditorStore = create<EditorState>((set) => {
       set(() => ({
         selectedGate: gate,
       }));
-    },           
+    },
     setAddingGateType: (type: GateTypeEntity) => {
       set(() => ({
         addingGateType: type,
@@ -145,7 +155,7 @@ export const useEditorStore = create<EditorState>((set) => {
       set((state) => ({
         currentTruthTable: createTruthTable(state.terminals, state.wires),
       }));
-    },    
+    },
     updateActivity: () => {
       set((state) => {
         const activePinIds: number[] = [...state.activeTerminalPinIds];
