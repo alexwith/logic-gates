@@ -1,40 +1,43 @@
 import { create } from "zustand";
 import { BASE_GATES } from "./common/constants";
-import { WireMeta, TerminalMeta, GateMeta, IEditorSettings } from "./common/types";
+import { IEditorSettings, IO } from "./common/types";
 import { createTruthTable } from "./libs/truthTable";
-import { inputTerminalId, outputTerminalId } from "./utils/idUtil";
 import { simulate } from "./libs/circuit";
+import GateTypeEntity from "./entities/GateTypeEntity";
+import TerminalEntity from "./entities/TerminalEntity";
+import GateEntity from "./entities/GateEntity";
+import WireEntity from "./entities/WireEntity";
+import PinEntity from "./entities/PinEntity";
 
 export interface EditorState {
   settings: IEditorSettings;
-  gateTypes: GateMeta[];
-  terminals: TerminalMeta[];
-  gates: GateMeta[];
-  wires: WireMeta[];
-  selectedGateId: number;
-  selectedPinId: string;
+  gateTypes: GateTypeEntity[];
+  terminals: TerminalEntity[];
+  gates: GateEntity[];
+  wires: WireEntity[];
+  selectedGate: GateEntity | null;
+  selectedPin: PinEntity | null;
   currentTruthTable: boolean[][];
-  addingGateType: GateMeta | null;
-  activeTerminalIds: string[];
-  activePinIds: string[];
+  addingGateType: GateTypeEntity | null;
+  activeTerminalPinIds: number[];
+  activePinIds: number[];
   setSettings: (settings: IEditorSettings) => void;
-  setGates: (gates: GateMeta[]) => void;
-  addGate: (gate: GateMeta) => void;
-  removeGate: (gateId: number) => void;
-  setSelectedPin: (gateId: string) => void;
-  setSelectedGate: (gateId: number) => void;
-  updateSelectedGate: (gate: GateMeta) => void;
-  updateCurrentTruthTable: () => void;
-  setGateTypes: (gateTypes: GateMeta[]) => void;
-  addGateType: (type: GateMeta) => void;
-  setWires: (wires: WireMeta[]) => void;
-  addWire: (wire: WireMeta) => void;
-  removeWire: (wire: WireMeta) => void;
-  setTerminals: (terminals: TerminalMeta[]) => void;
+  setGateTypes: (gateTypes: GateTypeEntity[]) => void;
+  addGateType: (gateType: GateTypeEntity) => void;
+  setGates: (gates: GateEntity[]) => void;
+  addGate: (gate: GateEntity) => void;
+  removeGate: (gate: GateEntity) => void;
+  setWires: (wires: WireEntity[]) => void;
+  addWire: (wire: WireEntity) => void;
+  removeWire: (wire: WireEntity) => void;
+  setTerminals: (terminals: TerminalEntity[]) => void;
   addTerminal: (isInput: boolean, yPos: number) => void;
-  setAddingGateType: (type: GateMeta) => void;
-  toggleTerminal: (pinId: string) => void;
-  setTerminalName: (pinId: string, name: string) => void;
+  updateTerminal: (terminal: TerminalEntity) => void;
+  setSelectedPin: (pin: PinEntity | null) => void;
+  setSelectedGate: (gate: GateEntity | null) => void;
+  setAddingGateType: (type: GateTypeEntity) => void;
+  toggleTerminal: (terminal: TerminalEntity) => void;
+  updateCurrentTruthTable: () => void;
   updateActivity: () => void;
   clear: () => void;
 }
@@ -48,143 +51,132 @@ export const useEditorStore = create<EditorState>((set) => {
     terminals: [],
     gates: [],
     wires: [],
-    selectedGateId: -1,
-    selectedPinId: "",
+    selectedGate: null,
+    selectedPin: null,
     currentTruthTable: [],
     addingGateType: null,
-    activeTerminalIds: [],
+    activeTerminalPinIds: [],
     activePinIds: [],
     setSettings: (settings: IEditorSettings) => {
-      set((gate) => ({
+      set(() => ({
         settings,
       }));
     },
-    setGates: (gates: GateMeta[]) => {
-      set((state) => ({
-        gates,
-      }));
-    },
-    addGate: (gate: GateMeta) => {
-      set((state) => ({
-        gates: [...state.gates, gate],
-      }));
-    },
-    removeGate: (gateId: number) => {
-      set((state) => ({
-        gates: state.gates.filter((gate) => gate.id !== gateId),
-      }));
-    },
-    setSelectedPin: (pinId: string) => {
+    setGateTypes: (gateTypes: GateTypeEntity[]) => {
       set(() => ({
-        selectedPinId: pinId,
+        gateTypes,
       }));
     },
-    setSelectedGate: (gateId: number) => {
-      set(() => ({
-        selectedGateId: gateId,
-      }));
-    },
-    updateSelectedGate: (gate: GateMeta) => {
-      set((state) => {
-        const { selectedGateId, gates } = state;
-        if (selectedGateId === -1) {
-          return {};
-        }
-
-        const updatedGates = [...gates];
-        updatedGates[selectedGateId] = gate;
-        return { gates: updatedGates };
-      });
-    },
-    updateCurrentTruthTable: () => {
-      set((state) => ({
-        currentTruthTable: createTruthTable(state.terminals, state.wires, state.gates),
-      }));
-    },
-    setGateTypes: (gateTypes: GateMeta[]) => {
-      set((state) => {
-        return { gateTypes };
-      });
-    },
-    addGateType: (type: GateMeta) => {
+    addGateType: (type: GateTypeEntity) => {
       set((state) => ({
         gateTypes: [...state.gateTypes, type],
       }));
     },
-    setWires: (wires: WireMeta[]) => {
+    setGates: (gates: GateEntity[]) => {
+      set(() => ({
+        gates,
+      }));
+    },
+    addGate: (gate: GateEntity) => {
       set((state) => ({
+        gates: [...state.gates, gate],
+      }));
+    },
+    removeGate: (gate: GateEntity) => {
+      set((state) => ({
+        gates: state.gates.filter((value) => value !== gate),
+      }));
+    },
+    setWires: (wires: WireEntity[]) => {
+      set(() => ({
         wires,
       }));
     },
-    addWire: (wire: WireMeta) => {
+    addWire: (wire: WireEntity) => {
       set((state) => ({
         wires: [...state.wires, wire],
       }));
     },
-    removeWire: (wire: WireMeta) => {
+    removeWire: (wire: WireEntity) => {
       set((state) => ({
         wires: state.wires.filter((value) => value !== wire),
       }));
     },
-    setTerminals: (terminals: TerminalMeta[]) => {
-      set((state) => ({
+    setTerminals: (terminals: TerminalEntity[]) => {
+      set(() => ({
         terminals,
       }));
     },
     addTerminal: (isInput: boolean, yPos: number) => {
       set((state) => {
-        const nextPinIndex = state.terminals.filter((pin) => pin.input === isInput).length;
-        const pin: TerminalMeta = {
-          id: isInput ? inputTerminalId(nextPinIndex) : outputTerminalId(nextPinIndex),
-          name: "?",
-          input: isInput,
-          yPos,
-        };
+        const terminal: TerminalEntity = new TerminalEntity(
+          "?",
+          isInput ? IO.Input : IO.Output,
+          yPos
+        );
 
-        return { terminals: [...state.terminals, pin] };
+        return { terminals: [...state.terminals, terminal] };
       });
     },
-    setAddingGateType: (type: GateMeta) => {
+    updateTerminal: (terminal: TerminalEntity) => {
+      set((state) => {
+        const terminals = [...state.terminals];
+        const index = terminals.findIndex((otherTerminal) => otherTerminal.id === terminal.id);
+        terminals[index] = terminal;
+
+        return { terminals };
+      });
+    },
+    setSelectedPin: (pin: PinEntity | null) => {
+      set(() => ({
+        selectedPin: pin,
+      }));
+    },
+    setSelectedGate: (gate: GateEntity | null) => {
+      set(() => ({
+        selectedGate: gate,
+      }));
+    },
+    setAddingGateType: (type: GateTypeEntity) => {
       set(() => ({
         addingGateType: type,
       }));
     },
-    toggleTerminal: (pinId: string) => {
+    toggleTerminal: (terminal: TerminalEntity) => {
       set((state) => {
-        const activeTerminalIds = [...state.activeTerminalIds];
-        const index = activeTerminalIds.indexOf(pinId);
-        index !== -1 ? activeTerminalIds.splice(index, 1) : activeTerminalIds.push(pinId);
+        const activeTerminalIds = [...state.activeTerminalPinIds];
+        const index = activeTerminalIds.indexOf(terminal.pin.id);
+        index !== -1 ? activeTerminalIds.splice(index, 1) : activeTerminalIds.push(terminal.pin.id);
 
-        return { activeTerminalIds: activeTerminalIds };
+        return { activeTerminalPinIds: activeTerminalIds };
       });
     },
-    setTerminalName: (pinId: string, name: string) => {
-      set((state) => {
-        const terminals = [...state.terminals];
-        const pinIndex = terminals.findIndex((pin) => pin.id === pinId);
-        const pin = { ...terminals[pinIndex], name };
-
-        terminals[pinIndex] = pin;
-        return { terminals: terminals };
-      });
+    updateCurrentTruthTable: () => {
+      set((state) => ({
+        currentTruthTable: createTruthTable(state.terminals, state.wires),
+      }));
     },
     updateActivity: () => {
       set((state) => {
-        const activePinIds: string[] = [...state.activeTerminalIds];
-        simulate(state.terminals, state.wires, state.gates, activePinIds);
+        const activePinIds: number[] = [...state.activeTerminalPinIds];
+        simulate(state.terminals, state.wires, activePinIds);
         return { activePinIds };
       });
     },
     clear: () => {
+      TerminalEntity.idCounter = 0;
+      GateEntity.idCounter = 0;
+      PinEntity.idCounter = 0;
+
       set(() => ({
         terminals: [],
         gates: [],
         wires: [],
-        selectedGateId: -1,
-        selectedPinId: "",
+        selectedGate: null,
+        selectedPin: null,
         currentTruthTable: [],
         addingGateType: null,
-        activeTerminalIds: [],
+        activeTerminalPinIds: [],
         activePinIds: [],
       }));
     },

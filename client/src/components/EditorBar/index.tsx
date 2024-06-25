@@ -4,9 +4,10 @@ import { LuTable2 as TableIcon } from "react-icons/lu";
 import { HiOutlineSave as SaveIcon, HiOutlineUpload as UploadIcon } from "react-icons/hi";
 import { EditorState, useEditorStore } from "../../store";
 import TruthTable from "../TruthTable";
-import { GateMeta } from "../../common/types";
 import { toast } from "react-toastify";
 import { deserializeCircuit, serializeCircuit } from "../../libs/circuitFile";
+import GateTypeEntity from "../../entities/GateTypeEntity";
+import { IO } from "../../common/types";
 
 export function EditorBar() {
   const gateNameRef: any = useRef<any>(null);
@@ -24,6 +25,7 @@ export function EditorBar() {
   const setTerminals = useEditorStore((state: EditorState) => state.setTerminals);
   const setWires = useEditorStore((state: EditorState) => state.setWires);
   const addGateType = useEditorStore((state: EditorState) => state.addGateType);
+  const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
   const clearEditor = useEditorStore((state: EditorState) => state.clear);
 
   const handleGateNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -53,6 +55,7 @@ export function EditorBar() {
       setGates(gates);
       setTerminals(terminals);
       setWires(wires);
+      updateActivity();
     };
 
     reader.readAsArrayBuffer(file);
@@ -85,19 +88,11 @@ export function EditorBar() {
       return;
     }
 
-    const inputs: number = terminals.filter((pin) => pin.input).length;
+    const inputs: number = terminals.filter((pin) => pin.io === IO.Input).length;
     const outputs: number = terminals.length - inputs;
 
-    const gate: GateMeta = {
-      id: -1,
-      name,
-      pos: { x: 0, y: 0 },
-      inputs,
-      outputs,
-      truthTable: currentTruthTable,
-    };
-
-    addGateType(gate);
+    const gateType: GateTypeEntity = new GateTypeEntity(name, inputs, outputs, currentTruthTable);
+    addGateType(gateType);
     clearEditor();
 
     gateNameRef.current.value = "";
@@ -155,7 +150,7 @@ export function EditorBar() {
           </div>
           {showTruthTable && (
             <div className="absolute overflow-scroll max-h-44 no-scrollbar z-10 right-0">
-              <TruthTable pins={terminals} truthTable={currentTruthTable} />
+              <TruthTable terminals={terminals} truthTable={currentTruthTable} />
             </div>
           )}
         </div>

@@ -1,3 +1,6 @@
+import GateEntity from "../entities/GateEntity";
+import TerminalEntity from "../entities/TerminalEntity";
+
 export interface Pos {
   x: number;
   y: number;
@@ -7,24 +10,30 @@ export interface IEditorSettings {
   grid: boolean;
 }
 
-export interface GateMeta {
-  id: number;
-  name: string;
-  pos: Pos;  
-  inputs: number;
-  outputs: number;
-  truthTable: boolean[][];
+export enum IO {
+  Input,
+  Output,
 }
 
-export interface WireMeta {
-  pin0Id: string;
-  pin1Id: string;
-  checkpoints: Pos[];
+export enum PinType {
+  Terminal,
+  Gate,
 }
 
-export interface TerminalMeta {
-  id: string;
-  name: string;
-  input: boolean;
-  yPos: number;
+export namespace PinType {
+  export function fromEntity(entity: TerminalEntity | GateEntity): PinType {
+    if (entity instanceof TerminalEntity) {
+      return PinType.Terminal;
+    } else {
+      return PinType.Gate;
+    }
+  }
+
+  export function dynamicLogic<T>(type: PinType, terminal: () => T, gate: () => T): T {
+    if (type === PinType.Terminal) {
+      return terminal();
+    } else {
+      return gate();
+    }
+  }
 }

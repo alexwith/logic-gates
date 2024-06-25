@@ -1,16 +1,17 @@
 import { MouseEvent } from "react";
 import { Pos } from "../../common/types";
+import PinEntity from "../../entities/PinEntity";
 
 interface Props {
-  id: string;
+  pin: PinEntity;
   pos: Pos;
   onMouseDown: (event: MouseEvent) => void;
-  setLastPin: (id: string | null) => void;
+  setLastPin: (pin: PinEntity | null) => void;
 }
 
 const PIN_RADIUS = 10;
 
-export default function Pin({ id, pos, onMouseDown, setLastPin }: Props) {
+export default function Pin({ pin, pos, onMouseDown, setLastPin }: Props) {
   return (
     <circle
       className="fill-stone-950"
@@ -18,7 +19,7 @@ export default function Pin({ id, pos, onMouseDown, setLastPin }: Props) {
       cy={pos.y}
       r={PIN_RADIUS}
       onMouseDown={onMouseDown}
-      onMouseEnter={() => setLastPin(id)}
+      onMouseEnter={() => setLastPin(pin)}
       onMouseLeave={() => setLastPin(null)}
     />
   );

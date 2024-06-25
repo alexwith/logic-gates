@@ -1,45 +1,19 @@
-import { GateMeta } from "./types";
+import GateTypeEntity from "../entities/GateTypeEntity";
 
-export const BASE_GATES: GateMeta[] = [
-  {
-    id: -1,
-    name: "AND",
-    pos: { x: 0, y: 0 },
-    inputs: 2,
-    outputs: 1,
-    truthTable: [[true, true, true]],
-  },
-  {
-    id: -1,
-    name: "NOT",
-    pos: { x: 0, y: 0 },
-    inputs: 1,
-    outputs: 1,
-    truthTable: [[false, true]],
-  },
-  {
-    id: -1,
-    name: "OR",
-    pos: { x: 0, y: 0 },
-    inputs: 2,
-    outputs: 1,
-    truthTable: [
-      [true, false, true],
-      [false, true, true],
-      [true, true, true],
-    ],
-  },
-  {
-    id: -1,
-    name: "XOR",
-    pos: { x: 0, y: 0 },
-    inputs: 2,
-    outputs: 1,
-    truthTable: [
-      [true, false, true],
-      [false, true, true]
-    ],
-  },
+export const EDITOR_WIDTH = 1200; //px
+
+export const BASE_GATES: GateTypeEntity[] = [
+  new GateTypeEntity("AND", 2, 1, [[true, true, true]]),
+  new GateTypeEntity("NOT", 1, 1, [[false, true]]),
+  new GateTypeEntity("OR", 2, 1, [
+    [true, false, true],
+    [false, true, true],
+    [true, true, true],
+  ]),
+  new GateTypeEntity("XOR", 2, 1, [
+    [true, false, true],
+    [false, true, true],
+  ]),
 ];
 
 export const POS_ZERO = { x: 0, y: 0 };

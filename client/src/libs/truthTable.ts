@@ -1,15 +1,13 @@
-import { WireMeta, TerminalMeta, GateMeta } from "../common/types";
-import { inputTerminalId } from "../utils/idUtil";
+import { IO } from "../common/types";
+import PinEntity from "../entities/PinEntity";
+import TerminalEntity from "../entities/TerminalEntity";
+import WireEntity from "../entities/WireEntity";
 import { simulate } from "./circuit";
 
-export function createTruthTable(
-  terminals: TerminalMeta[],
-  wires: WireMeta[],
-  gates: GateMeta[]
-): boolean[][] {
+export function createTruthTable(terminals: TerminalEntity[], wires: WireEntity[]): boolean[][] {
   const truthTable: boolean[][] = [];
 
-  const inputTerminals = terminals.filter((pin) => pin.input).length;
+  const inputTerminals = terminals.filter((pin) => pin.io === IO.Input).length;
   const combinationAmount = 1 << inputTerminals; // 2^inputTerminals cause Math#pow is slow
   const combinations: boolean[][] = [];
   for (let i = 0; i < combinationAmount; i++) {
@@ -23,42 +21,41 @@ export function createTruthTable(
     }
   }
 
-  combinations.forEach((combination, i) => {
-    const terminalCombination = [];
+  combinations.forEach((combination) => {
+    const activePins: number[] = [];
     for (let i = 0; i < combination.length; i++) {
       if (combination[i]) {
-        terminalCombination.push(inputTerminalId(i));
+        activePins.push(terminals[i].pin.id);
       }
     }
 
-    const activePins: string[] = [...terminalCombination];
-    simulate(terminals, wires, gates, activePins);
+    simulate(terminals, wires, activePins);
 
     const outputValues: boolean[] = [];
     terminals
-      .filter((pin) => !pin.input)
+      .filter((pin) => pin.io !== IO.Input)
       .forEach((outputTerminal) => {
-        const id = outputTerminal.id;
+        const pin = outputTerminal.pin;
 
-        let matchingPinId: string | null = null;
+        let matchingPin: PinEntity | null = null;
         for (const wire of wires) {
-          const { pin0Id, pin1Id } = wire;
-          if (pin0Id === id) {
-            matchingPinId = pin1Id;
+          const { startPin, endPin } = wire;
+          if (startPin === pin) {
+            matchingPin = endPin;
             break;
           }
-          if (pin1Id === id) {
-            matchingPinId = pin0Id;
+          if (endPin === pin) {
+            matchingPin = startPin;
             break;
           }
         }
 
-        if (!matchingPinId) {
+        if (!matchingPin) {
           outputValues.push(false);
           return;
         }
 
-        const outputValue = activePins.includes(matchingPinId);
+        const outputValue = activePins.includes(matchingPin.id);
         outputValues.push(outputValue);
       });
 
