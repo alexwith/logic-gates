@@ -27,6 +27,7 @@ export function EditorBar() {
   const addGateType = useEditorStore((state: EditorState) => state.addGateType);
   const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
   const clearEditor = useEditorStore((state: EditorState) => state.clear);
+  const updateCurrentTruthTable = useEditorStore((state: EditorState) => state.updateCurrentTruthTable);
 
   const handleGateNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.target.value = event.target.value.toUpperCase();
@@ -55,6 +56,7 @@ export function EditorBar() {
       setGates(gates);
       setTerminals(terminals);
       setWires(wires);
+      updateCurrentTruthTable();
       updateActivity();
     };
 

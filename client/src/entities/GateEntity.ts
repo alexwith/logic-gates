@@ -27,10 +27,39 @@ class GateEntity {
     this.outputPins = this.populatePins(IO.Output);
   }
 
+  execute() {
+    const inputValues = [];
+    for (const pin of this.inputPins) {
+      inputValues.push(pin.active);
+    }
+
+    let outputValues: boolean[] | undefined;
+    truthTableLoop: for (const valuation of this.type.truthTable) {
+      const inputValutation = valuation.slice(0, this.type.inputs);
+
+      for (let i = 0; i < inputValutation.length; i++) {
+        if (inputValutation[i] !== inputValues[i]) {
+          continue truthTableLoop;
+        }
+      }
+
+      outputValues = valuation.slice(this.type.inputs);
+      break;
+    }
+
+    if (!outputValues) {
+      outputValues = Array(this.type.outputs).fill(false, 0, this.type.outputs);
+    }
+
+    for (let i = 0; i < outputValues.length; i++) {
+      this.outputPins[i].active = outputValues[i];
+    }
+  }
+
   private populatePins(io: IO): PinEntity[] {
     const pins: PinEntity[] = [];
     for (let i = 0; i < (io === IO.Input ? this.type.inputs : this.type.outputs); i++) {
-      pins.push(new PinEntity(this, i, io));
+      pins.push(new PinEntity(this, i, io, false));
     }
 
     return pins;
