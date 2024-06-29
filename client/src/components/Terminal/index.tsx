@@ -8,20 +8,19 @@ import { IO } from "../../common/types";
 interface Props {
   terminal: TerminalEntity;
   editorRect: DOMRect | undefined;
+  rerenderEditor: () => void;
 }
 
-export default function Terminal({ terminal, editorRect }: Props) {
+export default function Terminal({ terminal, editorRect, rerenderEditor: rerender }: Props) {
   const [ref, setRef] = useState<any>(null); // we need to rerender for computePos to be correct
   const buttonRef = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState<boolean>(false);
   const [hovering, setHovering] = useState<boolean>(false);
   const [dragging, setDragging] = useState<boolean>(false);
-  const [originY, setOriginY] = useState<number>(terminal.yPos);
+  const [originY, setOriginY] = useState<number>(terminal.yPos);  
 
   const { mouseDragOffset } = useMouse();
 
-  const updateTerminal = useEditorStore((state: EditorState) => state.updateTerminal);
-  const toggleTerminal = useEditorStore((state: EditorState) => state.toggleTerminal);
+  const updateTerminal = useEditorStore((state: EditorState) => state.updateTerminal);  
   const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
 
   const computePos = (): any => {
@@ -62,9 +61,10 @@ export default function Terminal({ terminal, editorRect }: Props) {
       return;
     }
 
-    toggleTerminal(terminal);
-    setActive(!active);
+    terminal.pin.active = !terminal.pin.active;
+
     updateActivity();
+    rerender();
   };
 
   useEffect(() => {
@@ -103,7 +103,7 @@ export default function Terminal({ terminal, editorRect }: Props) {
         <div
           className={`h-8 w-8 rounded-full border-4 ${
             terminal.io === IO.Input ? "mr-auto" : "ml-auto"
-          } ${active ? "bg-red-500 border-zinc-700" : "bg-stone-950 border-zinc-600"}`}
+          } ${terminal.pin.active ? "bg-red-500 border-zinc-700" : "bg-stone-950 border-zinc-600"}`}
           ref={buttonRef}
           onClick={handleClick}
         />

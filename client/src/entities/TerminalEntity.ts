@@ -19,7 +19,7 @@ class TerminalEntity {
     this.name = name;
     this.io = io;
     this.yPos = yPos;
-    this.pin = new PinEntity(this, 0, this.io);
+    this.pin = new PinEntity(this, 0, this.io, false);
   }
 }
 

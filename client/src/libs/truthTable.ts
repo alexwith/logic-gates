@@ -1,10 +1,14 @@
 import { IO } from "../common/types";
-import PinEntity from "../entities/PinEntity";
+import GateEntity from "../entities/GateEntity";
 import TerminalEntity from "../entities/TerminalEntity";
 import WireEntity from "../entities/WireEntity";
 import { simulate } from "./circuit";
 
-export function createTruthTable(terminals: TerminalEntity[], wires: WireEntity[]): boolean[][] {
+export function createTruthTable(
+  terminals: TerminalEntity[],
+  wires: WireEntity[],
+  gates: GateEntity[]
+): boolean[][] {
   const truthTable: boolean[][] = [];
 
   const inputTerminals = terminals.filter((pin) => pin.io === IO.Input).length;
@@ -21,46 +25,31 @@ export function createTruthTable(terminals: TerminalEntity[], wires: WireEntity[
     }
   }
 
+  const previousInputValues = terminals
+    .filter((terminal) => terminal.io === IO.Input)
+    .map((terminal) => terminal.pin.active);
+
   combinations.forEach((combination) => {
-    const activePins: number[] = [];
     for (let i = 0; i < combination.length; i++) {
-      if (combination[i]) {
-        activePins.push(terminals[i].pin.id);
-      }
+      terminals[i].pin.active = combination[i];
     }
 
-    simulate(terminals, wires, activePins);
+    simulate(wires, gates);
 
     const outputValues: boolean[] = [];
     terminals
-      .filter((pin) => pin.io !== IO.Input)
+      .filter((pin) => pin.io === IO.Output)
       .forEach((outputTerminal) => {
-        const pin = outputTerminal.pin;
-
-        let matchingPin: PinEntity | null = null;
-        for (const wire of wires) {
-          const { startPin, endPin } = wire;
-          if (startPin === pin) {
-            matchingPin = endPin;
-            break;
-          }
-          if (endPin === pin) {
-            matchingPin = startPin;
-            break;
-          }
-        }
-
-        if (!matchingPin) {
-          outputValues.push(false);
-          return;
-        }
-
-        const outputValue = activePins.includes(matchingPin.id);
+        const outputValue = outputTerminal.pin.active;
         outputValues.push(outputValue);
       });
 
     truthTable.push(combination.concat(outputValues));
   });
+
+  terminals
+    .filter((terminal) => terminal.io === IO.Input)
+    .forEach((terminal, i) => (terminal.pin.active = previousInputValues[i]));
 
   return truthTable;
 }

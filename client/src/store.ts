@@ -19,8 +19,6 @@ export interface EditorState {
   selectedPin: PinEntity | null;
   currentTruthTable: boolean[][];
   addingGateType: GateTypeEntity | null;
-  activeTerminalPinIds: number[];
-  activePinIds: number[];
   setSettings: (settings: IEditorSettings) => void;
   setGateTypes: (gateTypes: GateTypeEntity[]) => void;
   addGateType: (gateType: GateTypeEntity) => void;
@@ -36,7 +34,6 @@ export interface EditorState {
   setSelectedPin: (pin: PinEntity | null) => void;
   setSelectedGate: (gate: GateEntity | null) => void;
   setAddingGateType: (type: GateTypeEntity) => void;
-  toggleTerminal: (terminal: TerminalEntity) => void;
   updateCurrentTruthTable: () => void;
   updateActivity: () => void;
   clear: () => void;
@@ -55,8 +52,6 @@ export const useEditorStore = create<EditorState>((set) => {
     selectedPin: null,
     currentTruthTable: [],
     addingGateType: null,
-    activeTerminalPinIds: [],
-    activePinIds: [],
     setSettings: (settings: IEditorSettings) => {
       set(() => ({
         settings,
@@ -142,25 +137,16 @@ export const useEditorStore = create<EditorState>((set) => {
         addingGateType: type,
       }));
     },
-    toggleTerminal: (terminal: TerminalEntity) => {
-      set((state) => {
-        const activeTerminalIds = [...state.activeTerminalPinIds];
-        const index = activeTerminalIds.indexOf(terminal.pin.id);
-        index !== -1 ? activeTerminalIds.splice(index, 1) : activeTerminalIds.push(terminal.pin.id);
-
-        return { activeTerminalPinIds: activeTerminalIds };
-      });
-    },
     updateCurrentTruthTable: () => {
       set((state) => ({
-        currentTruthTable: createTruthTable(state.terminals, state.wires),
+        currentTruthTable: createTruthTable(state.terminals, state.wires, state.gates),
       }));
     },
     updateActivity: () => {
       set((state) => {
-        const activePinIds: number[] = [...state.activeTerminalPinIds];
-        simulate(state.terminals, state.wires, activePinIds);
-        return { activePinIds };
+        simulate(state.wires, state.gates);
+
+        return {};
       });
     },
     clear: () => {

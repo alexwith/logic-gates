@@ -28,7 +28,10 @@ import { EDITOR_WIDTH } from "../../common/constants";
 export default function Editor() {
   const ref = useRef<HTMLDivElement>(null);
   const { mouseDragOffset } = useMouse();
-  const { mouseDragOffset: wiringMouseOffset, updateOrigin: wiringUpdateOrigin } = useMouse(true, true);
+  const { mouseDragOffset: wiringMouseOffset, updateOrigin: wiringUpdateOrigin } = useMouse(
+    true,
+    true
+  );
 
   const [gateOrigin, setGateOrigin] = useState<Pos>({ x: 0, y: 0 });
   const [isDraggingGate, setIsDraggingGate] = useState<boolean>(false);
@@ -39,6 +42,7 @@ export default function Editor() {
   const [terminalAdderY, setTerminalAdderY] = useState<number | null>(null);
   const [isTerminalAdderInput, setIsTerminalAdderInput] = useState<boolean>(true);
   const [expandWarning, setExpandWarning] = useState<boolean>(false);
+  const [render, rerender] = useState<boolean>(false);
 
   const settings = useEditorStore((state: EditorState) => state.settings);
   const terminals = useEditorStore((state: EditorState) => state.terminals);
@@ -48,7 +52,6 @@ export default function Editor() {
   const selectedPin = useEditorStore((state: EditorState) => state.selectedPin);
   const setSelectedPin = useEditorStore((state: EditorState) => state.setSelectedPin);
   const addingGateType = useEditorStore((state: EditorState) => state.addingGateType);
-  const activePinIds = useEditorStore((state: EditorState) => state.activePinIds);
 
   const addWire = useEditorStore((state: EditorState) => state.addWire);
   const removeWire = useEditorStore((state: EditorState) => state.removeWire);
@@ -279,6 +282,7 @@ export default function Editor() {
               key={i}
               terminal={terminal}
               editorRect={ref.current?.getBoundingClientRect()}
+              rerenderEditor={() => rerender(!render)}
             />
           );
         })}
@@ -346,7 +350,8 @@ export default function Editor() {
               key={i}
               points={[wire.startPin.getPos(), ...wire.checkpoints, wire.endPin.getPos()]}
               active={
-                activePinIds.includes(wire.startPin.id) || activePinIds.includes(wire.endPin.id)
+                wire.startPin.active || wire.endPin.active
+                //activePinIds.includes(wire.startPin.id) || activePinIds.includes(wire.endPin.id)
               }
             />
           ))}

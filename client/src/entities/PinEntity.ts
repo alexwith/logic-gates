@@ -8,10 +8,11 @@ class PinEntity {
   attached: GateEntity | TerminalEntity;
   index: number;
   io: IO;
+  active: boolean;
 
   static idCounter: number = 0;
 
-  constructor(attached: GateEntity | TerminalEntity, index: number, io: IO, id?: number) {
+  constructor(attached: GateEntity | TerminalEntity, index: number, io: IO, active: boolean, id?: number) {
     if (id && id >= PinEntity.idCounter) {
       PinEntity.idCounter = id + 1;
     }
@@ -20,6 +21,7 @@ class PinEntity {
     this.attached = attached;
     this.index = index;
     this.io = io;
+    this.active = active;
   }
 
   getPos(): Pos {
