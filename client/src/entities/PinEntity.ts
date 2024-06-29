@@ -27,7 +27,7 @@ class PinEntity {
   getPos(): Pos {
     if (this.attached instanceof TerminalEntity) {
       return {
-        x: this.io === IO.Input ? 40 : EDITOR_WIDTH - 49,
+        x: this.attached.io === IO.Input ? 40 : EDITOR_WIDTH - 49,
         y: this.attached.yPos - 15,
       };
     } else if (this.attached instanceof GateEntity) {

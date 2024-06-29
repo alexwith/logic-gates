@@ -1,4 +1,4 @@
-import { Pos } from "../common/types";
+import { IO, Pos } from "../common/types";
 import PinEntity from "./PinEntity";
 
 class WireEntity {
@@ -13,18 +13,14 @@ class WireEntity {
   }
 
   execute() {
-    /*if (
-      this.startPin.io === this.endPin.io &&
-      this.startPin instanceof PinEntity &&
-      this.endPin instanceof PinEntity
-    ) {
+    if (this.startPin.io === IO.Output && this.endPin.io === IO.Input) {
+      this.endPin.active = this.startPin.active;
+    } else if (this.startPin.io === IO.Input && this.endPin.io === IO.Output) {
+      this.startPin.active = this.endPin.active;
+    } else {
       this.startPin.active = this.startPin.active || this.endPin.active;
       this.endPin.active = this.startPin.active;
-    } else {
-      this.endPin.active = this.startPin.active;
-    }*/
-
-    this.endPin.active = this.startPin.active;
+    }
   }
 }
 

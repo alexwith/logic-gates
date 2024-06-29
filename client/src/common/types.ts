@@ -15,6 +15,16 @@ export enum IO {
   Output,
 }
 
+export namespace IO {
+  export function opposite(io: IO) {
+    if (io === IO.Input) {
+      return IO.Output;
+    } else {
+      return IO.Input;
+    }
+  }
+}
+
 export enum PinType {
   Terminal,
   Gate,
