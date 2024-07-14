@@ -52,7 +52,8 @@ class GateEntity {
     }
 
     for (let i = 0; i < outputValues.length; i++) {
-      this.outputPins[i].active = outputValues[i];
+      const outputPin = this.outputPins[i];
+      outputPin.active = outputValues[i];
     }
   }
 
