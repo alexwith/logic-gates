@@ -2,6 +2,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import { IoCreateOutline as CreateIcon } from "react-icons/io5";
 import { LuTable2 as TableIcon } from "react-icons/lu";
 import { HiOutlineSave as SaveIcon, HiOutlineUpload as UploadIcon } from "react-icons/hi";
+import { AiOutlineAppstore as MenuIcon } from "react-icons/ai";
 import { EditorState, useEditorStore } from "../../store";
 import TruthTable from "../TruthTable";
 import { toast } from "react-toastify";
@@ -12,6 +13,7 @@ import { IO } from "../../common/types";
 export function EditorBar() {
   const circuitNameRef: any = useRef<any>(null);
 
+  const [showMenu, setShowMenu] = useState<boolean>(false);
   const [showTruthTable, setShowTruthTable] = useState<boolean>(false);
 
   const gates = useEditorStore((state: EditorState) => state.gates);
@@ -105,37 +107,49 @@ export function EditorBar() {
         className="font-bold text-xl px-2 bg-transparent placeholder:text-zinc-600 outline-none"
         ref={circuitNameRef}
         type="text"
-        placeholder="NAME"        
+        placeholder="NAME"
       />
       <div className="flex space-x-2">
-        <div>
-          <input
-            className="opacity-0 absolute -z-10"
-            type="file"
-            id="import-button"
-            onChange={handleImportClick}
-          />
-          <label
-            className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold bg-violet-500 hover:cursor-pointer"
-            htmlFor="import-button"
+        <div onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>
+          <div className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold bg-violet-500 hover:cursor-pointer">
+            <MenuIcon size={20} />
+            <p>Menu</p>
+          </div>
+          <div
+            className={`absolute flex flex-col space-y-1 bg-zinc-700 p-2 w-44 rounded-md z-10 ${
+              showMenu ? "" : "hidden"
+            }`}
           >
-            <UploadIcon size={20} />
-            <p>Import</p>
-          </label>
-        </div>
-        <div
-          onClick={handleSaveClick}
-          className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold bg-violet-500 hover:cursor-pointer"
-        >
-          <SaveIcon size={20} />
-          <p>Save</p>
-        </div>
-        <div
-          onClick={handleCreateClick}
-          className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold bg-violet-500 hover:cursor-pointer"
-        >
-          <CreateIcon size={20} />
-          <p>Create circuit</p>
+            <div>
+              <input
+                className="opacity-0 absolute -z-10"
+                type="file"
+                id="import-button"
+                onChange={handleImportClick}
+              />
+              <label
+                className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold hover:bg-violet-500 hover:cursor-pointer"
+                htmlFor="import-button"
+              >
+                <UploadIcon size={20} />
+                <p>Import</p>
+              </label>
+            </div>
+            <div
+              onClick={handleSaveClick}
+              className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold hover:bg-violet-500 hover:cursor-pointer"
+            >
+              <SaveIcon size={20} />
+              <p>Save</p>
+            </div>
+            <div
+              onClick={handleCreateClick}
+              className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold hover:bg-violet-500 hover:cursor-pointer"
+            >
+              <CreateIcon size={20} />
+              <p>Create circuit</p>
+            </div>
+          </div>
         </div>
         <div
           onMouseEnter={() => setShowTruthTable(true)}
