@@ -1,4 +1,4 @@
-import { ChangeEvent, KeyboardEvent, useRef, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { IoCreateOutline as CreateIcon } from "react-icons/io5";
 import { LuTable2 as TableIcon } from "react-icons/lu";
 import { HiOutlineSave as SaveIcon, HiOutlineUpload as UploadIcon } from "react-icons/hi";
@@ -10,7 +10,7 @@ import GateTypeEntity from "../../entities/GateTypeEntity";
 import { IO } from "../../common/types";
 
 export function EditorBar() {
-  const gateNameRef: any = useRef<any>(null);
+  const circuitNameRef: any = useRef<any>(null);
 
   const [showTruthTable, setShowTruthTable] = useState<boolean>(false);
 
@@ -27,17 +27,9 @@ export function EditorBar() {
   const addGateType = useEditorStore((state: EditorState) => state.addGateType);
   const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
   const clearEditor = useEditorStore((state: EditorState) => state.clear);
-  const updateCurrentTruthTable = useEditorStore((state: EditorState) => state.updateCurrentTruthTable);
-
-  const handleGateNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    event.target.value = event.target.value.toUpperCase();
-  };
-
-  const handleGateNameKeydown = (event: KeyboardEvent) => {
-    if (/[^A-Za-z0-9]+/.test(event.key)) {
-      event.preventDefault();
-    }
-  };
+  const updateCurrentTruthTable = useEditorStore(
+    (state: EditorState) => state.updateCurrentTruthTable
+  );
 
   const handleImportClick = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -84,9 +76,14 @@ export function EditorBar() {
       return;
     }
 
-    const { value: name } = gateNameRef.current;
+    const { value: name } = circuitNameRef.current;
     if (name == null || name.length < 1) {
       toast.error("You must provide a name for the circuit.");
+      return;
+    }
+
+    if (!/^[a-zA-Z0-9]+(?: [a-zA-Z0-9]+)*$/.test(name)) {
+      toast.error("The name can only contain letters, numbers and single spaces.");
       return;
     }
 
@@ -97,7 +94,7 @@ export function EditorBar() {
     addGateType(gateType);
     clearEditor();
 
-    gateNameRef.current.value = "";
+    circuitNameRef.current.value = "";
 
     toast.success("Created new circuit.");
   };
@@ -106,11 +103,9 @@ export function EditorBar() {
     <div className="relative flex justify-between">
       <input
         className="font-bold text-xl px-2 bg-transparent placeholder:text-zinc-600 outline-none"
-        ref={gateNameRef}
+        ref={circuitNameRef}
         type="text"
-        placeholder="NAME"
-        onKeyDown={handleGateNameKeydown}
-        onChange={handleGateNameChange}
+        placeholder="NAME"        
       />
       <div className="flex space-x-2">
         <div>
