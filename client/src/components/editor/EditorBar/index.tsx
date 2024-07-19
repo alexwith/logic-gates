@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { deserializeCircuit, serializeCircuit } from "../../../libs/circuitFile";
 import GateTypeEntity from "../../../entities/GateTypeEntity";
 import { IO } from "../../../common/types";
+import BasicButton from "../../common/BasicButton";
 
 export function EditorBar() {
   const circuitNameRef: any = useRef<any>(null);
@@ -111,10 +112,7 @@ export function EditorBar() {
       />
       <div className="flex space-x-2">
         <div onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>
-          <div className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold bg-violet-500 hover:cursor-pointer">
-            <MenuIcon size={20} />
-            <p>Menu</p>
-          </div>
+          <BasicButton name="Menu" icon={<MenuIcon size={20} />} />
           <div
             className={`absolute flex flex-col space-y-1 bg-zinc-800 p-2 w-44 rounded-md z-10 ${
               showMenu ? "" : "hidden"
@@ -135,30 +133,25 @@ export function EditorBar() {
                 <p>Import</p>
               </label>
             </div>
-            <div
+            <BasicButton
+              name="Save"
+              icon={<SaveIcon size={20} />}
+              hoverable
               onClick={handleSaveClick}
-              className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold hover:bg-violet-500 hover:cursor-pointer"
-            >
-              <SaveIcon size={20} />
-              <p>Save</p>
-            </div>
-            <div
+            />
+            <BasicButton
+              name="Create circuit"
+              icon={<CreateIcon size={20} />}
+              hoverable
               onClick={handleCreateClick}
-              className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold hover:bg-violet-500 hover:cursor-pointer"
-            >
-              <CreateIcon size={20} />
-              <p>Create circuit</p>
-            </div>
+            />
           </div>
         </div>
         <div
           onMouseEnter={() => setShowTruthTable(true)}
           onMouseLeave={() => setShowTruthTable(false)}
         >
-          <div className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold bg-violet-500 hover:cursor-pointer">
-            <TableIcon size={20} />
-            <p>Truth table</p>
-          </div>
+          <BasicButton name="Truth Table" icon={<TableIcon size={20} />} />
           {showTruthTable && (
             <div className="absolute overflow-scroll max-h-44 no-scrollbar z-10 right-0">
               <TruthTable terminals={terminals} truthTable={currentTruthTable} />

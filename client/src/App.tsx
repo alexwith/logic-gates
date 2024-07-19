@@ -2,7 +2,10 @@ import Editor from "./components/editor/Editor";
 import MiniProfile from "./components/profile/MiniProfile";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Profile from "./components/profile/Profile";
 
+// <Editor />
+// <Profile />
 export default function App() {
   return (
     <>
@@ -11,7 +14,7 @@ export default function App() {
           <h1 className="font-black text-3xl">Logic Gates</h1>
           <MiniProfile />
         </div>
-        <Editor />
+        <Profile />
       </div>
       <ToastContainer
         position="top-right"

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import DynamicInput from "../../DynamicInput";
+import DynamicInput from "../../common/DynamicInput";
 import { EditorState, useEditorStore } from "../../../store";
 import useMouse from "../../../hooks/useMouse";
 import TerminalEntity from "../../../entities/TerminalEntity";
