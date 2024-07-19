@@ -1,4 +1,4 @@
-import TerminalEntity from "../../entities/TerminalEntity";
+import TerminalEntity from "../../../entities/TerminalEntity";
 
 interface Props {
   terminals: TerminalEntity[];

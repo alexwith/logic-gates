@@ -1,4 +1,4 @@
-import { EditorState, useEditorStore } from "../../store";
+import { EditorState, useEditorStore } from "../../../store";
 
 export default function GateTypes() {
   const gateTypes = useEditorStore((state: EditorState) => state.gateTypes);

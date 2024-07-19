@@ -1,5 +1,5 @@
 import { roundCommands } from "svg-round-corners";
-import { Pos } from "../../common/types";
+import { Pos } from "../../../common/types";
 import { useEffect, useState } from "react";
 
 interface Props {

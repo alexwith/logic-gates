@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useUser } from "../../hooks/useUser";
-import { createGithubUrl } from "../../utils/createGithubUrl";
+import { useUser } from "../../../hooks/useUser";
+import { createGithubUrl } from "../../../utils/createGithubUrl";
 import { TbLogin2 as LogInIcon } from "react-icons/tb";
 import { TbLogout2 as LogOutIcon } from "react-icons/tb";
 

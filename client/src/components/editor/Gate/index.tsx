@@ -1,4 +1,4 @@
-import GateEntity from "../../entities/GateEntity";
+import GateEntity from "../../../entities/GateEntity";
 
 interface Props {
   gate: GateEntity;

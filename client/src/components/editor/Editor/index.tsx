@@ -6,24 +6,24 @@ import {
   useRef,
   useState,
 } from "react";
-import { IO, Pos } from "../../common/types";
+import { IO, Pos } from "../../../common/types";
 import Gate from "../Gate";
 import Pin from "../Pin";
 import Wire from "../Wire";
-import useMouse from "../../hooks/useMouse";
+import useMouse from "../../../hooks/useMouse";
 import Terminal from "../Terminal";
-import { EditorState, useEditorStore } from "../../store";
+import { EditorState, useEditorStore } from "../../../store";
 import { FaPlus as AddIcon } from "react-icons/fa";
 import { VscArrowBoth as ExpandWidthIcon } from "react-icons/vsc";
 import { LuTrash2 as TrashIcon } from "react-icons/lu";
 import EditorSettings from "../EditorSettings";
 import { EditorBar } from "../EditorBar";
 import GateTypes from "../GateTypes";
-import PinEntity from "../../entities/PinEntity";
-import GateEntity from "../../entities/GateEntity";
-import TerminalEntity from "../../entities/TerminalEntity";
-import WireEntity from "../../entities/WireEntity";
-import { EDITOR_WIDTH } from "../../common/constants";
+import PinEntity from "../../../entities/PinEntity";
+import GateEntity from "../../../entities/GateEntity";
+import TerminalEntity from "../../../entities/TerminalEntity";
+import WireEntity from "../../../entities/WireEntity";
+import { EDITOR_WIDTH } from "../../../common/constants";
 
 export default function Editor() {
   const ref = useRef<HTMLDivElement>(null);

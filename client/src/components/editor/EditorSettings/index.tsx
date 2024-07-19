@@ -1,5 +1,5 @@
 import { BsFillGrid3X3GapFill as GridIcon } from "react-icons/bs";
-import { EditorState, useEditorStore } from "../../store";
+import { EditorState, useEditorStore } from "../../../store";
 
 export default function EditorSettings() {
   const settings = useEditorStore((state: EditorState) => state.settings);

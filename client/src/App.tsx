@@ -1,5 +1,5 @@
-import Editor from "./components/Editor";
-import MiniProfile from "./components/MiniProfile";
+import Editor from "./components/editor/Editor";
+import MiniProfile from "./components/profile/MiniProfile";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import DynamicInput from "../DynamicInput";
-import { EditorState, useEditorStore } from "../../store";
-import useMouse from "../../hooks/useMouse";
-import TerminalEntity from "../../entities/TerminalEntity";
-import { IO } from "../../common/types";
+import DynamicInput from "../../DynamicInput";
+import { EditorState, useEditorStore } from "../../../store";
+import useMouse from "../../../hooks/useMouse";
+import TerminalEntity from "../../../entities/TerminalEntity";
+import { IO } from "../../../common/types";
 
 interface Props {
   terminal: TerminalEntity;

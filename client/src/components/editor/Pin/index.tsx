@@ -1,6 +1,6 @@
 import { MouseEvent } from "react";
-import { Pos } from "../../common/types";
-import PinEntity from "../../entities/PinEntity";
+import { Pos } from "../../../common/types";
+import PinEntity from "../../../entities/PinEntity";
 
 interface Props {
   pin: PinEntity;
