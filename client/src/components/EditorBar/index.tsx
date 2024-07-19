@@ -116,7 +116,7 @@ export function EditorBar() {
             <p>Menu</p>
           </div>
           <div
-            className={`absolute flex flex-col space-y-1 bg-zinc-700 p-2 w-44 rounded-md z-10 ${
+            className={`absolute flex flex-col space-y-1 bg-zinc-800 p-2 w-44 rounded-md z-10 ${
               showMenu ? "" : "hidden"
             }`}
           >

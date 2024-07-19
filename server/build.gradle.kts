@@ -20,7 +20,6 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web:3.2.5");
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.2.3")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -29,7 +28,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0-RC")
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.52.0")
 }
 
 tasks.withType<KotlinCompile> {

@@ -1,25 +1,33 @@
 package com.github.alexwith.gates.service
 
+import com.github.alexwith.gates.domain.User
+import com.github.alexwith.gates.domain.UserEntity
 import com.github.alexwith.gates.exception.ResourceNotFoundException
-import com.github.alexwith.gates.model.User
-import com.github.alexwith.gates.repository.UserRepository
 import jakarta.servlet.http.HttpServletRequest
-import org.springframework.beans.factory.annotation.Autowired
+import org.jetbrains.exposed.sql.selectAll
 import org.springframework.stereotype.Service
 
 @Service
-class UserService @Autowired constructor(val userRepository: UserRepository) {
+class UserService {
 
     fun findById(id: Long): User {
-        return this.userRepository.findById(id).orElseThrow { ResourceNotFoundException("Not found") }
+        return UserEntity
+            .selectAll()
+            .where { UserEntity.id eq id }
+            .map(User::wrapRow)
+            .firstOrNull() ?: throw ResourceNotFoundException("Not found")
     }
 
     fun findByGithubId(githubId: Long): User {
-        return this.userRepository.findByGithubId(githubId) ?: throw ResourceNotFoundException("Not found")
+        return UserEntity
+            .selectAll()
+            .where { UserEntity.githubId eq githubId }
+            .map(User::wrapRow)
+            .firstOrNull() ?: throw ResourceNotFoundException("Not found")
     }
 
-    fun create(user: User): User {
-        return this.userRepository.save(user)
+    fun create(init: User.() -> Unit): User {
+        return User.new(init);
     }
 
     fun getFromRequest(request: HttpServletRequest): User {

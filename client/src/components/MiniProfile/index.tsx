@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useUser } from "../../hooks/useUser";
 import { createGithubUrl } from "../../utils/createGithubUrl";
-import { TbLogin2 as LoginIcon } from "react-icons/tb";
+import { TbLogin2 as LogInIcon } from "react-icons/tb";
+import { TbLogout2 as LogOutIcon } from "react-icons/tb";
 
 export default function MiniProfile() {
   const user = useUser();
@@ -25,15 +26,18 @@ export default function MiniProfile() {
           onMouseEnter={() => setHoveringProfile(true)}
           onMouseLeave={() => setHoveringProfile(false)}
         >
-          <h1 className="text-lg font-bold hover:cursor-pointer hover:text-zinc-400">{user.username}</h1>
+          <h1 className="text-lg font-bold hover:cursor-pointer hover:text-zinc-400">
+            {user.username}
+          </h1>
           {hoveringProfile ? (
-            <div className="absolute z-10 rounded-lg bg-zinc-800 font-medium text-md p-2 w-[200px] translate-x-[-120px]">
-              <p
-                className="px-2 py-1 rounded-md hover:cursor-pointer hover:bg-zinc-700"
+            <div className="absolute z-10 rounded-lg bg-zinc-800 font-bold text-md p-2 w-[200px] translate-x-[-120px]">
+              <div
+                className="flex space-x-1 items-center px-2 py-1 rounded-md hover:cursor-pointer hover:bg-violet-500"
                 onClick={logout}
               >
-                Log Out
-              </p>
+                <LogOutIcon size={20} />
+                <p>Log Out</p>
+              </div>
             </div>
           ) : (
             <></>
@@ -47,7 +51,7 @@ export default function MiniProfile() {
           }}
         >
           <h1 className="text-lg font-bold">Log In</h1>
-          <LoginIcon size={25} />
+          <LogInIcon size={25} />
         </div>
       )}
     </div>
