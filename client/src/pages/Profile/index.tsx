@@ -17,44 +17,56 @@ export default function Profile() {
   }
 
   return (
-    <div className="">
-      <div className="flex justify-between mb-4">
-        <h1 className="font-bold text-2xl">Projects</h1>
-        <BasicButton name="New Project" icon={<NewProjectIcon size={20} />} />
+    <div className="flex flex-col">
+      <div className="mb-12">
+        <img
+          className="w-28 h-28 rounded-full border-4 border-zinc-800"
+          alt="User avatar"
+          src={`https://avatars.githubusercontent.com/u/${user.githubId}?v=4`}
+        />
+        <h1 className="font-bold text-2xl">{user.username}</h1>
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <ProjectCard
-          name="SR Latch"
-          description="Here is a very short description about this project. And it continues so we can see the end of the potato."
-        />
-        <ProjectCard
-          name="SR Latch"
-          description="Here is a very short description about this project. And it continues so we can see the end of the potato."
-        />
-        <ProjectCard
-          name="SR Latch"
-          description="Here is a very short description about this project. And it continues so we can see the end of the potato."
-        />
-        <ProjectCard
-          name="SR Latch"
-          description="Here is a very short description about this project. And it continues so we can see the end of the potato."
-        />
-        <ProjectCard
-          name="SR Latch"
-          description="Here is a very short description about this project. And it continues so we can see the end of the potato."
-        />
-        <ProjectCard
-          name="SR Latch"
-          description="Here is a very short description about this project. And it continues so we can see the end of the potato."
-        />
+      <div>
+        <div className="flex justify-between mb-4">
+          <h1 className="font-bold text-2xl">Projects</h1>
+          <BasicButton name="New Project" icon={<NewProjectIcon size={20} />} />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <ProjectCard
+            name="SR Latch"
+            description="Here is a very short description about this project. And it continues so we can see the end of the potato."
+          />
+          <ProjectCard
+            name="SR Latch"
+            description="Here is a very short description about this project. And it continues so we can see the end of the potato."
+          />
+          <ProjectCard
+            name="SR Latch"
+            description="Here is a very short description about this project. And it continues so we can see the end of the potato."
+          />
+          <ProjectCard
+            name="SR Latch"
+            description="Here is a very short description about this project. And it continues so we can see the end of the potato."
+          />
+          <ProjectCard
+            name="SR Latch"
+            description="Here is a very short description about this project. And it continues so we can see the end of the potato."
+          />
+          <ProjectCard
+            name="SR Latch"
+            description="Here is a very short description about this project. And it continues so we can see the end of the potato."
+          />
+        </div>
       </div>
     </div>
   );
 }
 
-export const handleProfileLoader = ({ params }: any): string => {
+export const handleProfileLoader = async ({ params }: any): Promise<string> => {
   const { userId } = params;
-  if (false) {
+
+  const response = await fetch(`http://localhost:8080/api/v1/user/${userId}`);
+  if (response.status === 404) {
     throw new Response("", { status: 404 });
   }
 
