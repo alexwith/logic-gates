@@ -5,15 +5,39 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { UserProvider } from "./hooks/useUser";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Layout } from "./components/common/Layout";
+import Editor from "./pages/Editor";
+import Profile, { handleProfileLoader } from "./pages/Profile";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+  },
+  {
+    path: "/editor",
+    element: <Editor />,
+  },
+  {
+    path: "/user/:userId",
+    element: <Profile />,
+    loader: handleProfileLoader,
+    errorElement: <NotFound />,
+  },
+]);
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <UserProvider>
-        <App />
+        <Layout>
+          <RouterProvider router={router} />
+        </Layout>
       </UserProvider>
     </QueryClientProvider>
   </React.StrictMode>

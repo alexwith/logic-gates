@@ -1,8 +1,21 @@
-import BasicButton from "../../common/BasicButton";
-import ProjectCard from "../ProjectCard";
+import { useLoaderData } from "react-router-dom";
+import BasicButton from "../../components/common/BasicButton";
+import ProjectCard from "../../components/profile/ProjectCard";
 import { LuCircuitBoard as NewProjectIcon } from "react-icons/lu";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Profile() {
+  const userId: string = useLoaderData() as string;
+  const { isLoading, data: user } = useQuery({
+    queryKey: ["user"],
+    queryFn: () =>
+      fetch(`http://localhost:8080/api/v1/users/${userId}`).then((response) => response.json()),
+  });
+
+  if (isLoading) {
+    return <h1>Loading...</h1>;
+  }
+
   return (
     <div className="">
       <div className="flex justify-between mb-4">
@@ -38,3 +51,12 @@ export default function Profile() {
     </div>
   );
 }
+
+export const handleProfileLoader = ({ params }: any): string => {
+  const { userId } = params;
+  if (false) {
+    throw new Response("", { status: 404 });
+  }
+
+  return userId;
+};
