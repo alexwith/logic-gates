@@ -9,7 +9,7 @@ export default function Profile() {
   const { isLoading, data: user } = useQuery({
     queryKey: ["user"],
     queryFn: () =>
-      fetch(`http://localhost:8080/api/v1/users/${userId}`).then((response) => response.json()),
+      fetch(`http://localhost:8080/api/v1/user/${userId}`).then((response) => response.json()),
   });
 
   if (isLoading) {
