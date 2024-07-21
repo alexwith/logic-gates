@@ -10,6 +10,7 @@ import { Layout } from "./components/common/Layout";
 import Editor from "./pages/Editor";
 import Profile, { handleProfileLoader } from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import NewProject from "./pages/NewProject";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
   {
     path: "/editor",
     element: <Editor />,
+  },
+  {
+    path: "/newproject",
+    element: <NewProject />,
   },
   {
     path: "/user/:userId",

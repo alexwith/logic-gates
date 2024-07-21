@@ -1,10 +1,11 @@
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import BasicButton from "../../components/common/BasicButton";
 import ProjectCard from "../../components/profile/ProjectCard";
 import { LuCircuitBoard as NewProjectIcon } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Profile() {
+  const routerNavigate = useNavigate();
   const userId: string = useLoaderData() as string;
   const { isLoading, data: user } = useQuery({
     queryKey: ["user"],
@@ -15,6 +16,10 @@ export default function Profile() {
   if (isLoading) {
     return <h1>Loading...</h1>;
   }
+
+  const handleNewProjectClick = () => {
+    routerNavigate("/newproject");
+  };
 
   return (
     <div className="flex flex-col">
@@ -29,7 +34,11 @@ export default function Profile() {
       <div>
         <div className="flex justify-between mb-4">
           <h1 className="font-bold text-2xl">Projects</h1>
-          <BasicButton name="New Project" icon={<NewProjectIcon size={20} />} />
+          <BasicButton
+            name="New Project"
+            icon={<NewProjectIcon size={20} />}
+            onClick={handleNewProjectClick}
+          />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <ProjectCard
