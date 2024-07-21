@@ -12,8 +12,8 @@ class User(id: EntityID<Long>) : LongEntity(id) {
     val projects by Project referrersOn ProjectEntity.creator
 
     fun toDTO(): UserDTO {
-        return UserDTO(githubId, username)
+        return UserDTO(id.value, githubId, username)
     }
 }
 
-class UserDTO(val githubId: Long, val username: String)
+class UserDTO(val id: Long, val githubId: Long, val username: String)

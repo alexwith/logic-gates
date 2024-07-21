@@ -3,22 +3,29 @@ import { useUser } from "../../../hooks/useUser";
 import { createGithubUrl } from "../../../utils/createGithubUrl";
 import { TbLogin2 as LogInIcon } from "react-icons/tb";
 import { TbLogout2 as LogOutIcon } from "react-icons/tb";
+import { CgProfile as ProfileIcon } from "react-icons/cg";
 import BasicButton from "../../common/BasicButton";
+import { useNavigate } from "react-router-dom";
 
 export default function MiniProfile() {
+  const routerNavigate = useNavigate();
   const user = useUser();
   const githubUrl = createGithubUrl(window.location.pathname);
 
   const menuRef = useRef<any>(null);
   const [showMenu, setShowMenu] = useState<boolean>(false);
 
-  const logout = () => {
+  const handleLogoutClick = () => {
     fetch("http://localhost:8080/api/v1/auth/logout", {
       method: "post",
       credentials: "include",
     }).then(() => {
       window.location.reload();
     });
+  };
+
+  const handleMyProfileClick = () => {
+    routerNavigate(`user/${user.id}`);
   };
 
   useEffect(() => {
@@ -54,10 +61,16 @@ export default function MiniProfile() {
               ref={menuRef}
             >
               <BasicButton
-                name="Log Out"
+                name="My profile"
+                icon={<ProfileIcon size={20} />}
+                hoverable
+                onClick={handleMyProfileClick}
+              />
+              <BasicButton
+                name="Log out"
                 icon={<LogOutIcon size={20} />}
                 hoverable
-                onClick={logout}
+                onClick={handleLogoutClick}
               />
             </div>
           )}

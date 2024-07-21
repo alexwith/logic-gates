@@ -1,10 +1,8 @@
-import { PropsWithChildren } from "react";
 import MiniProfile from "../../profile/MiniProfile";
 import { ToastContainer } from "react-toastify";
+import { Outlet } from "react-router-dom";
 
-interface Props {}
-
-export function Layout({ children }: PropsWithChildren<Props>) {
+export function Layout() {
   return (
     <>
       <div className="flex flex-col items-center">
@@ -12,7 +10,7 @@ export function Layout({ children }: PropsWithChildren<Props>) {
           <h1 className="font-black text-3xl">Logic Gates</h1>
           <MiniProfile />
         </div>
-        {children}
+        <Outlet />
       </div>
       <ToastContainer
         position="top-right"
