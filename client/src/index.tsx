@@ -11,6 +11,7 @@ import Editor from "./pages/Editor";
 import Profile, { handleProfileLoader } from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import NewProject from "./pages/NewProject";
+import ProtectedRoute from "./components/common/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -25,7 +26,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/newproject",
-    element: <NewProject />,
+    element: (
+      <ProtectedRoute>
+        <NewProject />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/user/:userId",
