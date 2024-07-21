@@ -17,26 +17,30 @@ export default function MiniProfile() {
 
   const handleLogoutClick = () => {
     runMenuClick(() => {
-      fetch("http://localhost:8080/api/v1/auth/logout", {
-        method: "post",
-        credentials: "include",
-      }).then(() => {
-        window.location.reload();
-      });
-    });
+        fetch("http://localhost:8080/api/v1/auth/logout", {
+          method: "post",
+          credentials: "include",
+        }).then(() => {
+          window.location.reload();
+        });
+    })
   };
 
   const handleMyProfileClick = () => {
-    runMenuClick(() => routerNavigate(`user/${user.id}`));
+    runMenuClick(() => routerNavigate(`user/${user.id}`));    
   };
 
   const runMenuClick = (runnable: () => void) => {
     runnable();
     setShowMenu(false);
-  };
+  }
 
   useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {      
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (menuRef.current && menuRef.current.contains(event.target)) {
+        return;
+      }
+
       setShowMenu(false);
     };
 
