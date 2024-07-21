@@ -16,24 +16,27 @@ export default function MiniProfile() {
   const [showMenu, setShowMenu] = useState<boolean>(false);
 
   const handleLogoutClick = () => {
-    fetch("http://localhost:8080/api/v1/auth/logout", {
-      method: "post",
-      credentials: "include",
-    }).then(() => {
-      window.location.reload();
+    runMenuClick(() => {
+      fetch("http://localhost:8080/api/v1/auth/logout", {
+        method: "post",
+        credentials: "include",
+      }).then(() => {
+        window.location.reload();
+      });
     });
   };
 
   const handleMyProfileClick = () => {
-    routerNavigate(`user/${user.id}`);
+    runMenuClick(() => routerNavigate(`user/${user.id}`));
+  };
+
+  const runMenuClick = (runnable: () => void) => {
+    runnable();
+    setShowMenu(false);
   };
 
   useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (menuRef.current && menuRef.current.contains(event.target)) {
-        return;
-      }
-
+    const handleOutsideClick = (event: MouseEvent) => {      
       setShowMenu(false);
     };
 
