@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+import "react-toastify/dist/ReactToastify.css";
 import reportWebVitals from "./reportWebVitals";
 import { UserProvider } from "./hooks/useUser";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -12,6 +13,7 @@ import NotFound from "./pages/NotFound";
 import NewProject from "./pages/NewProject";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import Home from "./pages/Home";
+import { ToastContainer } from "react-toastify";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +58,19 @@ root.render(
     <QueryClientProvider client={queryClient}>
       <UserProvider>
         <RouterProvider router={router} />
+        <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={true}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+          toastStyle={{ backgroundColor: "#181818" }}
+        />
       </UserProvider>
     </QueryClientProvider>
   </React.StrictMode>
