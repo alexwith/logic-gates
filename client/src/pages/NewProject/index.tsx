@@ -7,21 +7,50 @@ import { toast } from "react-toastify";
 
 export default function NewProject() {
   const [name, setName] = useState<string>("");
+  const [shortDescription, setShortDescription] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [visibility, setVisibility] = useState<string>("PUBLIC");
 
   const handleCreateClick = () => {
-    if (!/^[a-zA-Z0-9]+(?: [a-zA-Z0-9]+)*$/.test(name)) {
+    if (!/^[a-zA-Z0-9]+(?: [a-zA-Z0-9]+)*$/.test(name) || name.length > 50) {
       toast.error(
         "The name can only contain letters, numbers and single spaces and be a maximum 50 characters."
       );
       return;
     }
 
+    fetch("http://localhost:8080/api/v1/project/create", {
+      method: "post",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name,
+        shortDescription,
+        description,
+        visibility,
+      }),
+    });
     console.log(name);
   };
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setName(value);
+  };
+
+  const handleShortDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setShortDescription(value);
+  };
+
+  const handleDescriptionChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    const { value } = event.target;
+    setDescription(value);
+  };
+
+  const handleVisibilityChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setVisibility(value);
   };
 
   return (
@@ -48,6 +77,7 @@ export default function NewProject() {
         <input
           className="appearance-none focus:outline-none bg-transparent border-2 border-zinc-700 rounded-md py-1 px-2 w-full"
           type="text"
+          onChange={handleShortDescriptionChange}
         />
       </div>
       <div>
@@ -55,7 +85,10 @@ export default function NewProject() {
         <p className="text-sm text-zinc-500">
           The description that will show when viewing the project. Supports markdown.
         </p>
-        <textarea className="appearance-none focus:outline-none bg-transparent border-2 border-zinc-700 rounded-md py-1 px-2 w-full min-h-[75px]" />
+        <textarea
+          className="appearance-none focus:outline-none bg-transparent border-2 border-zinc-700 rounded-md py-1 px-2 w-full min-h-[75px]"
+          onChange={handleDescriptionChange}
+        />
       </div>
       <div className="flex flex-col space-y-2">
         <p className="font-bold">Visibility</p>
@@ -65,8 +98,10 @@ export default function NewProject() {
               className="appearance-none w-4 h-4 border-2 border-zinc-700 rounded-full checked:bg-violet-500"
               type="radio"
               name="visibility"
+              value="PUBLIC"
               id="public"
               defaultChecked
+              onChange={handleVisibilityChange}
             />
             <label className="flex space-x-1 items-center font-medium" htmlFor="public">
               <PublicIcon size={20} />
@@ -78,7 +113,9 @@ export default function NewProject() {
               className="appearance-none w-4 h-4 border-2 border-zinc-700 rounded-full checked:bg-violet-500"
               type="radio"
               name="visibility"
+              value="PRIVATE"
               id="private"
+              onChange={handleVisibilityChange}
             />
             <label className="flex space-x-1 items-center font-medium" htmlFor="private">
               <PrivateIcon size={20} />

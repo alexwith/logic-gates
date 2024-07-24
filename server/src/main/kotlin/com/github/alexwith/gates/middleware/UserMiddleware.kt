@@ -1,6 +1,7 @@
 package com.github.alexwith.gates.middleware
 
 import com.github.alexwith.gates.domain.User
+import com.github.alexwith.gates.exception.ResourceNotFoundException
 import com.github.alexwith.gates.provider.JedisClientProvider
 import com.github.alexwith.gates.service.UserService
 import jakarta.servlet.FilterChain
@@ -51,9 +52,14 @@ class UserMiddleware @Autowired constructor(val userService: UserService) : Once
                 val user: User = this@UserMiddleware.userService.findById(userId.toLong())
                 request.setAttribute("user", user)
                 request.setAttribute("sessionId", sessionId)
-            } catch (ignore: Exception) { }
+            } catch (ignore: Exception) {
+            }
 
             filterChain.doFilter(request, response)
         }
     }
+}
+
+fun HttpServletRequest.getUser(): User {
+    return (this.getAttribute("user") as User?) ?: throw ResourceNotFoundException("Not logged in")
 }

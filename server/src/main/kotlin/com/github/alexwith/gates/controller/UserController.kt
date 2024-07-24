@@ -2,6 +2,7 @@ package com.github.alexwith.gates.controller
 
 import com.github.alexwith.gates.domain.UserDTO
 import com.github.alexwith.gates.exception.ResourceNotFoundException
+import com.github.alexwith.gates.middleware.getUser
 import com.github.alexwith.gates.service.UserService
 import jakarta.servlet.http.HttpServletRequest
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -20,7 +21,7 @@ class UserController @Autowired constructor(val userService: UserService) {
     @GetMapping("/me")
     fun me(request: HttpServletRequest): ResponseEntity<UserDTO> {
         return try {
-            ResponseEntity(this.userService.getFromRequest(request).toDTO(), HttpStatus.OK)
+            ResponseEntity(request.getUser().toDTO(), HttpStatus.OK)
         } catch (e: ResourceNotFoundException) {
             ResponseEntity(null, HttpStatus.NOT_FOUND)
         }

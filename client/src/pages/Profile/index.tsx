@@ -7,13 +7,20 @@ import { useQuery } from "@tanstack/react-query";
 export default function Profile() {
   const routerNavigate = useNavigate();
   const userId: string = useLoaderData() as string;
-  const { isLoading, data: user } = useQuery({
+  const { isLoading: isUserLoading, data: user } = useQuery({
     queryKey: ["user"],
     queryFn: () =>
       fetch(`http://localhost:8080/api/v1/user/${userId}`).then((response) => response.json()),
   });
+  const { isLoading: isProjectsLoading, data: projects } = useQuery({
+    queryKey: ["projects"],
+    queryFn: () =>
+      fetch("http://localhost:8080/api/v1/project/get", {
+        credentials: "include",
+      }).then((response) => response.json()),
+  });
 
-  if (isLoading) {
+  if (isUserLoading || isProjectsLoading) {
     return <h1>Loading...</h1>;
   }
 
@@ -41,30 +48,16 @@ export default function Profile() {
           />
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <ProjectCard
-            name="SR Latch"
-            description="Here is a very short description about this project. And it continues so we can see the end of the potato."
-          />
-          <ProjectCard
-            name="SR Latch"
-            description="Here is a very short description about this project. And it continues so we can see the end of the potato."
-          />
-          <ProjectCard
-            name="SR Latch"
-            description="Here is a very short description about this project. And it continues so we can see the end of the potato."
-          />
-          <ProjectCard
-            name="SR Latch"
-            description="Here is a very short description about this project. And it continues so we can see the end of the potato."
-          />
-          <ProjectCard
-            name="SR Latch"
-            description="Here is a very short description about this project. And it continues so we can see the end of the potato."
-          />
-          <ProjectCard
-            name="SR Latch"
-            description="Here is a very short description about this project. And it continues so we can see the end of the potato."
-          />
+          {projects &&
+            projects.map((project: any) => {
+              return (
+                <ProjectCard
+                  key={project.id}
+                  name={project.name}
+                  description={project.shortDescription}
+                />
+              );
+            })}
         </div>
       </div>
     </div>
