@@ -4,15 +4,20 @@ import { LuCircuitBoard as NewProjectIcon } from "react-icons/lu";
 import { LuLock as PrivateIcon } from "react-icons/lu";
 import { MdOutlinePublic as PublicIcon } from "react-icons/md";
 import { toast } from "react-toastify";
-import Input from "../../components/common/TextInput";
+import TextInput from "../../components/common/TextInput";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../../hooks/useUser";
 
 export default function NewProject() {
+  const user = useUser();
+  const routerNavigate = useNavigate();
+
   const [name, setName] = useState<string>("");
   const [shortDescription, setShortDescription] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [visibility, setVisibility] = useState<string>("PUBLIC");
 
-  const handleCreateClick = () => {
+  const handleCreateClick = async () => {
     if (!/^[a-zA-Z0-9]+(?: [a-zA-Z0-9]+)*$/.test(name) || name.length > 50) {
       toast.error(
         "The name can only contain letters, numbers and single spaces and be a maximum 50 characters."
@@ -20,7 +25,7 @@ export default function NewProject() {
       return;
     }
 
-    fetch("/api/v1/project/create", {
+    await fetch("/api/v1/project/create", {
       method: "post",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -31,6 +36,8 @@ export default function NewProject() {
         visibility,
       }),
     });
+
+    routerNavigate(`/user/${user.id}`);
   };
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -63,14 +70,14 @@ export default function NewProject() {
       </div>
       <div>
         <p className="font-bold">Project name</p>
-        <Input onChange={handleNameChange} />
+        <TextInput onChange={handleNameChange} />
       </div>
       <div>
         <p className="font-bold">Short Description</p>
         <p className="text-sm text-zinc-500">
           A shorter description that will show in the project preview.
         </p>
-        <Input onChange={handleShortDescriptionChange} className="w-full" />
+        <TextInput onChange={handleShortDescriptionChange} className="w-full" />
       </div>
       <div>
         <p className="font-bold">Description</p>
