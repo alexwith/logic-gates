@@ -16,8 +16,12 @@ import org.springframework.web.bind.annotation.*
 class ProjectController @Autowired constructor(val projectService: ProjectService) {
 
     @PostMapping("/create")
-    fun create(request: HttpServletRequest, @RequestBody body: CreateProjectDTO) {
+    fun create(request: HttpServletRequest, @RequestBody body: CreateProjectDTO): ResponseEntity<Void> {
         val user = request.getUser()
+
+        if (!PROJECT_VALID_NAME_REGEX.matches(body.name)) {
+            return ResponseEntity(HttpStatus.BAD_REQUEST)
+        }
 
         this.projectService.create {
             name = body.name
@@ -27,6 +31,8 @@ class ProjectController @Autowired constructor(val projectService: ProjectServic
             data = byteArrayOf()
             creator = user
         }
+
+        return ResponseEntity(HttpStatus.OK)
     }
 
     @GetMapping("/get")
@@ -34,5 +40,9 @@ class ProjectController @Autowired constructor(val projectService: ProjectServic
         val user = request.getUser()
 
         return ResponseEntity(this.projectService.findByUserId(user.id.value).map(Project::toDTO), HttpStatus.OK)
+    }
+
+    companion object {
+        val PROJECT_VALID_NAME_REGEX = Regex("^[a-zA-Z0-9]+(?: [a-zA-Z0-9]+)*\$")
     }
 }
