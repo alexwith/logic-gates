@@ -9,14 +9,19 @@ export default function Profile() {
   const userId: string = useLoaderData() as string;
   const { isLoading: isUserLoading, data: user } = useQuery({
     queryKey: ["user"],
-    queryFn: () => fetch(`/api/v1/user/${userId}`).then((response) => response.json()),
+    queryFn: async () => {
+      const response = await fetch(`/api/v1/user/${userId}`);
+      return await response.json();
+    },
   });
   const { isLoading: isProjectsLoading, data: projects } = useQuery({
     queryKey: ["projects"],
-    queryFn: () =>
-      fetch("/api/v1/project/get", {
+    queryFn: async () => {
+      const response = await fetch("/api/v1/project/get", {
         credentials: "include",
-      }).then((response) => response.json()),
+      });
+      return await response.json();
+    },
   });
 
   if (isUserLoading || isProjectsLoading) {

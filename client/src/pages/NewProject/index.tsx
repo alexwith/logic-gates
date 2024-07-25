@@ -30,7 +30,6 @@ export default function NewProject() {
         visibility,
       }),
     });
-    console.log(name);
   };
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {

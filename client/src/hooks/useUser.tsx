@@ -6,14 +6,13 @@ const UserContext = createContext(null);
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const { data, isLoading } = useQuery({
     queryKey: ["user"],
-    queryFn: () => {
-      return fetch("/api/v1/user/me", {
-        credentials: "include",
-      })
-        .then((response) => (response.ok ? response.json() : null))
-        .catch(() => {
-          return null;
-        });
+    queryFn: async () => {
+      try {
+        const response = await fetch("/api/v1/user/me");
+        return await response.json();
+      } catch {
+        return null;
+      }
     },
   });
 
