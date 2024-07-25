@@ -1,7 +1,7 @@
 package com.github.alexwith.gates.service
 
-import com.github.alexwith.gates.domain.User
-import com.github.alexwith.gates.domain.UserEntity
+import com.github.alexwith.gates.domain.user.User
+import com.github.alexwith.gates.domain.user.UserEntity
 import com.github.alexwith.gates.exception.ResourceNotFoundException
 import org.jetbrains.exposed.sql.selectAll
 import org.springframework.stereotype.Service

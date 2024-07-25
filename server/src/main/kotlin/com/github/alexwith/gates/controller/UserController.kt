@@ -1,6 +1,6 @@
 package com.github.alexwith.gates.controller
 
-import com.github.alexwith.gates.domain.UserDTO
+import com.github.alexwith.gates.domain.user.UserDTO
 import com.github.alexwith.gates.exception.ResourceNotFoundException
 import com.github.alexwith.gates.middleware.getUser
 import com.github.alexwith.gates.service.UserService

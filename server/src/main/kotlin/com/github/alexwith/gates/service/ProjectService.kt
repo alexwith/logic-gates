@@ -1,8 +1,8 @@
 package com.github.alexwith.gates.service
 
-import com.github.alexwith.gates.domain.Project
-import com.github.alexwith.gates.domain.ProjectEntity
-import com.github.alexwith.gates.domain.UserEntity
+import com.github.alexwith.gates.domain.project.Project
+import com.github.alexwith.gates.domain.project.ProjectEntity
+import com.github.alexwith.gates.domain.user.UserEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.selectAll
 import org.springframework.stereotype.Service

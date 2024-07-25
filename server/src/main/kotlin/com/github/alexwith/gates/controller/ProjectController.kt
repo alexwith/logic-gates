@@ -1,7 +1,7 @@
 package com.github.alexwith.gates.controller
 
-import com.github.alexwith.gates.domain.Project
-import com.github.alexwith.gates.domain.ProjectDTO
+import com.github.alexwith.gates.domain.project.Project
+import com.github.alexwith.gates.domain.project.ProjectDTO
 import com.github.alexwith.gates.dto.project.CreateProjectDTO
 import com.github.alexwith.gates.middleware.getUser
 import com.github.alexwith.gates.service.ProjectService

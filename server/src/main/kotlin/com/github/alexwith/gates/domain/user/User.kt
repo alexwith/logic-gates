@@ -1,5 +1,7 @@
-package com.github.alexwith.gates.domain
+package com.github.alexwith.gates.domain.user
 
+import com.github.alexwith.gates.domain.project.Project
+import com.github.alexwith.gates.domain.project.ProjectEntity
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

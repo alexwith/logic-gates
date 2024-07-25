@@ -1,5 +1,6 @@
-package com.github.alexwith.gates.domain
+package com.github.alexwith.gates.domain.project
 
+import com.github.alexwith.gates.domain.user.UserEntity
 import com.github.alexwith.gates.enums.ProjectVisibility
 import org.jetbrains.exposed.dao.id.LongIdTable
 

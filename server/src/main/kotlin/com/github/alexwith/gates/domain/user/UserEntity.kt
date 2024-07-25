@@ -1,4 +1,4 @@
-package com.github.alexwith.gates.domain
+package com.github.alexwith.gates.domain.user
 
 import org.jetbrains.exposed.dao.id.LongIdTable
 

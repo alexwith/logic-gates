@@ -1,6 +1,6 @@
 package com.github.alexwith.gates.middleware
 
-import com.github.alexwith.gates.domain.User
+import com.github.alexwith.gates.domain.user.User
 import com.github.alexwith.gates.exception.ResourceNotFoundException
 import com.github.alexwith.gates.provider.JedisClientProvider
 import com.github.alexwith.gates.service.UserService
