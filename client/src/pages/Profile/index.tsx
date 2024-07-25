@@ -57,6 +57,7 @@ export default function Profile() {
               return (
                 <ProjectCard
                   key={project.id}
+                  id={project.id}
                   name={project.name}
                   description={project.shortDescription}
                 />

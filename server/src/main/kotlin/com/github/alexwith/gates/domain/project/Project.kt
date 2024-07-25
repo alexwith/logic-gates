@@ -15,6 +15,7 @@ class Project(id: EntityID<Long>) : LongEntity(id) {
     var visibility by ProjectEntity.visibility
     var data by ProjectEntity.data
     var creator by User referencedOn ProjectEntity.creator
+    var likes by User via ProjectLikeEntity
 
     fun toDTO(): ProjectDTO {
         return ProjectDTO(id.value, name, shortDescription, visibility, data)

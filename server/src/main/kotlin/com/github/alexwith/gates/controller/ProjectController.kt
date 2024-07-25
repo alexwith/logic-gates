@@ -15,6 +15,20 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/v1/project")
 class ProjectController @Autowired constructor(val projectService: ProjectService) {
 
+    @GetMapping("/get")
+    fun get(request: HttpServletRequest): ResponseEntity<List<ProjectDTO>> {
+        val user = request.getUser()
+
+        return ResponseEntity(this.projectService.findByUserId(user.id.value).map(Project::toDTO), HttpStatus.OK)
+    }
+
+    @GetMapping("/likes/{id}")
+    fun getLikes(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<List<Long>> {
+        val project = this.projectService.findById(id.toLong())
+
+        return ResponseEntity(project.likes.map { it.id.value }, HttpStatus.OK)
+    }
+
     @PostMapping("/create")
     fun create(request: HttpServletRequest, @RequestBody body: CreateProjectDTO): ResponseEntity<Void> {
         val user = request.getUser()
@@ -35,11 +49,39 @@ class ProjectController @Autowired constructor(val projectService: ProjectServic
         return ResponseEntity(HttpStatus.OK)
     }
 
-    @GetMapping("/get")
-    fun get(request: HttpServletRequest): ResponseEntity<List<ProjectDTO>> {
+    @PostMapping("/like/{id}")
+    fun createLike(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<Void> {
+        val user = request.getUser()
+        val project = this.projectService.findById(id.toLong())
+
+        this.projectService.createLike(user.id, project.id)
+
+        return ResponseEntity(HttpStatus.OK)
+    }
+
+    @DeleteMapping("/like/{id}")
+    fun deleteLike(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<Void> {
+        val user = request.getUser()
+        val project = this.projectService.findById(id.toLong())
+
+        this.projectService.deleteLike(user.id, project.id)
+
+        return ResponseEntity(HttpStatus.OK)
+    }
+
+    @PostMapping("/like/{id}/toggle")
+    fun toggleLike(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<Void> {
         val user = request.getUser()
 
-        return ResponseEntity(this.projectService.findByUserId(user.id.value).map(Project::toDTO), HttpStatus.OK)
+        val project = this.projectService.findById(id.toLong())
+
+        if (project.likes.contains(user)) {
+            this.projectService.deleteLike(user.id, project.id)
+        } else {
+            this.projectService.createLike(user.id, project.id)
+        }
+
+        return ResponseEntity(HttpStatus.OK)
     }
 
     companion object {

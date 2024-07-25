@@ -26,6 +26,6 @@ class UserService {
     }
 
     fun create(init: User.() -> Unit): User {
-        return User.new(init);
+        return User.new(init)
     }
 }
