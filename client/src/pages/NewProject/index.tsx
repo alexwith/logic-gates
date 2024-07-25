@@ -19,7 +19,7 @@ export default function NewProject() {
       return;
     }
 
-    fetch("http://localhost:8080/api/v1/project/create", {
+    fetch("/api/v1/project/create", {
       method: "post",
       credentials: "include",
       headers: { "Content-Type": "application/json" },

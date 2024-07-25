@@ -7,7 +7,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const { data, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: () => {
-      return fetch("http://localhost:8080/api/v1/user/me", {
+      return fetch("/api/v1/user/me", {
         credentials: "include",
       })
         .then((response) => (response.ok ? response.json() : null))

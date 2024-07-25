@@ -9,13 +9,12 @@ export default function Profile() {
   const userId: string = useLoaderData() as string;
   const { isLoading: isUserLoading, data: user } = useQuery({
     queryKey: ["user"],
-    queryFn: () =>
-      fetch(`http://localhost:8080/api/v1/user/${userId}`).then((response) => response.json()),
+    queryFn: () => fetch(`/api/v1/user/${userId}`).then((response) => response.json()),
   });
   const { isLoading: isProjectsLoading, data: projects } = useQuery({
     queryKey: ["projects"],
     queryFn: () =>
-      fetch("http://localhost:8080/api/v1/project/get", {
+      fetch("/api/v1/project/get", {
         credentials: "include",
       }).then((response) => response.json()),
   });
@@ -67,7 +66,7 @@ export default function Profile() {
 export const handleProfileLoader = async ({ params }: any): Promise<string> => {
   const { userId } = params;
 
-  const response = await fetch(`http://localhost:8080/api/v1/user/${userId}`);
+  const response = await fetch(`/api/v1/user/${userId}`);
   if (response.status === 404) {
     throw new Response("", { status: 404 });
   }

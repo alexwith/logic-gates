@@ -17,7 +17,7 @@ export default function MiniProfile() {
 
   const handleLogoutClick = () => {
     runMenuClick(() => {
-        fetch("http://localhost:8080/api/v1/auth/logout", {
+        fetch("/api/v1/auth/logout", {
           method: "post",
           credentials: "include",
         }).then(() => {
