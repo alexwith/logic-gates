@@ -4,6 +4,7 @@ import { LuCircuitBoard as NewProjectIcon } from "react-icons/lu";
 import { LuLock as PrivateIcon } from "react-icons/lu";
 import { MdOutlinePublic as PublicIcon } from "react-icons/md";
 import { toast } from "react-toastify";
+import Input from "../../components/common/TextInput";
 
 export default function NewProject() {
   const [name, setName] = useState<string>("");
@@ -62,22 +63,14 @@ export default function NewProject() {
       </div>
       <div>
         <p className="font-bold">Project name</p>
-        <input
-          className="appearance-none focus:outline-none bg-transparent border-2 border-zinc-700 rounded-md py-1 px-2"
-          type="text"
-          onChange={handleNameChange}
-        />
+        <Input onChange={handleNameChange} />
       </div>
       <div>
         <p className="font-bold">Short Description</p>
         <p className="text-sm text-zinc-500">
           A shorter description that will show in the project preview.
         </p>
-        <input
-          className="appearance-none focus:outline-none bg-transparent border-2 border-zinc-700 rounded-md py-1 px-2 w-full"
-          type="text"
-          onChange={handleShortDescriptionChange}
-        />
+        <Input onChange={handleShortDescriptionChange} className="w-full" />
       </div>
       <div>
         <p className="font-bold">Description</p>
