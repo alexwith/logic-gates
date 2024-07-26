@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import redis.clients.jedis.JedisPooled
+import redis.clients.jedis.params.SetParams
 import java.util.*
 
 @Service
@@ -48,13 +49,15 @@ class AuthService @Autowired constructor(val userService: UserService) {
         }
 
         val sessionId: String = UUID.randomUUID().toString()
-        this.redisClient.set(sessionId, user.id.toString())
+        this.redisClient.set(
+            sessionId, user.id.toString(), SetParams().ex(SESSION_EXPIRE_TIME.toLong())
+        )
 
         val sessionCookie = Cookie("session", sessionId)
         sessionCookie.path = "/"
         sessionCookie.isHttpOnly = true
         sessionCookie.secure = true
-        sessionCookie.maxAge = 24 * 60 * 60 // 24 hours
+        sessionCookie.maxAge = SESSION_EXPIRE_TIME
 
         return sessionCookie
     }
@@ -102,4 +105,8 @@ class AuthService @Autowired constructor(val userService: UserService) {
     }
 
     private data class GithubUserInfo(val id: Long, val username: String)
+
+    companion object {
+        const val SESSION_EXPIRE_TIME = 24 * 60 * 60
+    }
 }
