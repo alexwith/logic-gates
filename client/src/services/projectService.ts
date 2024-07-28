@@ -1,6 +1,11 @@
 import axios from "axios";
 import { Project } from "../common/types";
 
+export const getProject = async (id: number): Promise<Project> => {
+  const response = await axios.get(`/api/v1/projects/${id}`);
+  return response.data;
+};
+
 export const createProject = async ({
   name,
   shortDescription,

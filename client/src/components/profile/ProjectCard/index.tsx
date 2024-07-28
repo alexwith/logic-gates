@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FaHeart as FilledLikeIcon, FaRegHeart as EmptyLikeIcon } from "react-icons/fa";
 import { useUser } from "../../../hooks/useUser";
 import { getLikes, toggleLike } from "../../../services/projectService";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   id: number;
@@ -9,6 +10,7 @@ interface Props {
   description: string;
 }
 export default function ProjectCard({ id, name, description }: Props) {
+  const routerNavigate = useNavigate();
   const { user, isLoggedIn } = useUser();
 
   const [liked, setLiked] = useState<boolean>(false);
@@ -40,10 +42,19 @@ export default function ProjectCard({ id, name, description }: Props) {
     }
   };
 
+  const handleNameClick = () => {
+    routerNavigate(`/project/${id}`);
+  };
+
   return (
     <div className="flex-col space-y-2 border-zinc-700 border-4 rounded-lg w-96 px-4 pt-2 pb-4">
       <div className="flex justify-between">
-        <h1 className="font-bold text-xl hover:text-violet-500 hover:cursor-pointer">{name}</h1>
+        <h1
+          className="font-bold text-xl hover:text-violet-500 hover:cursor-pointer"
+          onClick={handleNameClick}
+        >
+          {name}
+        </h1>
         <div className="flex space-x-1 items-center">
           <div className="hover:cursor-pointer" onClick={handleLikeClick}>
             {liked ? (

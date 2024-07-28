@@ -1,5 +1,6 @@
 package com.github.alexwith.gates.controller
 
+import com.github.alexwith.gates.domain.project.ProjectDTO
 import com.github.alexwith.gates.dto.project.CreateProjectDTO
 import com.github.alexwith.gates.middleware.getUser
 import com.github.alexwith.gates.service.ProjectService
@@ -12,6 +13,12 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/v1/projects")
 class ProjectController @Autowired constructor(val projectService: ProjectService) {
+
+    @GetMapping("/{id}")
+    fun get(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<ProjectDTO> {
+        val project = this@ProjectController.projectService.findById(id.toLong())
+        return ResponseEntity(project.toDTO(), HttpStatus.OK)
+    }
 
     @GetMapping("/likes/{id}")
     fun getLikes(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<List<Long>> {

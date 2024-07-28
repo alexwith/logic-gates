@@ -14,6 +14,7 @@ import NewProject from "./pages/NewProject";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import Home from "./pages/Home";
 import { ToastContainer } from "react-toastify";
+import { handleProjectLoader, Project } from "./pages/Project";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,12 @@ const router = createBrowserRouter([
             <NewProject />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "/project/:projectId",
+        element: <Project />,
+        loader: handleProjectLoader,
+        errorElement: <NotFound />,
       },
       {
         path: "/user/:userId",
