@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaHeart as FilledLikeIcon, FaRegHeart as EmptyLikeIcon } from "react-icons/fa";
 import { useUser } from "../../../hooks/useUser";
+import { getLikes, toggleLike } from "../../../services/projectService";
 
 interface Props {
   id: number;
@@ -8,39 +9,32 @@ interface Props {
   description: string;
 }
 export default function ProjectCard({ id, name, description }: Props) {
-  const user = useUser();
+  const { user, isLoggedIn } = useUser();
 
   const [liked, setLiked] = useState<boolean>(false);
   const [likes, setLikes] = useState<number[]>([]);
 
   useEffect(() => {
-    const fetchLikes = async () => {
-      const response = await fetch(`/api/v1/project/likes/${id}`);
-      setLikes(await response.json());
-    };
-
-    fetchLikes();
+    getLikes(id).then((users) => {
+      setLikes(users);
+    });
   }, [id]);
 
   useEffect(() => {
-    setLiked(likes.includes(user.id));
-  }, [likes, user.id]);
+    setLiked(isLoggedIn && likes.includes(user.id));
+  }, [likes, isLoggedIn, user.id]);
 
-  const handleLikeClick = async () => {    
+  const handleLikeClick = async () => {
     setLiked(!liked);
 
-    if (likes.includes(user.id)) {
+    if (likes.includes(user!.id)) {
       setLikes(likes.filter((userId) => userId !== user.id));
     } else {
-      setLikes([...likes, user.id]);
+      setLikes([...likes, user!.id]);
     }
 
-    const response = await fetch(`/api/v1/project/like/${id}/toggle`, {
-      method: "post",
-      credentials: "include",
-    });
-
-    if (!response.ok) {
+    const success = await toggleLike(id);
+    if (!success) {
       setLiked(liked);
       setLikes(likes);
     }

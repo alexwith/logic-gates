@@ -11,7 +11,6 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.springframework.stereotype.Service
-import javax.swing.text.html.parser.Entity
 
 @Service
 class ProjectService {

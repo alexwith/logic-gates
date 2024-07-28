@@ -1,8 +1,11 @@
 package com.github.alexwith.gates.controller
 
+import com.github.alexwith.gates.domain.project.Project
+import com.github.alexwith.gates.domain.project.ProjectDTO
 import com.github.alexwith.gates.domain.user.UserDTO
 import com.github.alexwith.gates.exception.ResourceNotFoundException
 import com.github.alexwith.gates.middleware.getUser
+import com.github.alexwith.gates.service.ProjectService
 import com.github.alexwith.gates.service.UserService
 import jakarta.servlet.http.HttpServletRequest
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -15,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v1/user")
-class UserController @Autowired constructor(val userService: UserService) {
+@RequestMapping("/api/v1/users")
+class UserController @Autowired constructor(val userService: UserService, val projectService: ProjectService) {
 
     @GetMapping("/me")
     fun me(request: HttpServletRequest): ResponseEntity<UserDTO> {
@@ -36,5 +39,10 @@ class UserController @Autowired constructor(val userService: UserService) {
         } catch (e: ResourceNotFoundException) {
             return ResponseEntity(null, HttpStatus.NOT_FOUND)
         }
+    }
+
+    @GetMapping("/{id}/projects")
+    fun get(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<List<ProjectDTO>> {
+        return ResponseEntity(this.projectService.findByUserId(id.toLong()).map(Project::toDTO), HttpStatus.OK)
     }
 }

@@ -1,6 +1,25 @@
 import GateEntity from "../entities/GateEntity";
 import TerminalEntity from "../entities/TerminalEntity";
 
+export interface User {
+  id: number;
+  githubId: number;
+  username: string;
+}
+
+export interface Project {
+  id?: number;
+  name: string;
+  shortDescription: string;
+  description: string;
+  visibility: ProjectVisibilty;
+}
+
+export enum ProjectVisibilty {
+  Public = "PUBLIC",
+  Private = "PRIVATE",
+}
+
 export interface Pos {
   x: number;
   y: number;

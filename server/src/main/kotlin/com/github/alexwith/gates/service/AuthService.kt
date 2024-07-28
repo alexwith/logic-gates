@@ -10,7 +10,6 @@ import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -37,7 +36,7 @@ class AuthService @Autowired constructor(val userService: UserService) {
         val accessToken: String = this.getGithubOAuthToken(githubCode) ?: return null
         val githubUser: GithubUserInfo = this.getGithubUserInfo(accessToken) ?: return null
 
-        val user: User = transaction {
+        val user: User =
             try {
                 this@AuthService.userService.findByGithubId(githubUser.id)
             } catch (e: ResourceNotFoundException) {
@@ -46,7 +45,6 @@ class AuthService @Autowired constructor(val userService: UserService) {
                     username = githubUser.username
                 }
             }
-        }
 
         val sessionId: String = UUID.randomUUID().toString()
         this.redisClient.set(

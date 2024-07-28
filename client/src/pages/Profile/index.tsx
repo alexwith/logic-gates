@@ -3,25 +3,21 @@ import BasicButton from "../../components/common/BasicButton";
 import ProjectCard from "../../components/profile/ProjectCard";
 import { LuCircuitBoard as NewProjectIcon } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
+import { getProjects, getUser } from "../../services/userService";
+import { Project } from "../../common/types";
+import { useUser } from "../../hooks/useUser";
 
 export default function Profile() {
+  const { user: meUser } = useUser();
   const routerNavigate = useNavigate();
-  const userId: string = useLoaderData() as string;
+  const userId = useLoaderData() as number;
   const { isLoading: isUserLoading, data: user } = useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      const response = await fetch(`/api/v1/user/${userId}`);
-      return await response.json();
-    },
+    queryKey: ["user", userId],
+    queryFn: () => getUser(userId),
   });
   const { isLoading: isProjectsLoading, data: projects } = useQuery({
     queryKey: ["projects"],
-    queryFn: async () => {
-      const response = await fetch("/api/v1/project/get", {
-        credentials: "include",
-      });
-      return await response.json();
-    },
+    queryFn: () => getProjects(userId),
   });
 
   if (isUserLoading || isProjectsLoading) {
@@ -38,26 +34,28 @@ export default function Profile() {
         <img
           className="w-28 h-28 rounded-full border-4 border-zinc-800"
           alt="User avatar"
-          src={`https://avatars.githubusercontent.com/u/${user.githubId}?v=4`}
+          src={`https://avatars.githubusercontent.com/u/${user!.githubId}?v=4`}
         />
-        <h1 className="font-bold text-2xl">{user.username}</h1>
+        <h1 className="font-bold text-2xl">{user!.username}</h1>
       </div>
       <div>
         <div className="flex justify-between mb-4">
           <h1 className="font-bold text-2xl">Projects</h1>
-          <BasicButton
-            name="New Project"
-            icon={<NewProjectIcon size={20} />}
-            onClick={handleNewProjectClick}
-          />
+          {meUser.id === userId && (
+            <BasicButton
+              name="New Project"
+              icon={<NewProjectIcon size={20} />}
+              onClick={handleNewProjectClick}
+            />
+          )}
         </div>
         <div className="grid grid-cols-2 gap-4">
           {projects &&
-            projects.map((project: any) => {
+            projects.map((project: Project) => {
               return (
                 <ProjectCard
                   key={project.id}
-                  id={project.id}
+                  id={project.id!}
                   name={project.name}
                   description={project.shortDescription}
                 />
@@ -69,13 +67,9 @@ export default function Profile() {
   );
 }
 
-export const handleProfileLoader = async ({ params }: any): Promise<string> => {
+export const handleProfileLoader = async ({ params }: any): Promise<number> => {
   const { userId } = params;
 
-  const response = await fetch(`/api/v1/user/${userId}`);
-  if (response.status === 404) {
-    throw new Response("", { status: 404 });
-  }
-
-  return userId;
+  const user = await getUser(userId);
+  return user.id;
 };

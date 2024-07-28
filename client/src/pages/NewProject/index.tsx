@@ -7,15 +7,17 @@ import { toast } from "react-toastify";
 import TextInput from "../../components/common/TextInput";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../hooks/useUser";
+import { createProject } from "../../services/projectService";
+import { ProjectVisibilty } from "../../common/types";
 
 export default function NewProject() {
-  const user = useUser();
+  const { user } = useUser();
   const routerNavigate = useNavigate();
 
   const [name, setName] = useState<string>("");
   const [shortDescription, setShortDescription] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [visibility, setVisibility] = useState<string>("PUBLIC");
+  const [visibility, setVisibility] = useState<ProjectVisibilty>(ProjectVisibilty.Public);
 
   const handleCreateClick = async () => {
     if (!/^[a-zA-Z0-9]+(?: [a-zA-Z0-9]+)*$/.test(name) || name.length > 50) {
@@ -25,17 +27,7 @@ export default function NewProject() {
       return;
     }
 
-    await fetch("/api/v1/project/create", {
-      method: "post",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name,
-        shortDescription,
-        description,
-        visibility,
-      }),
-    });
+    await createProject({ name, shortDescription, description, visibility });
 
     routerNavigate(`/user/${user.id}`);
   };
@@ -57,7 +49,7 @@ export default function NewProject() {
 
   const handleVisibilityChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-    setVisibility(value);
+    setVisibility(value as ProjectVisibilty);
   };
 
   return (
@@ -97,7 +89,7 @@ export default function NewProject() {
               className="appearance-none w-4 h-4 border-2 border-zinc-700 rounded-full checked:bg-violet-500"
               type="radio"
               name="visibility"
-              value="PUBLIC"
+              value={ProjectVisibilty.Public}
               id="public"
               defaultChecked
               onChange={handleVisibilityChange}
@@ -112,7 +104,7 @@ export default function NewProject() {
               className="appearance-none w-4 h-4 border-2 border-zinc-700 rounded-full checked:bg-violet-500"
               type="radio"
               name="visibility"
-              value="PRIVATE"
+              value={ProjectVisibilty.Private}
               id="private"
               onChange={handleVisibilityChange}
             />

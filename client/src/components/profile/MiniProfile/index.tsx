@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function MiniProfile() {
   const routerNavigate = useNavigate();
-  const user = useUser();
+  const { user, isLoggedIn, logout } = useUser();
   const githubUrl = createGithubUrl(window.location.pathname);
 
   const menuRef = useRef<any>(null);
@@ -17,23 +17,20 @@ export default function MiniProfile() {
 
   const handleLogoutClick = () => {
     runMenuClick(() => {
-        fetch("/api/v1/auth/logout", {
-          method: "post",
-          credentials: "include",
-        }).then(() => {
-          window.location.reload();
-        });
-    })
+      logout().then(() => {
+        window.location.reload();
+      });
+    });
   };
 
   const handleMyProfileClick = () => {
-    runMenuClick(() => routerNavigate(`user/${user.id}`));    
+    runMenuClick(() => routerNavigate(`user/${user!.id}`));
   };
 
   const runMenuClick = (runnable: () => void) => {
     runnable();
     setShowMenu(false);
-  }
+  };
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -50,7 +47,7 @@ export default function MiniProfile() {
 
   return (
     <div>
-      {user ? (
+      {isLoggedIn ? (
         <div>
           <div className="flex space-x-1 items-center" onClick={() => setShowMenu(!showMenu)}>
             <img

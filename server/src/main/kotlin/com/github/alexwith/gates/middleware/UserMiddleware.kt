@@ -21,9 +21,13 @@ class UserMiddleware @Autowired constructor(val userService: UserService) : Once
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         response.setHeader("Access-Control-Allow-Credentials", "true")
 
+        val callNext = {
+            transaction { filterChain.doFilter(request, response) }
+        }
+
         val cookies: Array<out Cookie>? = request.cookies
         if (cookies == null) {
-            filterChain.doFilter(request, response)
+            callNext()
             return
         }
 
@@ -37,25 +41,26 @@ class UserMiddleware @Autowired constructor(val userService: UserService) : Once
         }
 
         if (sessionId == null) {
-            filterChain.doFilter(request, response)
+            callNext()
             return
         }
 
         val userId = redisClient[sessionId]
         if (userId == null) {
-            filterChain.doFilter(request, response)
+            callNext()
             return
         }
 
-        transaction {
-            try {
+        try {
+            transaction {
                 val user: User = this@UserMiddleware.userService.findById(userId.toLong())
                 request.setAttribute("user", user)
                 request.setAttribute("sessionId", sessionId)
-            } catch (ignore: Exception) {
             }
 
-            filterChain.doFilter(request, response)
+            callNext()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }

@@ -1,7 +1,5 @@
 package com.github.alexwith.gates.controller
 
-import com.github.alexwith.gates.domain.project.Project
-import com.github.alexwith.gates.domain.project.ProjectDTO
 import com.github.alexwith.gates.dto.project.CreateProjectDTO
 import com.github.alexwith.gates.middleware.getUser
 import com.github.alexwith.gates.service.ProjectService
@@ -12,20 +10,12 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v1/project")
+@RequestMapping("/api/v1/projects")
 class ProjectController @Autowired constructor(val projectService: ProjectService) {
-
-    @GetMapping("/get")
-    fun get(request: HttpServletRequest): ResponseEntity<List<ProjectDTO>> {
-        val user = request.getUser()
-
-        return ResponseEntity(this.projectService.findByUserId(user.id.value).map(Project::toDTO), HttpStatus.OK)
-    }
 
     @GetMapping("/likes/{id}")
     fun getLikes(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<List<Long>> {
-        val project = this.projectService.findById(id.toLong())
-
+        val project = this@ProjectController.projectService.findById(id.toLong())
         return ResponseEntity(project.likes.map { it.id.value }, HttpStatus.OK)
     }
 
@@ -75,7 +65,7 @@ class ProjectController @Autowired constructor(val projectService: ProjectServic
 
         val project = this.projectService.findById(id.toLong())
 
-        if (project.likes.contains(user)) {
+        if (project.likes.map { it.id.value }.contains(user.id.value)) {
             this.projectService.deleteLike(user.id, project.id)
         } else {
             this.projectService.createLike(user.id, project.id)
