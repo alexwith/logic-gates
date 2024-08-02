@@ -31,7 +31,7 @@ export function EditorBar() {
   const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
   const clearEditor = useEditorStore((state: EditorState) => state.clear);
   const updateCurrentTruthTable = useEditorStore(
-    (state: EditorState) => state.updateCurrentTruthTable
+    (state: EditorState) => state.updateCurrentTruthTable,
   );
 
   const handleImportClick = (event: ChangeEvent<HTMLInputElement>) => {

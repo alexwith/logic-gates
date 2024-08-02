@@ -22,12 +22,18 @@ export default function NewProject() {
   const handleCreateClick = async () => {
     if (!/^[a-zA-Z0-9]+(?: [a-zA-Z0-9]+)*$/.test(name) || name.length > 50) {
       toast.error(
-        "The name can only contain letters, numbers and single spaces and be a maximum 50 characters."
+        "The name can only contain letters, numbers and single spaces and be a maximum 50 characters.",
       );
       return;
     }
 
-    await createProject({ name, shortDescription, description, visibility });
+    await createProject({
+      name,
+      shortDescription,
+      description,
+      visibility,
+      data: Int8Array.from([]),
+    });
 
     routerNavigate(`/user/${user.id}`);
   };

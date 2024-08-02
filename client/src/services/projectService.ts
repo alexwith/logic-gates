@@ -11,6 +11,7 @@ export const createProject = async ({
   shortDescription,
   description,
   visibility,
+  data,
 }: Project): Promise<void> => {
   await axios.post("/api/v1/projects/create", {
     name,

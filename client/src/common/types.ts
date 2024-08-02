@@ -13,6 +13,7 @@ export interface Project {
   shortDescription: string;
   description: string;
   visibility: ProjectVisibilty;
+  data: Int8Array;
 }
 
 export enum ProjectVisibilty {

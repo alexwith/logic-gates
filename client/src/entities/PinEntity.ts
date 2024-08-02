@@ -1,4 +1,4 @@
-import { EDITOR_WIDTH } from "../common/constants";
+import { SIMULATOR_WIDTH } from "../common/constants";
 import { IO, Pos } from "../common/types";
 import GateEntity from "./GateEntity";
 import TerminalEntity from "./TerminalEntity";
@@ -12,7 +12,13 @@ class PinEntity {
 
   static idCounter: number = 0;
 
-  constructor(attached: GateEntity | TerminalEntity, index: number, io: IO, active: boolean, id?: number) {
+  constructor(
+    attached: GateEntity | TerminalEntity,
+    index: number,
+    io: IO,
+    active: boolean,
+    id?: number,
+  ) {
     if (id && id >= PinEntity.idCounter) {
       PinEntity.idCounter = id + 1;
     }
@@ -27,7 +33,7 @@ class PinEntity {
   getPos(): Pos {
     if (this.attached instanceof TerminalEntity) {
       return {
-        x: this.attached.io === IO.Input ? 40 : EDITOR_WIDTH - 49,
+        x: this.attached.io === IO.Input ? 40 : SIMULATOR_WIDTH - 49,
         y: this.attached.yPos - 15,
       };
     } else if (this.attached instanceof GateEntity) {

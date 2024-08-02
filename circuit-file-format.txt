@@ -1,12 +1,12 @@
 Circuit file format
 
-2 bytes - magic, id file type = 0xC1C0
+2 bytes - magic, id file type = 0x418
 1 byte - version = 0x01
 
-2 bytes - gate types size      
+2 bytes - gate types size
     string - name
     1 byte - input amount
-    1 byte - output amount      
+    1 byte - output amount
     2 bytes - valuations size
         1 byte - bitset representing valuations, there are ceil((inputs + outputs) * valuations / 8) bitsets
 

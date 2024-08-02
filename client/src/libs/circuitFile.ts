@@ -10,7 +10,7 @@ export const serializeCircuit = (
   gateTypes: GateTypeEntity[],
   gates: GateEntity[],
   terminals: TerminalEntity[],
-  wires: WireEntity[]
+  wires: WireEntity[],
 ): Buffer => {
   let size = 11; // see spec
 
@@ -18,7 +18,7 @@ export const serializeCircuit = (
     size +=
       4 +
       (gateType.name.length + 1) +
-      Math.ceil(((gateType.inputs + gateType.outputs) * gateType.truthTable.length) / 8); // see spec
+      Math.ceil(((gateType.inputs + gateType.outputs) * gateType.truthTable.length) / 8) * 2; // see spec
   });
 
   gates.forEach(() => {
@@ -34,7 +34,7 @@ export const serializeCircuit = (
   });
 
   const buffer = new OffsetBuffer(Buffer.alloc(size));
-  buffer.writeUInt16(0xc1c0); // magic
+  buffer.writeUInt16(0x418); // magic
   buffer.writeUInt8(0x01); // version
 
   buffer.writeUInt16(gateTypes.length);
@@ -53,7 +53,7 @@ export const serializeCircuit = (
         }
 
         if (++truthValueCounter === 8) {
-          buffer.writeUInt8(truthValueBitset);
+          buffer.writeUInt16(truthValueBitset);
           truthValueBitset = 0;
           truthValueCounter = 0;
         }
@@ -61,7 +61,7 @@ export const serializeCircuit = (
     });
 
     if (truthValueBitset !== 0) {
-      buffer.writeUInt8(truthValueBitset);
+      buffer.writeUInt16(truthValueBitset);
     }
   });
 
@@ -89,8 +89,8 @@ export const serializeCircuit = (
       PinType.dynamicLogic(
         PinType.fromEntity(startEntity),
         () => terminals.indexOf(startEntity as TerminalEntity),
-        () => gates.indexOf(startEntity as GateEntity)
-      )
+        () => gates.indexOf(startEntity as GateEntity),
+      ),
     );
     buffer.writeUInt8(wire.startPin.index);
     buffer.writeUInt8(wire.startPin.io);
@@ -101,8 +101,8 @@ export const serializeCircuit = (
       PinType.dynamicLogic(
         PinType.fromEntity(endEntity),
         () => terminals.indexOf(endEntity as TerminalEntity),
-        () => gates.indexOf(endEntity as GateEntity)
-      )
+        () => gates.indexOf(endEntity as GateEntity),
+      ),
     );
     buffer.writeUInt8(wire.endPin.index);
     buffer.writeUInt8(wire.endPin.io);
@@ -118,12 +118,12 @@ export const serializeCircuit = (
 };
 
 export const deserializeCircuit = (
-  data: ArrayBuffer
+  data: ArrayBuffer,
 ): [GateTypeEntity[], GateEntity[], TerminalEntity[], WireEntity[]] | null => {
   const buffer = new OffsetBuffer(Buffer.from(data));
 
   const magic = buffer.readUInt16();
-  if (magic !== 0xc1c0) {
+  if (magic !== 0x418) {
     // the file is not a circuit file
     console.error("The file is not a circuit file.");
     return null;
@@ -149,7 +149,7 @@ export const deserializeCircuit = (
 
     let valuation: boolean[] = [];
     for (let i = 0; i < truthValueBitsets; i++) {
-      const truthValueBitset = buffer.readUInt8();
+      const truthValueBitset = buffer.readUInt16();
       for (let j = 0; j < 8; j++) {
         valuation.push((truthValueBitset & (1 << j)) !== 0);
 
@@ -199,7 +199,7 @@ export const deserializeCircuit = (
     const startEntity = PinType.dynamicLogic<TerminalEntity | GateEntity>(
       startPinType,
       () => terminals[startPinAttachedIndex],
-      () => gates[startPinAttachedIndex]
+      () => gates[startPinAttachedIndex],
     );
 
     const startPin = PinType.dynamicLogic(
@@ -210,7 +210,7 @@ export const deserializeCircuit = (
         return startIo === IO.Input
           ? gateEntity.inputPins[startPinIndex]
           : gateEntity.outputPins[startPinIndex];
-      }
+      },
     );
     const endPinType = buffer.readUInt8();
     const endPinAttachedId = buffer.readUInt16();
@@ -220,7 +220,7 @@ export const deserializeCircuit = (
     const endEntity = PinType.dynamicLogic<TerminalEntity | GateEntity>(
       endPinType,
       () => terminals[endPinAttachedId],
-      () => gates[endPinAttachedId]
+      () => gates[endPinAttachedId],
     );
 
     const endPin = PinType.dynamicLogic(
@@ -231,7 +231,7 @@ export const deserializeCircuit = (
         return endIo === IO.Input
           ? gateEntity.inputPins[endPinIndex]
           : gateEntity.outputPins[endPinIndex];
-      }
+      },
     );
 
     const checkpointsSize = buffer.readUInt16();

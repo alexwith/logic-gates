@@ -4,7 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import "../../css/markdown.css";
-import { EDITOR_WIDTH } from "../../common/constants";
+import { SIMULATOR_WIDTH } from "../../common/constants";
+import { Simulator } from "../../components/simulator/Simulator";
 
 export function Project() {
   const projectId = useLoaderData() as number;
@@ -20,9 +21,10 @@ export function Project() {
   return (
     <div className="">
       <h1 className="font-bold text-2xl">{project!.name}</h1>
+      <Simulator project={project!} />
       <div
         className="prose prose-invert markdown border-4 border-zinc-800 p-4 rounded-lg mt-4"
-        style={{ maxWidth: EDITOR_WIDTH }}
+        style={{ maxWidth: SIMULATOR_WIDTH }}
       >
         <Markdown remarkPlugins={[remarkGfm]}>{project!.description}</Markdown>
       </div>

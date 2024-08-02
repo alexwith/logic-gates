@@ -23,14 +23,14 @@ import PinEntity from "../../entities/PinEntity";
 import GateEntity from "../../entities/GateEntity";
 import TerminalEntity from "../../entities/TerminalEntity";
 import WireEntity from "../../entities/WireEntity";
-import { EDITOR_WIDTH } from "../../common/constants";
+import { SIMULATOR_WIDTH } from "../../common/constants";
 
 export default function Editor() {
   const ref = useRef<HTMLDivElement>(null);
   const { mouseDragOffset } = useMouse();
   const { mouseDragOffset: wiringMouseOffset, updateOrigin: wiringUpdateOrigin } = useMouse(
     true,
-    true
+    true,
   );
 
   const [gateOrigin, setGateOrigin] = useState<Pos>({ x: 0, y: 0 });
@@ -61,7 +61,7 @@ export default function Editor() {
   const addTerminal = useEditorStore((state: EditorState) => state.addTerminal);
   const setSelectedGate = useEditorStore((state: EditorState) => state.setSelectedGate);
   const updateCurrentTruthTable = useEditorStore(
-    (state: EditorState) => state.updateCurrentTruthTable
+    (state: EditorState) => state.updateCurrentTruthTable,
   );
 
   const handleMouseMove = () => {
@@ -116,7 +116,7 @@ export default function Editor() {
         x: event.clientX - editorRect.left,
         y: event.clientY - editorRect.top,
       },
-      addingGateType
+      addingGateType,
     );
     gate.pos.x -= gate.width / 2;
     gate.pos.y -= gate.height / 2;
@@ -234,11 +234,11 @@ export default function Editor() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (!expandWarning && window.innerWidth < EDITOR_WIDTH) {
+      if (!expandWarning && window.innerWidth < SIMULATOR_WIDTH) {
         setExpandWarning(true);
       }
 
-      if (expandWarning && window.innerWidth > EDITOR_WIDTH) {
+      if (expandWarning && window.innerWidth > SIMULATOR_WIDTH) {
         setExpandWarning(false);
       }
     };
@@ -262,7 +262,7 @@ export default function Editor() {
   }
 
   return (
-    <div className="flex-col space-y-3" style={{ width: EDITOR_WIDTH }}>
+    <div className="flex-col space-y-3" style={{ width: SIMULATOR_WIDTH }}>
       <EditorBar />
       <div
         className="relative border-zinc-800 border-4 rounded-lg grow h-[800px]"

@@ -8,7 +8,7 @@ export class OffsetBuffer {
     this.buffer = buffer;
   }
 
-  writeString(value: string) {    
+  writeString(value: string) {
     this.writeUInt8(value.length);
     this.buffer.write(value, this.offset);
     this.offset += value.length;
@@ -25,7 +25,7 @@ export class OffsetBuffer {
   }
 
   readString(): string {
-    const length = this.readUInt8();   
+    const length = this.readUInt8();
     const result = this.buffer.toString("utf8", this.offset, this.offset + length);
     this.offset += length;
 
