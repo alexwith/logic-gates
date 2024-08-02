@@ -80,7 +80,7 @@ root.render(
         />
       </UserProvider>
     </QueryClientProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 reportWebVitals();

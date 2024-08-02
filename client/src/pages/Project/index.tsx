@@ -1,6 +1,10 @@
 import { useLoaderData } from "react-router-dom";
 import { getProject } from "../../services/projectService";
 import { useQuery } from "@tanstack/react-query";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import "../../css/markdown.css";
+import { EDITOR_WIDTH } from "../../common/constants";
 
 export function Project() {
   const projectId = useLoaderData() as number;
@@ -14,8 +18,14 @@ export function Project() {
   }
 
   return (
-    <div>
+    <div className="">
       <h1 className="font-bold text-2xl">{project!.name}</h1>
+      <div
+        className="prose prose-invert markdown border-4 border-zinc-800 p-4 rounded-lg mt-4"
+        style={{ maxWidth: EDITOR_WIDTH }}
+      >
+        <Markdown remarkPlugins={[remarkGfm]}>{project!.description}</Markdown>
+      </div>
     </div>
   );
 }
