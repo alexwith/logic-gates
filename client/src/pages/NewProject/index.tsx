@@ -10,7 +10,7 @@ import { validateProjectDetails } from "../../libs/validation";
 
 export default function NewProject() {
   const { user } = useUser();
-  const routerNavigate = useNavigate();
+  const navigate = useNavigate();
 
   const [details, setDetails] = useState<Project | undefined>();
 
@@ -24,7 +24,7 @@ export default function NewProject() {
       data: Int8Array.from([]),
     });
 
-    routerNavigate(`/user/${user.id}`);
+    navigate(`/user/${user.id}`);
   };
 
   return (

@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { validateProjectDetails } from "../../libs/validation";
 
 export function EditProjectDetails() {
-  const routerNavigate = useNavigate();
+  const navigate = useNavigate();
   const projectId = useLoaderData() as number;
   const { isLoading, data: project } = useQuery({
     queryKey: ["project", projectId],
@@ -28,7 +28,7 @@ export function EditProjectDetails() {
     }
 
     await updateProject(project!.id!, details!);
-    routerNavigate(`/project/${project!.id}`);
+    navigate(`/project/${project!.id}`);
   };
 
   return (

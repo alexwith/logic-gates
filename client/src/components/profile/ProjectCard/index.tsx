@@ -10,7 +10,7 @@ interface Props {
   description: string;
 }
 export default function ProjectCard({ id, name, description }: Props) {
-  const routerNavigate = useNavigate();
+  const navigate = useNavigate();
   const { user, isLoggedIn } = useUser();
 
   const [liked, setLiked] = useState<boolean>(false);
@@ -43,7 +43,7 @@ export default function ProjectCard({ id, name, description }: Props) {
   };
 
   const handleNameClick = () => {
-    routerNavigate(`/project/${id}`);
+    navigate(`/project/${id}`);
   };
 
   return (

@@ -17,7 +17,7 @@ import { TruthTableButton } from "../../components/common/TruthTableButton";
 import { useUser } from "../../hooks/useUser";
 
 export function Project() {
-  const routerNavigate = useNavigate();
+  const navigate = useNavigate();
   const { user, isLoggedIn } = useUser();
   const projectId = useLoaderData() as number;
   const { isLoading, data: project } = useQuery({
@@ -34,12 +34,12 @@ export function Project() {
   const isUserCreator = isLoggedIn && user.id === project!.creatorId;
 
   const handleEditDetailsClick = () => {
-    routerNavigate(`/projectdetails/${project!.id}`);
+    navigate(`/projectdetails/${project!.id}`);
   };
 
   const handleDeleteClick = async () => {
     await deleteProject(project!.id!);
-    routerNavigate(`/user/${user.id}`);
+    navigate(`/user/${user.id}`);
   };
 
   return (

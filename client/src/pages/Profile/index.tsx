@@ -9,7 +9,7 @@ import { useUser } from "../../hooks/useUser";
 
 export default function Profile() {
   const { user: meUser } = useUser();
-  const routerNavigate = useNavigate();
+  const navigate = useNavigate();
   const userId = useLoaderData() as number;
   const { isLoading: isUserLoading, data: user } = useQuery({
     queryKey: ["user", userId],
@@ -25,7 +25,7 @@ export default function Profile() {
   }
 
   const handleNewProjectClick = () => {
-    routerNavigate("/newproject");
+    navigate("/newproject");
   };
 
   return (

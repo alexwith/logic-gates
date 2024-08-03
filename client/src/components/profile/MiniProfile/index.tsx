@@ -8,7 +8,7 @@ import BasicButton from "../../common/BasicButton";
 import { useNavigate } from "react-router-dom";
 
 export default function MiniProfile() {
-  const routerNavigate = useNavigate();
+  const navigate = useNavigate();
   const { user, isLoggedIn, logout } = useUser();
   const githubUrl = createGithubUrl(window.location.pathname);
 
@@ -24,7 +24,7 @@ export default function MiniProfile() {
   };
 
   const handleMyProfileClick = () => {
-    runMenuClick(() => routerNavigate(`user/${user!.id}`));
+    runMenuClick(() => navigate(`user/${user!.id}`));
   };
 
   const runMenuClick = (runnable: () => void) => {

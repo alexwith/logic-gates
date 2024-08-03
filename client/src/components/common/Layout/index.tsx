@@ -2,10 +2,10 @@ import MiniProfile from "../../profile/MiniProfile";
 import { Outlet, useNavigate } from "react-router-dom";
 
 export function Layout() {
-  const routerNavigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleHomeClick = () => {
-    routerNavigate("/");
+    navigate("/");
   };
 
   return (
