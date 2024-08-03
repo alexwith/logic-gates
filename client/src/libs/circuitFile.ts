@@ -122,10 +122,14 @@ export const deserializeCircuit = (
 ): [GateTypeEntity[], GateEntity[], TerminalEntity[], WireEntity[]] | null => {
   const buffer = new OffsetBuffer(Buffer.from(data));
 
-  const magic = buffer.readUInt16();
-  if (magic !== 0x418) {
-    // the file is not a circuit file
-    console.error("The file is not a circuit file.");
+  try {
+    const magic = buffer.readUInt16();
+    if (magic !== 0x418) {
+      // the file is not a circuit file
+      console.error("The file is not a circuit file.");
+      return null;
+    }
+  } catch {
     return null;
   }
 

@@ -18,7 +18,15 @@ class Project(id: EntityID<Long>) : LongEntity(id) {
     var likes by User via ProjectLikeEntity
 
     fun toDTO(): ProjectDTO {
-        return ProjectDTO(id.value, name, shortDescription, description, visibility, data.toUByteArray().map { it.toInt() })
+        return ProjectDTO(
+            id.value,
+            name,
+            shortDescription,
+            description,
+            visibility,
+            data.toUByteArray().map { it.toInt() },
+            creator.id.value
+        )
     }
 }
 
@@ -28,5 +36,6 @@ class ProjectDTO(
     val shortDescription: String,
     val description: String,
     val visibility: ProjectVisibility,
-    val data: List<Int>
+    val data: List<Int>,
+    val creatorId: Long
 )

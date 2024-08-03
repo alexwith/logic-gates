@@ -8,6 +8,7 @@ import Wire from "../../editor/Wire";
 import GateEntity from "../../../entities/GateEntity";
 import Gate from "../../editor/Gate";
 import Pin from "../../editor/Pin";
+import Settings from "../Settings";
 
 interface Props {
   project: Project;
@@ -18,6 +19,7 @@ export function Simulator({ project }: Props) {
 
   const [render, rerender] = useState<boolean>(false);
 
+  const settings = useEditorStore((state: EditorState) => state.settings);
   const terminals = useEditorStore((state: EditorState) => state.terminals);
   const gates = useEditorStore((state: EditorState) => state.gates);
   const wires = useEditorStore((state: EditorState) => state.wires);
@@ -30,7 +32,13 @@ export function Simulator({ project }: Props) {
 
   useEffect(() => {
     const buffer = Uint8Array.from(project.data).buffer;
-    const [gateTypes, gates, terminals, wires] = deserializeCircuit(buffer)!;
+    const deserializedData = deserializeCircuit(buffer);
+    if (!deserializedData) {
+      return;
+    }
+
+    const [gateTypes, gates, terminals, wires] = deserializedData!;
+
     setGateTypes(gateTypes);
     setGates(gates);
     setTerminals(terminals);
@@ -41,6 +49,7 @@ export function Simulator({ project }: Props) {
   return (
     <div className="flex-col space-y-3" style={{ width: SIMULATOR_WIDTH }}>
       <div className="relative border-zinc-800 border-4 rounded-lg grow h-[800px]" ref={ref}>
+        <Settings />
         {terminals.map((terminal, i) => {
           return (
             <Terminal
@@ -52,6 +61,22 @@ export function Simulator({ project }: Props) {
           );
         })}
         <svg className="w-full h-full">
+          {settings.grid && (
+            <>
+              <defs>
+                <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path
+                    d="M 20 0 L 0 0 0 20"
+                    fill="none"
+                    stroke="#71717a"
+                    strokeWidth="0.5"
+                    opacity="0.5"
+                  />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#grid)" />
+            </>
+          )}
           {wires.map((wire, i) => (
             <Wire
               key={i}

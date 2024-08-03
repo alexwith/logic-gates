@@ -14,6 +14,7 @@ export interface Project {
   description: string;
   visibility: ProjectVisibilty;
   data: Int8Array;
+  creatorId?: number;
 }
 
 export enum ProjectVisibilty {
