@@ -31,7 +31,7 @@ export function Simulator({ project }: Props) {
   const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
 
   useEffect(() => {
-    const buffer = Uint8Array.from(project.data).buffer;
+    const buffer = Uint8Array.from(project.data!).buffer;
     const deserializedData = deserializeCircuit(buffer);
     if (!deserializedData) {
       return;

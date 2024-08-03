@@ -13,7 +13,7 @@ export interface Project {
   shortDescription: string;
   description: string;
   visibility: ProjectVisibilty;
-  data: Int8Array;
+  data?: Int8Array;
   creatorId?: number;
 }
 
