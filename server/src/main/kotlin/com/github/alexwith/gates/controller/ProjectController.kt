@@ -1,13 +1,10 @@
 package com.github.alexwith.gates.controller
 
 import com.github.alexwith.gates.domain.project.ProjectDTO
-import com.github.alexwith.gates.domain.project.ProjectEntity
 import com.github.alexwith.gates.dto.project.CreateProjectDTO
-import com.github.alexwith.gates.enums.ProjectVisibility
 import com.github.alexwith.gates.middleware.getUser
 import com.github.alexwith.gates.service.ProjectService
 import jakarta.servlet.http.HttpServletRequest
-import org.jetbrains.exposed.sql.update
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -22,6 +19,18 @@ class ProjectController @Autowired constructor(val projectService: ProjectServic
         val project = this@ProjectController.projectService.findById(id.toLong())
 
         return ResponseEntity(project.toDTO(), HttpStatus.OK)
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<Void> {
+        val user = request.getUser()
+        val project = this@ProjectController.projectService.findById(id.toLong())
+        if (project.creator.id != user.id) {
+            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        }
+
+        this.projectService.deleteById(id.toLong())
+        return ResponseEntity(HttpStatus.OK)
     }
 
     @GetMapping("/likes/{id}")

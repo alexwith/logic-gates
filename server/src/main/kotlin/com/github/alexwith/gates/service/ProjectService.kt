@@ -34,6 +34,11 @@ class ProjectService {
         return Project.new(init)
     }
 
+    fun deleteById(id: Long) {
+        ProjectLikeEntity.deleteWhere { project eq id }
+        ProjectEntity.deleteWhere { ProjectEntity.id eq id }
+    }
+
     fun createLike(userId: EntityID<Long>, projectId: EntityID<Long>) {
         ProjectLikeEntity.insert {
             it[user] = userId

@@ -1,5 +1,5 @@
-import { useLoaderData } from "react-router-dom";
-import { getProject } from "../../services/projectService";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import { deleteProject, getProject } from "../../services/projectService";
 import { useQuery } from "@tanstack/react-query";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -11,11 +11,13 @@ import { FaCodeFork as ForkIcon } from "react-icons/fa6";
 import { BiEditAlt as EditIcon } from "react-icons/bi";
 import { AiOutlineAppstore as MenuIcon } from "react-icons/ai";
 import { LuCircuitBoard as CircuitIcon } from "react-icons/lu";
+import { FaRegTrashAlt as DeleteIcon } from "react-icons/fa";
 import { useState } from "react";
 import { TruthTableButton } from "../../components/common/TruthTableButton";
 import { useUser } from "../../hooks/useUser";
 
 export function Project() {
+  const routerNavigate = useNavigate();
   const { user, isLoggedIn } = useUser();
   const projectId = useLoaderData() as number;
   const { isLoading, data: project } = useQuery({
@@ -30,6 +32,11 @@ export function Project() {
   }
 
   const isUserCreator = isLoggedIn && user.id === project!.creatorId;
+
+  const handleDeleteClick = async () => {
+    await deleteProject(project!.id!);
+    routerNavigate(`/user/${user.id}`);
+  };
 
   return (
     <div className="flex flex-col">
@@ -47,9 +54,17 @@ export function Project() {
               }`}
             >
               {!isUserCreator && <BasicButton name="Fork" icon={<ForkIcon />} hoverable />}
-              {isUserCreator && <BasicButton name="Edit details" icon={<EditIcon />} hoverable />}
               {isUserCreator && (
-                <BasicButton name="Edit circuit" icon={<CircuitIcon />} hoverable />
+                <>
+                  <BasicButton name="Edit details" icon={<EditIcon />} hoverable />
+                  <BasicButton name="Edit circuit" icon={<CircuitIcon />} hoverable />
+                  <BasicButton
+                    name="Delete"
+                    icon={<DeleteIcon />}
+                    hoverable
+                    onClick={handleDeleteClick}
+                  />
+                </>
               )}
             </div>
           </div>

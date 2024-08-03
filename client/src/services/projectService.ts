@@ -6,6 +6,11 @@ export const getProject = async (id: number): Promise<Project> => {
   return response.data;
 };
 
+export const deleteProject = async (id: number): Promise<void> => {
+  await axios.delete(`/api/v1/projects/${id}`);
+  return Promise.resolve();
+};
+
 export const createProject = async ({
   name,
   shortDescription,
