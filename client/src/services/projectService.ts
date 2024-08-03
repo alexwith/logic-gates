@@ -11,6 +11,19 @@ export const deleteProject = async (id: number): Promise<void> => {
   return Promise.resolve();
 };
 
+export const updateProject = async (
+  id: number,
+  { name, shortDescription, description, visibility }: Project,
+): Promise<void> => {
+  await axios.post(`/api/v1/projects/${id}`, {
+    name,
+    shortDescription,
+    description,
+    visibility,
+  });
+  return Promise.resolve();
+};
+
 export const createProject = async ({
   name,
   shortDescription,

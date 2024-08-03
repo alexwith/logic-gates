@@ -10,6 +10,8 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.statements.UpdateStatement
+import org.jetbrains.exposed.sql.update
 import org.springframework.stereotype.Service
 
 @Service
@@ -32,6 +34,10 @@ class ProjectService {
 
     fun create(init: Project.() -> Unit): Project {
         return Project.new(init)
+    }
+
+    fun update(id: Long, body: ProjectEntity.(UpdateStatement) -> Unit) {
+        ProjectEntity.update({ ProjectEntity.id eq id }, body = body)
     }
 
     fun deleteById(id: Long) {

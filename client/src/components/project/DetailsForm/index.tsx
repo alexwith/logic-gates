@@ -1,64 +1,72 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { Project, ProjectVisibilty } from "../../../common/types";
 import TextInput from "../../common/TextInput";
 import { LuLock as PrivateIcon } from "react-icons/lu";
 import { MdOutlinePublic as PublicIcon } from "react-icons/md";
 
 interface Props {
+  defaults?: Project;
   onUpdate: (details: Project) => void;
 }
 
-export function DetailsForm({ onUpdate }: Props) {
-  const [name, setName] = useState<string>("");
-  const [shortDescription, setShortDescription] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [visibility, setVisibility] = useState<ProjectVisibilty>(ProjectVisibilty.Public);
+export function DetailsForm({ defaults, onUpdate }: Props) {
+  const initValues: Project = {
+    name: defaults?.name || "",
+    shortDescription: defaults?.shortDescription || "",
+    description: defaults?.description || "",
+    visibility: defaults?.visibility || ProjectVisibilty.Public,
+  };
+
+  const [name, setName] = useState<string>(initValues.name);
+  const [shortDescription, setShortDescription] = useState<string>(initValues.shortDescription);
+  const [description, setDescription] = useState<string>(initValues.description);
+  const [visibility, setVisibility] = useState<ProjectVisibilty>(initValues.visibility);
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setName(value);
-    notifyUpdate();
   };
 
   const handleShortDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setShortDescription(value);
-    notifyUpdate();
   };
 
   const handleDescriptionChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = event.target;
     setDescription(value);
-    notifyUpdate();
   };
 
   const handleVisibilityChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setVisibility(value as ProjectVisibilty);
-    notifyUpdate();
   };
 
-  const notifyUpdate = () => {
+  useEffect(() => {
     onUpdate({
       name,
       shortDescription,
       description,
       visibility,
     });
-  };
+  }, [onUpdate, name, shortDescription, description, visibility]);
 
   return (
     <div className="space-y-4">
       <div>
         <p className="font-bold">Project name</p>
-        <TextInput onChange={handleNameChange} />
+        <TextInput value={name} onChange={handleNameChange} />
       </div>
       <div>
         <p className="font-bold">Short Description</p>
         <p className="text-sm text-zinc-500">
           A shorter description that will show in the project preview.
         </p>
-        <TextInput onChange={handleShortDescriptionChange} className="w-full" />
+        <TextInput
+          value={shortDescription}
+          onChange={handleShortDescriptionChange}
+          className="w-full"
+        />
       </div>
       <div>
         <p className="font-bold">Description</p>
@@ -67,6 +75,7 @@ export function DetailsForm({ onUpdate }: Props) {
         </p>
         <textarea
           className="appearance-none focus:outline-none bg-transparent border-2 border-zinc-700 rounded-md py-1 px-2 w-full min-h-[75px]"
+          value={description}
           onChange={handleDescriptionChange}
         />
       </div>
@@ -80,7 +89,7 @@ export function DetailsForm({ onUpdate }: Props) {
               name="visibility"
               value={ProjectVisibilty.Public}
               id="public"
-              defaultChecked
+              checked={visibility === ProjectVisibilty.Public}
               onChange={handleVisibilityChange}
             />
             <label className="flex space-x-1 items-center font-medium" htmlFor="public">
@@ -95,6 +104,7 @@ export function DetailsForm({ onUpdate }: Props) {
               name="visibility"
               value={ProjectVisibilty.Private}
               id="private"
+              checked={visibility === ProjectVisibilty.Private}
               onChange={handleVisibilityChange}
             />
             <label className="flex space-x-1 items-center font-medium" htmlFor="private">

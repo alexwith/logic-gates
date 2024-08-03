@@ -33,6 +33,10 @@ export function Project() {
 
   const isUserCreator = isLoggedIn && user.id === project!.creatorId;
 
+  const handleEditDetailsClick = () => {
+    routerNavigate(`/projectdetails/${project!.id}`);
+  };
+
   const handleDeleteClick = async () => {
     await deleteProject(project!.id!);
     routerNavigate(`/user/${user.id}`);
@@ -53,14 +57,21 @@ export function Project() {
                 showMenu ? "" : "hidden"
               }`}
             >
-              {!isUserCreator && <BasicButton name="Fork" icon={<ForkIcon />} hoverable />}
+              {!isUserCreator && (
+                <BasicButton name="Fork" icon={<ForkIcon size={20} />} hoverable />
+              )}
               {isUserCreator && (
                 <>
-                  <BasicButton name="Edit details" icon={<EditIcon />} hoverable />
-                  <BasicButton name="Edit circuit" icon={<CircuitIcon />} hoverable />
+                  <BasicButton
+                    name="Edit details"
+                    icon={<EditIcon size={20} />}
+                    hoverable
+                    onClick={handleEditDetailsClick}
+                  />
+                  <BasicButton name="Edit circuit" icon={<CircuitIcon size={20} />} hoverable />
                   <BasicButton
                     name="Delete"
-                    icon={<DeleteIcon />}
+                    icon={<DeleteIcon size={20} />}
                     hoverable
                     onClick={handleDeleteClick}
                   />

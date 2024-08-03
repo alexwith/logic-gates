@@ -1,12 +1,12 @@
 import BasicButton from "../../components/common/BasicButton";
 import { LuCircuitBoard as NewProjectIcon } from "react-icons/lu";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../hooks/useUser";
 import { createProject } from "../../services/projectService";
 import { DetailsForm } from "../../components/project/DetailsForm";
 import { useState } from "react";
 import { Project } from "../../common/types";
+import { validateProjectDetails } from "../../libs/validation";
 
 export default function NewProject() {
   const { user } = useUser();
@@ -15,20 +15,12 @@ export default function NewProject() {
   const [details, setDetails] = useState<Project | undefined>();
 
   const handleCreateClick = async () => {
-    if (!details) {
-      toast.error("You must fill out the fields.");
-      return;
-    }
-
-    if (!/^[a-zA-Z0-9]+(?: [a-zA-Z0-9]+)*$/.test(details.name) || details.name.length > 50) {
-      toast.error(
-        "The name can only contain letters, numbers and single spaces and be a maximum 50 characters.",
-      );
+    if (!validateProjectDetails(details)) {
       return;
     }
 
     await createProject({
-      ...details,
+      ...details!,
       data: Int8Array.from([]),
     });
 

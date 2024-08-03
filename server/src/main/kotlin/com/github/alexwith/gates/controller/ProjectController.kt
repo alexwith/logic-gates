@@ -1,7 +1,7 @@
 package com.github.alexwith.gates.controller
 
 import com.github.alexwith.gates.domain.project.ProjectDTO
-import com.github.alexwith.gates.dto.project.CreateProjectDTO
+import com.github.alexwith.gates.dto.project.ProjectDetailsDTO
 import com.github.alexwith.gates.middleware.getUser
 import com.github.alexwith.gates.service.ProjectService
 import jakarta.servlet.http.HttpServletRequest
@@ -33,6 +33,24 @@ class ProjectController @Autowired constructor(val projectService: ProjectServic
         return ResponseEntity(HttpStatus.OK)
     }
 
+    @PostMapping("/{id}")
+    fun update(request: HttpServletRequest, @PathVariable id: String, @RequestBody body: ProjectDetailsDTO): ResponseEntity<Void> {
+        val user = request.getUser()
+        val project = this@ProjectController.projectService.findById(id.toLong())
+        if (project.creator.id != user.id) {
+            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        }
+
+        this.projectService.update(id.toLong()) {
+            it[name] = body.name
+            it[shortDescription] = body.shortDescription
+            it[description] = body.description
+            it[visibility] = body.visibility
+        }
+
+        return ResponseEntity(HttpStatus.OK)
+    }
+
     @GetMapping("/likes/{id}")
     fun getLikes(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<List<Long>> {
         val project = this@ProjectController.projectService.findById(id.toLong())
@@ -40,7 +58,7 @@ class ProjectController @Autowired constructor(val projectService: ProjectServic
     }
 
     @PostMapping("/create")
-    fun create(request: HttpServletRequest, @RequestBody body: CreateProjectDTO): ResponseEntity<Void> {
+    fun create(request: HttpServletRequest, @RequestBody body: ProjectDetailsDTO): ResponseEntity<Void> {
         val user = request.getUser()
 
         if (!PROJECT_VALID_NAME_REGEX.matches(body.name)) {
