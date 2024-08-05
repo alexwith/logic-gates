@@ -5,7 +5,7 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import "../../css/markdown.css";
 import { SIMULATOR_WIDTH } from "../../common/constants";
-import { Simulator } from "../../components/simulator/Simulator";
+import Simulator from "../../components/simulator/Simulator";
 import BasicButton from "../../components/common/BasicButton";
 import { FaCodeFork as ForkIcon } from "react-icons/fa6";
 import { BiEditAlt as EditIcon } from "react-icons/bi";
@@ -13,10 +13,10 @@ import { AiOutlineAppstore as MenuIcon } from "react-icons/ai";
 import { LuCircuitBoard as CircuitIcon } from "react-icons/lu";
 import { FaRegTrashAlt as DeleteIcon } from "react-icons/fa";
 import { useState } from "react";
-import { TruthTableButton } from "../../components/common/TruthTableButton";
+import TruthTableButton from "../../components/common/TruthTableButton";
 import { useUser } from "../../hooks/useUser";
 
-export function Project() {
+export default function Project() {
   const navigate = useNavigate();
   const { user, isLoggedIn } = useUser();
   const projectId = useLoaderData() as number;

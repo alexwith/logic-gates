@@ -3,7 +3,7 @@ import { LuCircuitBoard as NewProjectIcon } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../hooks/useUser";
 import { createProject } from "../../services/projectService";
-import { DetailsForm } from "../../components/project/DetailsForm";
+import DetailsForm from "../../components/project/DetailsForm";
 import { useState } from "react";
 import { Project } from "../../common/types";
 import { validateProjectDetails } from "../../libs/validation";

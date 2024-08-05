@@ -14,7 +14,7 @@ interface Props {
   project: Project;
 }
 
-export function Simulator({ project }: Props) {
+export default function Simulator({ project }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   const [render, rerender] = useState<boolean>(false);

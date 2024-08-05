@@ -7,7 +7,7 @@ import { simulate } from "./circuit";
 export function createTruthTable(
   terminals: TerminalEntity[],
   wires: WireEntity[],
-  gates: GateEntity[]
+  gates: GateEntity[],
 ): boolean[][] {
   const truthTable: boolean[][] = [];
 

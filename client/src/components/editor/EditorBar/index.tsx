@@ -11,7 +11,7 @@ import GateTypeEntity from "../../../entities/GateTypeEntity";
 import { IO } from "../../../common/types";
 import BasicButton from "../../common/BasicButton";
 
-export function EditorBar() {
+export default function EditorBar() {
   const circuitNameRef: any = useRef<any>(null);
 
   const [showMenu, setShowMenu] = useState<boolean>(false);

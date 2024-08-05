@@ -17,7 +17,7 @@ import { FaPlus as AddIcon } from "react-icons/fa";
 import { VscArrowBoth as ExpandWidthIcon } from "react-icons/vsc";
 import { LuTrash2 as TrashIcon } from "react-icons/lu";
 import EditorSettings from "../../components/editor/EditorSettings";
-import { EditorBar } from "../../components/editor/EditorBar";
+import EditorBar from "../../components/editor/EditorBar";
 import GateTypes from "../../components/editor/GateTypes";
 import PinEntity from "../../entities/PinEntity";
 import GateEntity from "../../entities/GateEntity";

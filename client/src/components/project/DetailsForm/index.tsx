@@ -9,7 +9,7 @@ interface Props {
   onUpdate: (details: Project) => void;
 }
 
-export function DetailsForm({ defaults, onUpdate }: Props) {
+export default function DetailsForm({ defaults, onUpdate }: Props) {
   const initValues: Project = {
     name: defaults?.name || "",
     shortDescription: defaults?.shortDescription || "",

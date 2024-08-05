@@ -4,7 +4,7 @@ import BasicButton from "../BasicButton";
 import { EditorState, useEditorStore } from "../../../store";
 import TruthTable from "../../editor/TruthTable";
 
-export function TruthTableButton() {
+export default function TruthTableButton() {
   const [show, setShow] = useState<boolean>(false);
 
   const terminals = useEditorStore((state: EditorState) => state.terminals);

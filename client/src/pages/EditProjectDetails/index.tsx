@@ -2,13 +2,13 @@ import BasicButton from "../../components/common/BasicButton";
 import { HiOutlineSave as SaveIcon } from "react-icons/hi";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { getProject, updateProject } from "../../services/projectService";
-import { DetailsForm } from "../../components/project/DetailsForm";
+import DetailsForm from "../../components/project/DetailsForm";
 import { useState } from "react";
 import { Project } from "../../common/types";
 import { useQuery } from "@tanstack/react-query";
 import { validateProjectDetails } from "../../libs/validation";
 
-export function EditProjectDetails() {
+export default function EditProjectDetails() {
   const navigate = useNavigate();
   const projectId = useLoaderData() as number;
   const { isLoading, data: project } = useQuery({
