@@ -1,4 +1,4 @@
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import BasicButton from "../../components/common/BasicButton";
 import ProjectCard from "../../components/profile/ProjectCard";
 import { LuCircuitBoard as NewProjectIcon } from "react-icons/lu";
@@ -9,7 +9,6 @@ import { useUser } from "../../hooks/useUser";
 
 export default function Profile() {
   const { user: meUser } = useUser();
-  const navigate = useNavigate();
   const userId = useLoaderData() as number;
   const { isLoading: isUserLoading, data: user } = useQuery({
     queryKey: ["user", userId],
@@ -23,10 +22,6 @@ export default function Profile() {
   if (isUserLoading || isProjectsLoading) {
     return <h1>Loading...</h1>;
   }
-
-  const handleNewProjectClick = () => {
-    navigate("/newproject");
-  };
 
   return (
     <div className="flex flex-col">
@@ -42,11 +37,9 @@ export default function Profile() {
         <div className="flex justify-between mb-4">
           <h1 className="font-bold text-2xl">Projects</h1>
           {meUser.id === userId && (
-            <BasicButton
-              name="New Project"
-              icon={<NewProjectIcon size={20} />}
-              onClick={handleNewProjectClick}
-            />
+            <Link to="/newproject">
+              <BasicButton name="New Project" icon={<NewProjectIcon size={20} />} />
+            </Link>
           )}
         </div>
         <div className="grid grid-cols-2 gap-4">
