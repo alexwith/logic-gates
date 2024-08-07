@@ -1,6 +1,7 @@
 import GateTypeEntity from "../entities/GateTypeEntity";
 
 export const SIMULATOR_WIDTH = 1200; //px
+export const SIMULATOR_HEIGHT = 800; //px
 
 export const BASE_GATES: GateTypeEntity[] = [
   new GateTypeEntity("AND", 2, 1, [[true, true, true]]),

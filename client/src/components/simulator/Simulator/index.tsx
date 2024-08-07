@@ -1,23 +1,28 @@
-import { Fragment, useEffect, useRef, useState } from "react";
-import { SIMULATOR_WIDTH } from "../../../common/constants";
+import { Fragment, useEffect, useRef, useState, MouseEvent } from "react";
+import { SIMULATOR_HEIGHT, SIMULATOR_WIDTH } from "../../../common/constants";
 import { EditorState, useEditorStore } from "../../../store";
 import Terminal from "../../editor/Terminal";
 import { deserializeCircuit } from "../../../libs/circuitFile";
 import { Project } from "../../../common/types";
 import Wire from "../../editor/Wire";
 import GateEntity from "../../../entities/GateEntity";
+import { VscArrowBoth as ExpandWidthIcon } from "react-icons/vsc";
 import Gate from "../../editor/Gate";
 import Pin from "../../editor/Pin";
 import Settings from "../Settings";
+import PinEntity from "../../../entities/PinEntity";
 
 interface Props {
-  project: Project;
+  project?: Project;
+  editable?: boolean;
+  onPinClick?: (event: MouseEvent, pin: PinEntity) => void;
 }
 
-export default function Simulator({ project }: Props) {
+export default function Simulator({ project, editable, onPinClick }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   const [render, rerender] = useState<boolean>(false);
+  const [expandWarning, setExpandWarning] = useState<boolean>(false);
 
   const settings = useEditorStore((state: EditorState) => state.settings);
   const terminals = useEditorStore((state: EditorState) => state.terminals);
@@ -31,6 +36,10 @@ export default function Simulator({ project }: Props) {
   const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
 
   useEffect(() => {
+    if (!project) {
+      return;
+    }
+
     const buffer = Uint8Array.from(project.data!).buffer;
     const deserializedData = deserializeCircuit(buffer);
     if (!deserializedData) {
@@ -44,19 +53,52 @@ export default function Simulator({ project }: Props) {
     setTerminals(terminals);
     setWires(wires);
     updateActivity();
-  }, [setGateTypes, setGates, setTerminals, setWires, updateActivity, project.data]);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (!expandWarning && window.innerWidth < SIMULATOR_WIDTH) {
+        setExpandWarning(true);
+      }
+
+      if (expandWarning && window.innerWidth > SIMULATOR_WIDTH) {
+        setExpandWarning(false);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [expandWarning]);
+
+  if (expandWarning) {
+    return (
+      <div className="border-zinc-800 border-4 rounded-lg p-8 mt-20 text-center">
+        <h1 className="font-bold text-2xl">Expand your window</h1>
+        <div className="flex justify-center py-2">
+          <ExpandWidthIcon size={40} className="animate-ping" />
+          <ExpandWidthIcon size={40} className="absolute" />
+        </div>
+        <p className="text-zinc-400">The simulator needs a bit more width to fit.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex-col space-y-3" style={{ width: SIMULATOR_WIDTH }}>
-      <div className="relative border-zinc-800 border-4 rounded-lg grow h-[800px]" ref={ref}>
+    <div className="flex-col space-y-3">
+      <div
+        className="relative border-zinc-800 border-4 rounded-lg grow"
+        style={{ height: SIMULATOR_HEIGHT, width: SIMULATOR_WIDTH }}
+        ref={ref}
+      >
         <Settings />
         {terminals.map((terminal, i) => {
           return (
             <Terminal
               key={i}
               terminal={terminal}
-              editorRect={ref.current?.getBoundingClientRect()}
-              rerenderEditor={() => rerender(!render)}
+              rerenderParent={() => rerender(!render)}
+              editable={editable}
             />
           );
         })}
@@ -93,7 +135,7 @@ export default function Simulator({ project }: Props) {
                     key={`in-${j}`}
                     pin={pin}
                     pos={pin.getPos()}
-                    onMouseDown={() => {}}
+                    onMouseDown={(event) => onPinClick?.(event, pin)}
                     setLastPin={() => {}}
                   />
                 );
@@ -104,7 +146,7 @@ export default function Simulator({ project }: Props) {
                     key={`out-${j}`}
                     pin={pin}
                     pos={pin.getPos()}
-                    onMouseDown={() => {}}
+                    onMouseDown={(event) => onPinClick?.(event, pin)}
                     setLastPin={() => {}}
                   />
                 );
@@ -117,7 +159,7 @@ export default function Simulator({ project }: Props) {
                 key={i}
                 pin={terminal.pin}
                 pos={terminal.pin.getPos()}
-                onMouseDown={() => {}}
+                onMouseDown={(event) => onPinClick?.(event, terminal.pin)}
                 setLastPin={() => {}}
               />
             );

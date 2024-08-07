@@ -5,10 +5,9 @@ import { TbLogin2 as LogInIcon } from "react-icons/tb";
 import { TbLogout2 as LogOutIcon } from "react-icons/tb";
 import { CgProfile as ProfileIcon } from "react-icons/cg";
 import BasicButton from "../../common/BasicButton";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function MiniProfile() {
-  const navigate = useNavigate();
   const { user, isLoggedIn, logout } = useUser();
   const githubUrl = createGithubUrl(window.location.pathname);
 
@@ -16,19 +15,9 @@ export default function MiniProfile() {
   const [showMenu, setShowMenu] = useState<boolean>(false);
 
   const handleLogoutClick = () => {
-    runMenuClick(() => {
-      logout().then(() => {
-        window.location.reload();
-      });
+    logout().then(() => {
+      window.location.reload();
     });
-  };
-
-  const handleMyProfileClick = () => {
-    runMenuClick(() => navigate(`user/${user!.id}`));
-  };
-
-  const runMenuClick = (runnable: () => void) => {
-    runnable();
     setShowMenu(false);
   };
 
@@ -64,12 +53,9 @@ export default function MiniProfile() {
               className="absolute z-10 rounded-lg bg-zinc-800 font-bold text-md p-2 w-[200px] translate-x-[-50px] mt-4"
               ref={menuRef}
             >
-              <BasicButton
-                name="My profile"
-                icon={<ProfileIcon size={20} />}
-                hoverable
-                onClick={handleMyProfileClick}
-              />
+              <Link to={`user/${user!.id}`} onClick={() => setShowMenu(false)}>
+                <BasicButton name="My profile" icon={<ProfileIcon size={20} />} hoverable />
+              </Link>
               <BasicButton
                 name="Log out"
                 icon={<LogOutIcon size={20} />}

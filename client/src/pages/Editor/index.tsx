@@ -25,6 +25,7 @@ import TerminalEntity from "../../entities/TerminalEntity";
 import WireEntity from "../../entities/WireEntity";
 import { SIMULATOR_WIDTH } from "../../common/constants";
 
+/*
 export default function Editor() {
   const ref = useRef<HTMLDivElement>(null);
   const { mouseDragOffset } = useMouse();
@@ -105,30 +106,6 @@ export default function Editor() {
     }
   };
 
-  const handleDrop = (event: DragEvent) => {
-    if (!addingGateType || !ref.current) {
-      return;
-    }
-
-    const editorRect: DOMRect = ref.current.getBoundingClientRect();
-    const gate = new GateEntity(
-      {
-        x: event.clientX - editorRect.left,
-        y: event.clientY - editorRect.top,
-      },
-      addingGateType,
-    );
-    gate.pos.x -= gate.width / 2;
-    gate.pos.y -= gate.height / 2;
-
-    addGate(gate);
-  };
-
-  const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
-  };
-
   const handleWiringStart = (event: ReactMouseEvent, pin: PinEntity) => {
     setIsWiring(true);
     setSelectedPin(pin);
@@ -190,77 +167,6 @@ export default function Editor() {
     return () => window.removeEventListener("keyup", handleEscape);
   }, []);
 
-  useEffect(() => {
-    const handleTerminalAdderMove = (event: MouseEvent) => {
-      const rect = ref.current!.getBoundingClientRect();
-      const yPos = event.clientY - rect.top;
-      if (yPos < 0 || event.clientY - rect.bottom > 0) {
-        if (terminalAdderY) {
-          setTerminalAdderY(null);
-        }
-        return;
-      }
-
-      const isLeft = Math.abs(rect.left - event.clientX) <= 20;
-      const isInsideTerminal =
-        terminals.find((terminal) => {
-          if ((terminal.io === IO.Input) !== isLeft) {
-            return false;
-          }
-
-          const diff = terminal.yPos - yPos;
-          return diff >= -16 && diff <= 48;
-        }) !== undefined;
-      if (isInsideTerminal) {
-        if (terminalAdderY) {
-          setTerminalAdderY(null);
-        }
-        return;
-      }
-
-      const isRight = Math.abs(rect.right - event.clientX) <= 20;
-      if (isLeft || isRight) {
-        setIsTerminalAdderInput(isLeft);
-        setTerminalAdderY(yPos);
-      } else if (terminalAdderY) {
-        setTerminalAdderY(null);
-      }
-    };
-
-    window.addEventListener("mousemove", handleTerminalAdderMove);
-
-    return () => window.removeEventListener("mousemove", handleTerminalAdderMove);
-  }, [terminalAdderY, terminals]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (!expandWarning && window.innerWidth < SIMULATOR_WIDTH) {
-        setExpandWarning(true);
-      }
-
-      if (expandWarning && window.innerWidth > SIMULATOR_WIDTH) {
-        setExpandWarning(false);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, [expandWarning]);
-
-  if (expandWarning) {
-    return (
-      <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 border-zinc-800 border-4 rounded-lg p-8">
-        <h1 className="text-center font-bold text-2xl">Expand your window</h1>
-        <div className="flex justify-center py-2">
-          <ExpandWidthIcon size={40} className="animate-ping" />
-          <ExpandWidthIcon size={40} className="absolute" />
-        </div>
-        <p className="text-zinc-400">The editor needs a bit more width to fit.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="flex-col space-y-3" style={{ width: SIMULATOR_WIDTH }}>
       <EditorBar />
@@ -277,14 +183,7 @@ export default function Editor() {
           </h1>
         )}
         {terminals.map((terminal, i) => {
-          return (
-            <Terminal
-              key={i}
-              terminal={terminal}
-              editorRect={ref.current?.getBoundingClientRect()}
-              rerenderEditor={() => rerender(!render)}
-            />
-          );
+          return <Terminal key={i} terminal={terminal} rerenderEditor={() => rerender(!render)} />;
         })}
         {terminalAdderY ? (
           <div
@@ -407,3 +306,4 @@ export default function Editor() {
     </div>
   );
 }
+*/

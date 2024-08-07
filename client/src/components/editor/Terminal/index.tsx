@@ -4,20 +4,15 @@ import { EditorState, useEditorStore } from "../../../store";
 import useMouse from "../../../hooks/useMouse";
 import TerminalEntity from "../../../entities/TerminalEntity";
 import { IO } from "../../../common/types";
+import { SIMULATOR_HEIGHT } from "../../../common/constants";
 
 interface Props {
   terminal: TerminalEntity;
-  editorRect: DOMRect | undefined;
-  rerenderEditor: () => void;
+  rerenderParent: () => void;
   editable?: boolean;
 }
 
-export default function Terminal({
-  terminal,
-  editorRect,
-  rerenderEditor: rerender,
-  editable,
-}: Props) {
+export default function Terminal({ terminal, rerenderParent, editable }: Props) {
   const [ref, setRef] = useState<any>(null); // we need to rerender for computePos to be correct
   const buttonRef = useRef<HTMLDivElement>(null);
   const [hovering, setHovering] = useState<boolean>(false);
@@ -33,10 +28,10 @@ export default function Terminal({
     if (dragging) {
       terminal.yPos = Math.min(
         Math.max(originY - mouseDragOffset.y, ref?.getBoundingClientRect().height || 0),
-        editorRect?.height || Number.MAX_SAFE_INTEGER,
+        SIMULATOR_HEIGHT || Number.MAX_SAFE_INTEGER,
       );
     }
-  }, [dragging, mouseDragOffset, originY, terminal, editorRect?.height, ref]);
+  }, [dragging, mouseDragOffset, originY, terminal, ref]);
 
   useEffect(() => {
     const handleMouseUp = () => {
@@ -91,7 +86,7 @@ export default function Terminal({
     terminal.pin.active = !terminal.pin.active;
 
     updateActivity();
-    rerender();
+    rerenderParent();
   };
 
   const handleHover = (entered: boolean) => {

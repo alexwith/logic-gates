@@ -29,7 +29,7 @@ export interface EditorState {
   addWire: (wire: WireEntity) => void;
   removeWire: (wire: WireEntity) => void;
   setTerminals: (terminals: TerminalEntity[]) => void;
-  addTerminal: (isInput: boolean, yPos: number) => void;
+  addTerminal: (io: IO, yPos: number) => void;
   updateTerminal: (terminal: TerminalEntity) => void;
   setSelectedPin: (pin: PinEntity | null) => void;
   setSelectedGate: (gate: GateEntity | null) => void;
@@ -102,13 +102,9 @@ export const useEditorStore = create<EditorState>((set) => {
         terminals,
       }));
     },
-    addTerminal: (isInput: boolean, yPos: number) => {
+    addTerminal: (io: IO, yPos: number) => {
       set((state) => {
-        const terminal: TerminalEntity = new TerminalEntity(
-          "?",
-          isInput ? IO.Input : IO.Output,
-          yPos
-        );
+        const terminal: TerminalEntity = new TerminalEntity("?", io, yPos);
 
         return { terminals: [...state.terminals, terminal] };
       });
