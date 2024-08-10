@@ -1,24 +1,40 @@
-import { Fragment, useEffect, useRef, useState, MouseEvent } from "react";
+import { Fragment, useEffect, useRef, useState, MouseEvent, ReactNode } from "react";
 import { SIMULATOR_HEIGHT, SIMULATOR_WIDTH } from "../../../common/constants";
 import { EditorState, useEditorStore } from "../../../store";
-import Terminal from "../../editor/Terminal";
+import Terminal from "../Terminal";
 import { deserializeCircuit } from "../../../libs/circuitFile";
 import { Project } from "../../../common/types";
-import Wire from "../../editor/Wire";
+import Wire from "../Wire";
 import GateEntity from "../../../entities/GateEntity";
 import { VscArrowBoth as ExpandWidthIcon } from "react-icons/vsc";
-import Gate from "../../editor/Gate";
-import Pin from "../../editor/Pin";
+import Gate from "../Gate";
+import Pin from "../Pin";
 import Settings from "../Settings";
 import PinEntity from "../../../entities/PinEntity";
 
 interface Props {
+  children?: ReactNode;
   project?: Project;
   editable?: boolean;
+  onMouseUp?: (event: MouseEvent) => void;
+  onMouseMove?: (event: MouseEvent) => void;
+  onMouseDown?: (event: MouseEvent) => void;
+  onGateClick?: (event: MouseEvent, pin: GateEntity) => void;
   onPinClick?: (event: MouseEvent, pin: PinEntity) => void;
+  onPinHover?: (pin: PinEntity | null) => void;
 }
 
-export default function Simulator({ project, editable, onPinClick }: Props) {
+export default function Simulator({
+  children,
+  project,
+  editable,
+  onMouseUp,
+  onMouseMove,
+  onMouseDown,
+  onGateClick,
+  onPinClick,
+  onPinHover,
+}: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   const [render, rerender] = useState<boolean>(false);
@@ -102,7 +118,12 @@ export default function Simulator({ project, editable, onPinClick }: Props) {
             />
           );
         })}
-        <svg className="w-full h-full">
+        <svg
+          className="w-full h-full"
+          onMouseUp={onMouseUp}
+          onMouseMove={onMouseMove}
+          onMouseDown={onMouseDown}
+        >
           {settings.grid && (
             <>
               <defs>
@@ -119,6 +140,7 @@ export default function Simulator({ project, editable, onPinClick }: Props) {
               <rect width="100%" height="100%" fill="url(#grid)" />
             </>
           )}
+          {children}
           {wires.map((wire, i) => (
             <Wire
               key={i}
@@ -128,7 +150,7 @@ export default function Simulator({ project, editable, onPinClick }: Props) {
           ))}
           {gates.map((gate: GateEntity, i) => (
             <Fragment key={i}>
-              <Gate key={i} gate={gate} setIsDraggingGate={() => {}} setSelectedGate={() => {}} />
+              <Gate key={i} gate={gate} onClick={onGateClick} />
               {gate.inputPins.map((pin, j) => {
                 return (
                   <Pin
@@ -136,7 +158,7 @@ export default function Simulator({ project, editable, onPinClick }: Props) {
                     pin={pin}
                     pos={pin.getPos()}
                     onMouseDown={(event) => onPinClick?.(event, pin)}
-                    setLastPin={() => {}}
+                    onHover={onPinHover}
                   />
                 );
               })}
@@ -147,7 +169,7 @@ export default function Simulator({ project, editable, onPinClick }: Props) {
                     pin={pin}
                     pos={pin.getPos()}
                     onMouseDown={(event) => onPinClick?.(event, pin)}
-                    setLastPin={() => {}}
+                    onHover={onPinHover}
                   />
                 );
               })}
@@ -160,7 +182,7 @@ export default function Simulator({ project, editable, onPinClick }: Props) {
                 pin={terminal.pin}
                 pos={terminal.pin.getPos()}
                 onMouseDown={(event) => onPinClick?.(event, terminal.pin)}
-                setLastPin={() => {}}
+                onHover={onPinHover}
               />
             );
           })}

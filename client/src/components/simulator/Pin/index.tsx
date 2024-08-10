@@ -6,12 +6,12 @@ interface Props {
   pin: PinEntity;
   pos: Pos;
   onMouseDown: (event: MouseEvent) => void;
-  setLastPin: (pin: PinEntity | null) => void;
+  onHover?: (pin: PinEntity | null) => void;
 }
 
 const PIN_RADIUS = 10;
 
-export default function Pin({ pin, pos, onMouseDown, setLastPin }: Props) {
+export default function Pin({ pin, pos, onMouseDown, onHover }: Props) {
   return (
     <circle
       className="fill-stone-950"
@@ -19,8 +19,8 @@ export default function Pin({ pin, pos, onMouseDown, setLastPin }: Props) {
       cy={pos.y}
       r={PIN_RADIUS}
       onMouseDown={onMouseDown}
-      onMouseEnter={() => setLastPin(pin)}
-      onMouseLeave={() => setLastPin(null)}
+      onMouseEnter={() => onHover?.(pin)}
+      onMouseLeave={() => onHover?.(null)}
     />
   );
 }

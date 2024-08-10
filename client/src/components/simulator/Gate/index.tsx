@@ -1,17 +1,12 @@
+import { MouseEvent } from "react";
 import GateEntity from "../../../entities/GateEntity";
 
 interface Props {
   gate: GateEntity;
-  setIsDraggingGate: (isDragging: boolean) => void;
-  setSelectedGate: (gate: GateEntity) => void;
+  onClick?: (event: MouseEvent, gate: GateEntity) => void;
 }
 
-export default function Gate({ gate, setIsDraggingGate, setSelectedGate }: Props) {
-  const handleMouseDown = () => {
-    setIsDraggingGate(true);
-    setSelectedGate(gate);
-  };
-
+export default function Gate({ gate, onClick }: Props) {
   return (
     <>
       <rect
@@ -22,7 +17,7 @@ export default function Gate({ gate, setIsDraggingGate, setSelectedGate }: Props
         height={gate.height}
         rx={5}
         ry={5}
-        onMouseDown={handleMouseDown}
+        onMouseDown={(event) => onClick?.(event, gate)}
       />
       <text
         className="fill-indigo-950 select-none"
@@ -33,7 +28,7 @@ export default function Gate({ gate, setIsDraggingGate, setSelectedGate }: Props
         fontWeight={"bold"}
         fontSize={20}
         fontFamily={"Inter"}
-        onMouseDown={handleMouseDown}
+        onMouseDown={(event) => onClick?.(event, gate)}
       >
         {gate.type.name}
       </text>

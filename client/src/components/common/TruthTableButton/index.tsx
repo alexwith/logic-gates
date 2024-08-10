@@ -2,7 +2,7 @@ import { useState } from "react";
 import { LuTable2 as TableIcon } from "react-icons/lu";
 import BasicButton from "../BasicButton";
 import { EditorState, useEditorStore } from "../../../store";
-import TruthTable from "../../editor/TruthTable";
+import TruthTable from "../../simulator/TruthTable";
 
 export default function TruthTableButton() {
   const [show, setShow] = useState<boolean>(false);

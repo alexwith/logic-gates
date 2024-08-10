@@ -1,69 +1,64 @@
-import {
-  DragEvent,
-  Fragment,
-  MouseEvent as ReactMouseEvent,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { IO, Pos } from "../../common/types";
-import Gate from "../../components/editor/Gate";
-import Pin from "../../components/editor/Pin";
-import Wire from "../../components/editor/Wire";
-import useMouse from "../../hooks/useMouse";
-import Terminal from "../../components/editor/Terminal";
+import { DragEvent, MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
+import Simulator from "../../components/simulator/Simulator";
 import { EditorState, useEditorStore } from "../../store";
+import { IO, Pos } from "../../common/types";
 import { FaPlus as AddIcon } from "react-icons/fa";
-import { VscArrowBoth as ExpandWidthIcon } from "react-icons/vsc";
 import { LuTrash2 as TrashIcon } from "react-icons/lu";
-import EditorSettings from "../../components/editor/EditorSettings";
-import EditorBar from "../../components/editor/EditorBar";
-import GateTypes from "../../components/editor/GateTypes";
 import PinEntity from "../../entities/PinEntity";
 import GateEntity from "../../entities/GateEntity";
+import useMouse from "../../hooks/useMouse";
+import Wire from "../../components/simulator/Wire";
 import TerminalEntity from "../../entities/TerminalEntity";
 import WireEntity from "../../entities/WireEntity";
-import { SIMULATOR_WIDTH } from "../../common/constants";
 
-/*
-export default function Editor() {
+export default function NewEditor() {
   const ref = useRef<HTMLDivElement>(null);
   const { mouseDragOffset } = useMouse();
-  const { mouseDragOffset: wiringMouseOffset, updateOrigin: wiringUpdateOrigin } = useMouse(
+  const { mouseDragOffset: wiringMouseOffset, updateOrigin: wiringMouseUpdateOrigin } = useMouse(
     true,
     true,
   );
 
+  const [newTerminalIO, setNewTerminalIO] = useState<IO | null>(null);
+  const [newTerminalY, setNewTerminalY] = useState<number>(0);
   const [gateOrigin, setGateOrigin] = useState<Pos>({ x: 0, y: 0 });
   const [isDraggingGate, setIsDraggingGate] = useState<boolean>(false);
   const [isWiring, setIsWiring] = useState<boolean>(false);
   const [wiringEndPoint, setWiringEndPoint] = useState<Pos | null>(null);
   const [wiringCheckpoints, setWiringCheckpoints] = useState<Pos[]>([]);
   const [lastPin, setLastPin] = useState<PinEntity | null>(null);
-  const [terminalAdderY, setTerminalAdderY] = useState<number | null>(null);
-  const [isTerminalAdderInput, setIsTerminalAdderInput] = useState<boolean>(true);
-  const [expandWarning, setExpandWarning] = useState<boolean>(false);
-  const [render, rerender] = useState<boolean>(false);
 
-  const settings = useEditorStore((state: EditorState) => state.settings);
-  const terminals = useEditorStore((state: EditorState) => state.terminals);
-  const gates = useEditorStore((state: EditorState) => state.gates);
-  const wires = useEditorStore((state: EditorState) => state.wires);
-  const selectedGate = useEditorStore((state: EditorState) => state.selectedGate);
-  const selectedPin = useEditorStore((state: EditorState) => state.selectedPin);
-  const setSelectedPin = useEditorStore((state: EditorState) => state.setSelectedPin);
+  const gateTypes = useEditorStore((state: EditorState) => state.gateTypes);
   const addingGateType = useEditorStore((state: EditorState) => state.addingGateType);
+  const terminals = useEditorStore((state: EditorState) => state.terminals);
+  const selectedPin = useEditorStore((state: EditorState) => state.selectedPin);
+  const wires = useEditorStore((state: EditorState) => state.wires);
 
+  const setAddingGateType = useEditorStore((state: EditorState) => state.setAddingGateType);
+  const addTerminal = useEditorStore((state: EditorState) => state.addTerminal);
+  const setSelectedPin = useEditorStore((state: EditorState) => state.setSelectedPin);
+  const selectedGate = useEditorStore((state: EditorState) => state.selectedGate);
+  const setSelectedGate = useEditorStore((state: EditorState) => state.setSelectedGate);
+  const addGate = useEditorStore((state: EditorState) => state.addGate);
+  const removeGate = useEditorStore((state: EditorState) => state.removeGate);
   const addWire = useEditorStore((state: EditorState) => state.addWire);
   const removeWire = useEditorStore((state: EditorState) => state.removeWire);
   const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
-  const addGate = useEditorStore((state: EditorState) => state.addGate);
-  const removeGate = useEditorStore((state: EditorState) => state.removeGate);
-  const addTerminal = useEditorStore((state: EditorState) => state.addTerminal);
-  const setSelectedGate = useEditorStore((state: EditorState) => state.setSelectedGate);
   const updateCurrentTruthTable = useEditorStore(
     (state: EditorState) => state.updateCurrentTruthTable,
   );
+
+  const handlePinClick = (event: ReactMouseEvent, pin: PinEntity) => {
+    setIsWiring(true);
+    setSelectedPin(pin);
+    wiringMouseUpdateOrigin(event);
+  };
+
+  const handleGateClick = (event: ReactMouseEvent, gate: GateEntity) => {
+    setIsDraggingGate(true);
+    setSelectedGate(gate);
+    setGateOrigin(gate.pos);
+  };
 
   const handleMouseMove = () => {
     if (isDraggingGate) {
@@ -78,6 +73,42 @@ export default function Editor() {
     if (isDraggingGate) {
       setIsDraggingGate(false);
     }
+  };
+
+  const handleWiringMove = () => {
+    if (!selectedPin) {
+      return;
+    }
+
+    const { x, y } = selectedPin.getPos();
+    setWiringEndPoint({
+      x: Math.abs(wiringMouseOffset.x - x),
+      y: Math.abs(wiringMouseOffset.y - y),
+    });
+  };
+
+  const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = (event: DragEvent) => {
+    if (!addingGateType || !ref.current) {
+      return;
+    }
+
+    const simulatorBoundingBox: DOMRect = ref.current.getBoundingClientRect();
+    const gate = new GateEntity(
+      {
+        x: event.clientX - simulatorBoundingBox.left,
+        y: event.clientY - simulatorBoundingBox.top,
+      },
+      addingGateType,
+    );
+    gate.pos.x -= gate.width / 2;
+    gate.pos.y -= gate.height / 2;
+
+    addGate(gate);
   };
 
   const handleMouseDown = () => {
@@ -104,24 +135,6 @@ export default function Editor() {
 
       setWiringCheckpoints([...wiringCheckpoints, wiringEndPoint!]);
     }
-  };
-
-  const handleWiringStart = (event: ReactMouseEvent, pin: PinEntity) => {
-    setIsWiring(true);
-    setSelectedPin(pin);
-    wiringUpdateOrigin(event);
-  };
-
-  const handleWiringMove = () => {
-    if (!selectedPin) {
-      return;
-    }
-
-    const { x, y } = selectedPin.getPos();
-    setWiringEndPoint({
-      x: Math.abs(wiringMouseOffset.x - x),
-      y: Math.abs(wiringMouseOffset.y - y),
-    });
   };
 
   const handleGateDraggingMove = () => {
@@ -152,6 +165,36 @@ export default function Editor() {
   };
 
   useEffect(() => {
+    const handleNewTerminalMove = (event: MouseEvent) => {
+      const boundingBox = ref.current!.getBoundingClientRect();
+      const yPos = event.clientY - boundingBox.top;
+      if (yPos < 0 || event.clientY - boundingBox.bottom > 0) {
+        setNewTerminalIO(null);
+        return;
+      }
+
+      const isLeft = Math.abs(boundingBox.left - event.clientX) <= 20;
+      const isRight = Math.abs(boundingBox.right - event.clientX) <= 20;
+      const io = isLeft ? IO.Input : isRight ? IO.Output : null;
+
+      for (const terminal of terminals) {
+        const diff = terminal.yPos - yPos;
+        if (terminal.io === io && diff >= -16 && diff <= 48) {
+          setNewTerminalIO(null);
+          return;
+        }
+      }
+
+      setNewTerminalIO(io);
+      setNewTerminalY(yPos);
+    };
+
+    window.addEventListener("mousemove", handleNewTerminalMove);
+
+    return () => window.removeEventListener("mousemove", handleNewTerminalMove);
+  }, [newTerminalY, terminals]);
+
+  useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key !== "Escape") {
         return;
@@ -168,34 +211,19 @@ export default function Editor() {
   }, []);
 
   return (
-    <div className="flex-col space-y-3" style={{ width: SIMULATOR_WIDTH }}>
-      <EditorBar />
-      <div
-        className="relative border-zinc-800 border-4 rounded-lg grow h-[800px]"
-        ref={ref}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-      >
-        {isWiring && (
-          <h1 className="absolute font-medium m-2 -z-10">
-            Press <span className="bg-zinc-800 p-1 rounded-md font-bold">Escape</span> to stop
-            wiring
-          </h1>
-        )}
-        {terminals.map((terminal, i) => {
-          return <Terminal key={i} terminal={terminal} rerenderEditor={() => rerender(!render)} />;
-        })}
-        {terminalAdderY ? (
+    <div>
+      <div ref={ref} className="relative" onDragOver={handleDragOver} onDrop={handleDrop}>
+        {newTerminalIO !== null ? (
           <div
-            className={`absolute h-8 w-8 rounded-full border-4 bg-stone-950 border-zinc-600 flex justify-center items-center hover:cursor-pointer hover:border-violet-500 ${
-              isTerminalAdderInput ? "left-[-17px]" : "right-[-17px]"
+            className={`absolute h-8 w-8 z-10 rounded-full border-4 bg-stone-950 border-zinc-600 flex justify-center items-center hover:cursor-pointer hover:border-violet-500 ${
+              newTerminalIO === IO.Input ? "left-[-15px]" : "right-[-15px]"
             }`}
             style={{
-              top: terminalAdderY - 16,
+              top: newTerminalY - 16,
             }}
             onClick={() => {
-              addTerminal(isTerminalAdderInput, terminalAdderY + 16);
-              setTerminalAdderY(null);
+              addTerminal(newTerminalIO, newTerminalY + 16);
+              setNewTerminalIO(null);
             }}
           >
             <AddIcon color="#94a3b8" />
@@ -203,107 +231,51 @@ export default function Editor() {
         ) : (
           <></>
         )}
-
+        {isWiring && (
+          <h1 className="absolute font-medium m-2 -z-10">
+            Press <span className="bg-zinc-800 p-1 rounded-md font-bold">Escape</span> to stop
+            wiring
+          </h1>
+        )}
         {isDraggingGate && (
           <div
-            className="absolute bg-zinc-800 p-2 left-0 bottom-0 m-2 rounded-md hover:cursor-pointer hover:text-red-500"
+            className="absolute bg-zinc-800 p-2 z-10 left-0 bottom-0 m-2 rounded-md hover:cursor-pointer hover:text-red-500"
             onMouseUp={deleteDraggingGate}
           >
             <TrashIcon size={20} />
           </div>
         )}
-
-        <EditorSettings />
-
-        <svg
-          className="w-full h-full"
+        <Simulator
+          editable
           onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
           onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onPinClick={handlePinClick}
+          onPinHover={setLastPin}
+          onGateClick={handleGateClick}
         >
-          {settings.grid && (
-            <Fragment>
-              <defs>
-                <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                  <path
-                    d="M 20 0 L 0 0 0 20"
-                    fill="none"
-                    stroke="#71717a"
-                    strokeWidth="0.5"
-                    opacity="0.5"
-                  />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#grid)" />
-            </Fragment>
-          )}
-
           {isWiring && selectedPin && wiringEndPoint && (
             <Wire
               points={[selectedPin.getPos(), ...wiringCheckpoints, wiringEndPoint]}
               active={false}
             />
           )}
-          {wires.map((wire, i) => (
-            <Wire
-              key={i}
-              points={[wire.startPin.getPos(), ...wire.checkpoints, wire.endPin.getPos()]}
-              active={
-                wire.startPin.active || wire.endPin.active
-                //activePinIds.includes(wire.startPin.id) || activePinIds.includes(wire.endPin.id)
-              }
-            />
-          ))}
-          {gates.map((gate: GateEntity, i) => (
-            <Fragment key={i}>
-              <Gate
-                key={i}
-                gate={gate}
-                setIsDraggingGate={setIsDraggingGate}
-                setSelectedGate={(gate) => {
-                  setSelectedGate(gate);
-                  setGateOrigin(gate.pos);
-                }}
-              />
-              {gate.inputPins.map((pin, j) => {
-                return (
-                  <Pin
-                    key={`in-${j}`}
-                    pin={pin}
-                    pos={pin.getPos()}
-                    onMouseDown={(event) => handleWiringStart(event, pin)}
-                    setLastPin={setLastPin}
-                  />
-                );
-              })}
-              {gate.outputPins.map((pin, j) => {
-                return (
-                  <Pin
-                    key={`out-${j}`}
-                    pin={pin}
-                    pos={pin.getPos()}
-                    onMouseDown={(event) => handleWiringStart(event, pin)}
-                    setLastPin={setLastPin}
-                  />
-                );
-              })}
-            </Fragment>
-          ))}
-          {terminals.map((terminal, i) => {
-            return (
-              <Pin
-                key={i}
-                pin={terminal.pin}
-                pos={terminal.pin.getPos()}
-                onMouseDown={(event) => handleWiringStart(event, terminal.pin)}
-                setLastPin={setLastPin}
-              />
-            );
-          })}
-        </svg>
+        </Simulator>
       </div>
-      <GateTypes />
+      <div className="flex space-x-2 mb-4">
+        {gateTypes.map((type, i) => (
+          <div
+            className="bg-violet-500 w-fit p-2 font-bold rounded-md select-none"
+            key={i}
+            draggable
+            onDragStart={() => {
+              setAddingGateType(type);
+            }}
+          >
+            {type.name}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
-*/

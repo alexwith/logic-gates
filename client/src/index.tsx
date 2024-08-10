@@ -15,7 +15,7 @@ import Home from "./pages/Home";
 import { ToastContainer } from "react-toastify";
 import Project, { handleProjectLoader } from "./pages/Project";
 import EditProjectDetails from "./pages/EditProjectDetails";
-import NewEditor from "./pages/NewEditor";
+import NewEditor from "./pages/Editor";
 
 const queryClient = new QueryClient();
 
