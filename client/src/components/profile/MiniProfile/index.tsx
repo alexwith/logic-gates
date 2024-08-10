@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "../../../hooks/useUser";
 import { createGithubUrl } from "../../../utils/createGithubUrl";
-import { TbLogin2 as LogInIcon } from "react-icons/tb";
-import { TbLogout2 as LogOutIcon } from "react-icons/tb";
-import { CgProfile as ProfileIcon } from "react-icons/cg";
 import BasicButton from "../../common/BasicButton";
 import { Link } from "react-router-dom";
+import { LogInIcon, LogOutIcon, ProfileIcon } from "../../../common/icons";
 
 export default function MiniProfile() {
   const { user, isLoggedIn, logout } = useUser();

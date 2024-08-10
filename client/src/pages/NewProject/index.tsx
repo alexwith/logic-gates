@@ -1,5 +1,4 @@
 import BasicButton from "../../components/common/BasicButton";
-import { LuCircuitBoard as NewProjectIcon } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../hooks/useUser";
 import { createProject } from "../../services/projectService";
@@ -7,6 +6,7 @@ import DetailsForm from "../../components/project/DetailsForm";
 import { useState } from "react";
 import { Project } from "../../common/types";
 import { validateProjectDetails } from "../../libs/validation";
+import { CircuitIcon } from "../../common/icons";
 
 export default function NewProject() {
   const { user } = useUser();
@@ -39,7 +39,7 @@ export default function NewProject() {
       <div className="flex justify-end">
         <BasicButton
           name="Create project"
-          icon={<NewProjectIcon size={20} />}
+          icon={<CircuitIcon size={20} />}
           onClick={handleCreateClick}
         />
       </div>

@@ -6,11 +6,11 @@ import { deserializeCircuit } from "../../../libs/circuitFile";
 import { Project } from "../../../common/types";
 import Wire from "../Wire";
 import GateEntity from "../../../entities/GateEntity";
-import { VscArrowBoth as ExpandWidthIcon } from "react-icons/vsc";
 import Gate from "../Gate";
 import Pin from "../Pin";
 import Settings from "../Settings";
 import PinEntity from "../../../entities/PinEntity";
+import { ExpandIcon } from "../../../common/icons";
 
 interface Props {
   children?: ReactNode;
@@ -92,8 +92,8 @@ export default function Simulator({
       <div className="border-zinc-800 border-4 rounded-lg p-8 mt-20 text-center">
         <h1 className="font-bold text-2xl">Expand your window</h1>
         <div className="flex justify-center py-2">
-          <ExpandWidthIcon size={40} className="animate-ping" />
-          <ExpandWidthIcon size={40} className="absolute" />
+          <ExpandIcon size={40} className="animate-ping" />
+          <ExpandIcon size={40} className="absolute" />
         </div>
         <p className="text-zinc-400">The simulator needs a bit more width to fit.</p>
       </div>

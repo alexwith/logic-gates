@@ -1,8 +1,7 @@
 import { useState, ChangeEvent, useEffect } from "react";
 import { Project, ProjectVisibilty } from "../../../common/types";
 import TextInput from "../../common/TextInput";
-import { LuLock as PrivateIcon } from "react-icons/lu";
-import { MdOutlinePublic as PublicIcon } from "react-icons/md";
+import { PrivateIcon, PublicIcon } from "../../../common/icons";
 
 interface Props {
   defaults?: Project;

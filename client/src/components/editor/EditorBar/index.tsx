@@ -1,8 +1,4 @@
 import { ChangeEvent, useRef, useState } from "react";
-import { IoCreateOutline as CreateIcon } from "react-icons/io5";
-import { LuTable2 as TableIcon } from "react-icons/lu";
-import { HiOutlineSave as SaveIcon, HiOutlineUpload as UploadIcon } from "react-icons/hi";
-import { AiOutlineAppstore as MenuIcon } from "react-icons/ai";
 import { EditorState, useEditorStore } from "../../../store";
 import TruthTable from "../../simulator/TruthTable";
 import { toast } from "react-toastify";
@@ -10,6 +6,7 @@ import { deserializeCircuit, serializeCircuit } from "../../../libs/circuitFile"
 import GateTypeEntity from "../../../entities/GateTypeEntity";
 import { IO } from "../../../common/types";
 import BasicButton from "../../common/BasicButton";
+import { CreateIcon, MenuIcon, SaveIcon, TableIcon, UploadIcon } from "../../../common/icons";
 
 export default function EditorBar() {
   const circuitNameRef: any = useRef<any>(null);

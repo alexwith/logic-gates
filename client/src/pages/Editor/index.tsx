@@ -2,14 +2,13 @@ import { DragEvent, MouseEvent as ReactMouseEvent, useEffect, useRef, useState }
 import Simulator from "../../components/simulator/Simulator";
 import { EditorState, useEditorStore } from "../../store";
 import { IO, Pos } from "../../common/types";
-import { FaPlus as AddIcon } from "react-icons/fa";
-import { LuTrash2 as TrashIcon } from "react-icons/lu";
 import PinEntity from "../../entities/PinEntity";
 import GateEntity from "../../entities/GateEntity";
 import useMouse from "../../hooks/useMouse";
 import Wire from "../../components/simulator/Wire";
 import TerminalEntity from "../../entities/TerminalEntity";
 import WireEntity from "../../entities/WireEntity";
+import { TrashIcon, AddIcon } from "../../common/icons";
 
 export default function NewEditor() {
   const ref = useRef<HTMLDivElement>(null);

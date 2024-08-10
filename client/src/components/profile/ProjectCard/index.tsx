@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { FaHeart as FilledLikeIcon, FaRegHeart as EmptyLikeIcon } from "react-icons/fa";
 import { useUser } from "../../../hooks/useUser";
 import { getLikes, toggleLike } from "../../../services/projectService";
 import { Link } from "react-router-dom";
+import { EmptyLikeIcon, FilledLikeIcon } from "../../../common/icons";
 
 interface Props {
   id: number;

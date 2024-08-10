@@ -1,11 +1,11 @@
 import { Link, useLoaderData } from "react-router-dom";
 import BasicButton from "../../components/common/BasicButton";
 import ProjectCard from "../../components/profile/ProjectCard";
-import { LuCircuitBoard as NewProjectIcon } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
 import { getProjects, getUser } from "../../services/userService";
 import { Project } from "../../common/types";
 import { useUser } from "../../hooks/useUser";
+import { CircuitIcon } from "../../common/icons";
 
 export default function Profile() {
   const { user: meUser } = useUser();
@@ -38,7 +38,7 @@ export default function Profile() {
           <h1 className="font-bold text-2xl">Projects</h1>
           {meUser.id === userId && (
             <Link to="/newproject">
-              <BasicButton name="New Project" icon={<NewProjectIcon size={20} />} />
+              <BasicButton name="New Project" icon={<CircuitIcon size={20} />} />
             </Link>
           )}
         </div>

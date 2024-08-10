@@ -1,5 +1,4 @@
 import BasicButton from "../../components/common/BasicButton";
-import { HiOutlineSave as SaveIcon } from "react-icons/hi";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { getProject, updateProject } from "../../services/projectService";
 import DetailsForm from "../../components/project/DetailsForm";
@@ -7,6 +6,7 @@ import { useState } from "react";
 import { Project } from "../../common/types";
 import { useQuery } from "@tanstack/react-query";
 import { validateProjectDetails } from "../../libs/validation";
+import { SaveIcon } from "../../common/icons";
 
 export default function EditProjectDetails() {
   const navigate = useNavigate();
