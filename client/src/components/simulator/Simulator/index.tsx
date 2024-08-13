@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useRef, useState, MouseEvent, ReactNode } from "react";
 import { SIMULATOR_HEIGHT, SIMULATOR_WIDTH } from "../../../common/constants";
-import { SimulatorState, useEditorStore } from "../../../store";
+import { SimulatorState, useSimulatorStore } from "../../../store";
 import Terminal from "../Terminal";
 import { deserializeCircuit } from "../../../libs/circuitFile";
 import { Project } from "../../../common/types";
@@ -40,21 +40,24 @@ export default function Simulator({
   const [render, rerender] = useState<boolean>(false);
   const [expandWarning, setExpandWarning] = useState<boolean>(false);
 
-  const settings = useEditorStore((state: SimulatorState) => state.settings);
-  const terminals = useEditorStore((state: SimulatorState) => state.terminals);
-  const gates = useEditorStore((state: SimulatorState) => state.gates);
-  const wires = useEditorStore((state: SimulatorState) => state.wires);
+  const settings = useSimulatorStore((state: SimulatorState) => state.settings);
+  const terminals = useSimulatorStore((state: SimulatorState) => state.terminals);
+  const gates = useSimulatorStore((state: SimulatorState) => state.gates);
+  const wires = useSimulatorStore((state: SimulatorState) => state.wires);
 
-  const setGateTypes = useEditorStore((state: SimulatorState) => state.setGateTypes);
-  const setGates = useEditorStore((state: SimulatorState) => state.setGates);
-  const setTerminals = useEditorStore((state: SimulatorState) => state.setTerminals);
-  const setWires = useEditorStore((state: SimulatorState) => state.setWires);
-  const updateActivity = useEditorStore((state: SimulatorState) => state.updateActivity);
+  const reset = useSimulatorStore((state: SimulatorState) => state.reset);
+  const setGateTypes = useSimulatorStore((state: SimulatorState) => state.setGateTypes);
+  const setGates = useSimulatorStore((state: SimulatorState) => state.setGates);
+  const setTerminals = useSimulatorStore((state: SimulatorState) => state.setTerminals);
+  const setWires = useSimulatorStore((state: SimulatorState) => state.setWires);
+  const updateActivity = useSimulatorStore((state: SimulatorState) => state.updateActivity);
 
   useEffect(() => {
     if (!project) {
       return;
     }
+
+    reset();
 
     const buffer = Uint8Array.from(project.data!).buffer;
     const deserializedData = deserializeCircuit(buffer);

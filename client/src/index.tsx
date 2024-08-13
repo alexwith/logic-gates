@@ -14,8 +14,8 @@ import ProtectedRoute from "./components/common/ProtectedRoute";
 import Home from "./pages/Home";
 import { ToastContainer } from "react-toastify";
 import Project, { handleProjectLoader } from "./pages/Project";
-import EditProjectDetails from "./pages/EditProjectDetails";
-import NewEditor from "./pages/Editor";
+import ProjectEditor from "./pages/ProjectEditor";
+import ProjectDetails from "./pages/ProjectDetails";
 
 const queryClient = new QueryClient();
 
@@ -29,10 +29,6 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/editor",
-        element: <NewEditor />,
-      },
-      {
         path: "/newproject",
         element: (
           <ProtectedRoute>
@@ -41,10 +37,20 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/projectdetails/:projectId",
+        path: "/editor/:projectId",
         element: (
           <ProtectedRoute>
-            <EditProjectDetails />
+            <ProjectEditor />
+          </ProtectedRoute>
+        ),
+        loader: handleProjectLoader,
+        errorElement: <NotFound />,
+      },
+      {
+        path: "/details/:projectId",
+        element: (
+          <ProtectedRoute>
+            <ProjectDetails />
           </ProtectedRoute>
         ),
         loader: handleProjectLoader,

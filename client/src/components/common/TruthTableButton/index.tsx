@@ -1,14 +1,14 @@
 import { useState } from "react";
 import BasicButton from "../BasicButton";
-import { SimulatorState, useEditorStore } from "../../../store";
+import { SimulatorState, useSimulatorStore } from "../../../store";
 import TruthTable from "../../simulator/TruthTable";
 import { TableIcon } from "../../../common/icons";
 
 export default function TruthTableButton() {
   const [show, setShow] = useState<boolean>(false);
 
-  const terminals = useEditorStore((state: SimulatorState) => state.terminals);
-  const currentTruthTable = useEditorStore((state: SimulatorState) => state.currentTruthTable);
+  const terminals = useSimulatorStore((state: SimulatorState) => state.terminals);
+  const currentTruthTable = useSimulatorStore((state: SimulatorState) => state.currentTruthTable);
 
   return (
     <div className="relative">

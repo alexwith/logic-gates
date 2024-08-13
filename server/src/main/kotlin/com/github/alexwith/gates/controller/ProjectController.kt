@@ -1,6 +1,7 @@
 package com.github.alexwith.gates.controller
 
 import com.github.alexwith.gates.domain.project.ProjectDTO
+import com.github.alexwith.gates.dto.project.ProjectDataDTO
 import com.github.alexwith.gates.dto.project.ProjectDetailsDTO
 import com.github.alexwith.gates.middleware.getUser
 import com.github.alexwith.gates.service.ProjectService
@@ -46,6 +47,22 @@ class ProjectController @Autowired constructor(val projectService: ProjectServic
             it[shortDescription] = body.shortDescription
             it[description] = body.description
             it[visibility] = body.visibility
+        }
+
+        return ResponseEntity(HttpStatus.OK)
+    }
+
+    @PostMapping("/{id}/data")
+    fun updateData(request: HttpServletRequest, @PathVariable id: String, @RequestBody body: ProjectDataDTO): ResponseEntity<Void> {
+        val user = request.getUser()
+        val project = this@ProjectController.projectService.findById(id.toLong())
+        if (project.creator.id != user.id) {
+            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        }
+
+        println("updated to data ${body.data}")
+        this.projectService.update(id.toLong()) {
+            it[data] = body.data.map(Int::toByte).toByteArray()
         }
 
         return ResponseEntity(HttpStatus.OK)

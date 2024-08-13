@@ -1,37 +1,52 @@
 import { ChangeEvent, useRef, useState } from "react";
-import { SimulatorState, useEditorStore } from "../../../store";
+import { SimulatorState, useSimulatorStore } from "../../../store";
 import TruthTable from "../../simulator/TruthTable";
 import { toast } from "react-toastify";
 import { deserializeCircuit, serializeCircuit } from "../../../libs/circuitFile";
 import GateTypeEntity from "../../../entities/GateTypeEntity";
-import { IO } from "../../../common/types";
+import { IO, Project } from "../../../common/types";
 import BasicButton from "../../common/BasicButton";
 import { CreateIcon, MenuIcon, SaveIcon, TableIcon, UploadIcon } from "../../../common/icons";
+import { useNavigate } from "react-router-dom";
+import { updateProjectData } from "../../../services/projectService";
 
-export default function EditorBar() {
+interface Props {
+  project: Project;
+}
+
+export default function EditorBar({ project }: Props) {
+  const navigate = useNavigate();
+
   const circuitNameRef: any = useRef<any>(null);
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [showTruthTable, setShowTruthTable] = useState<boolean>(false);
 
-  const gates = useEditorStore((state: SimulatorState) => state.gates);
-  const gateTypes = useEditorStore((state: SimulatorState) => state.gateTypes);
-  const wires = useEditorStore((state: SimulatorState) => state.wires);
-  const terminals = useEditorStore((state: SimulatorState) => state.terminals);
-  const currentTruthTable = useEditorStore((state: SimulatorState) => state.currentTruthTable);
+  const gates = useSimulatorStore((state: SimulatorState) => state.gates);
+  const gateTypes = useSimulatorStore((state: SimulatorState) => state.gateTypes);
+  const wires = useSimulatorStore((state: SimulatorState) => state.wires);
+  const terminals = useSimulatorStore((state: SimulatorState) => state.terminals);
+  const currentTruthTable = useSimulatorStore((state: SimulatorState) => state.currentTruthTable);
 
-  const setGateTypes = useEditorStore((state: SimulatorState) => state.setGateTypes);
-  const setGates = useEditorStore((state: SimulatorState) => state.setGates);
-  const setTerminals = useEditorStore((state: SimulatorState) => state.setTerminals);
-  const setWires = useEditorStore((state: SimulatorState) => state.setWires);
-  const addGateType = useEditorStore((state: SimulatorState) => state.addGateType);
-  const updateActivity = useEditorStore((state: SimulatorState) => state.updateActivity);
-  const clearEditor = useEditorStore((state: SimulatorState) => state.clear);
-  const updateCurrentTruthTable = useEditorStore(
+  const setGateTypes = useSimulatorStore((state: SimulatorState) => state.setGateTypes);
+  const setGates = useSimulatorStore((state: SimulatorState) => state.setGates);
+  const setTerminals = useSimulatorStore((state: SimulatorState) => state.setTerminals);
+  const setWires = useSimulatorStore((state: SimulatorState) => state.setWires);
+  const addGateType = useSimulatorStore((state: SimulatorState) => state.addGateType);
+  const updateActivity = useSimulatorStore((state: SimulatorState) => state.updateActivity);
+  const clearEditor = useSimulatorStore((state: SimulatorState) => state.reset);
+  const updateCurrentTruthTable = useSimulatorStore(
     (state: SimulatorState) => state.updateCurrentTruthTable,
   );
 
-  const handleImportClick = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleSaveChangesClick = () => {
+    navigate(`/project/${project.id}`);
+
+    const data = serializeCircuit(gateTypes, gates, terminals, wires);
+    updateProjectData(project.id!, new Uint8Array(data));
+  };
+
+  const handleImportFileClick = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files) {
       return;
@@ -55,7 +70,7 @@ export default function EditorBar() {
     reader.readAsArrayBuffer(file);
   };
 
-  const handleSaveClick = () => {
+  const handleSaveFileClick = () => {
     const data = serializeCircuit(gateTypes, gates, terminals, wires);
     const fileURL = window.URL.createObjectURL(new Blob([data], { type: "text/plain" }));
 
@@ -115,27 +130,27 @@ export default function EditorBar() {
               showMenu ? "" : "hidden"
             }`}
           >
+            <BasicButton
+              name="Save file"
+              icon={<SaveIcon size={20} />}
+              hoverable
+              onClick={handleSaveFileClick}
+            />
             <div>
               <input
                 className="opacity-0 absolute -z-10"
                 type="file"
                 id="import-button"
-                onChange={handleImportClick}
+                onChange={handleImportFileClick}
               />
               <label
                 className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold hover:bg-violet-500 hover:cursor-pointer"
                 htmlFor="import-button"
               >
                 <UploadIcon size={20} />
-                <p>Import</p>
+                <p>Import file</p>
               </label>
             </div>
-            <BasicButton
-              name="Save"
-              icon={<SaveIcon size={20} />}
-              hoverable
-              onClick={handleSaveClick}
-            />
             <BasicButton
               name="Create circuit"
               icon={<CreateIcon size={20} />}
@@ -144,11 +159,16 @@ export default function EditorBar() {
             />
           </div>
         </div>
+        <BasicButton
+          name="Save changes"
+          icon={<SaveIcon size={20} />}
+          onClick={handleSaveChangesClick}
+        />
         <div
           onMouseEnter={() => setShowTruthTable(true)}
           onMouseLeave={() => setShowTruthTable(false)}
         >
-          <BasicButton name="Truth Table" icon={<TableIcon size={20} />} />
+          <BasicButton name="Truth table" icon={<TableIcon size={20} />} />
           {showTruthTable && (
             <div className="absolute overflow-scroll max-h-44 no-scrollbar z-10 right-0">
               <TruthTable terminals={terminals} truthTable={currentTruthTable} />

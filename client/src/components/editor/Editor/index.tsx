@@ -1,16 +1,20 @@
 import { DragEvent, MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
-import Simulator from "../../components/simulator/Simulator";
-import { SimulatorState, useEditorStore } from "../../store";
-import { IO, Pos } from "../../common/types";
-import PinEntity from "../../entities/PinEntity";
-import GateEntity from "../../entities/GateEntity";
-import useMouse from "../../hooks/useMouse";
-import Wire from "../../components/simulator/Wire";
-import TerminalEntity from "../../entities/TerminalEntity";
-import WireEntity from "../../entities/WireEntity";
-import { TrashIcon, AddIcon } from "../../common/icons";
+import Simulator from "../../simulator/Simulator";
+import { SimulatorState, useSimulatorStore } from "../../../store";
+import { IO, Pos, Project } from "../../../common/types";
+import PinEntity from "../../../entities/PinEntity";
+import GateEntity from "../../../entities/GateEntity";
+import useMouse from "../../../hooks/useMouse";
+import Wire from "../../simulator/Wire";
+import WireEntity from "../../../entities/WireEntity";
+import { TrashIcon, AddIcon } from "../../../common/icons";
+import EditorBar from "../EditorBar";
 
-export default function NewEditor() {
+interface Props {
+  project: Project;
+}
+
+export default function Editor({ project }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const { mouseDragOffset } = useMouse();
   const { mouseDragOffset: wiringMouseOffset, updateOrigin: wiringMouseUpdateOrigin } = useMouse(
@@ -27,23 +31,23 @@ export default function NewEditor() {
   const [wiringCheckpoints, setWiringCheckpoints] = useState<Pos[]>([]);
   const [lastPin, setLastPin] = useState<PinEntity | null>(null);
 
-  const gateTypes = useEditorStore((state: SimulatorState) => state.gateTypes);
-  const addingGateType = useEditorStore((state: SimulatorState) => state.addingGateType);
-  const terminals = useEditorStore((state: SimulatorState) => state.terminals);
-  const selectedPin = useEditorStore((state: SimulatorState) => state.selectedPin);
-  const wires = useEditorStore((state: SimulatorState) => state.wires);
+  const gateTypes = useSimulatorStore((state: SimulatorState) => state.gateTypes);
+  const addingGateType = useSimulatorStore((state: SimulatorState) => state.addingGateType);
+  const terminals = useSimulatorStore((state: SimulatorState) => state.terminals);
+  const selectedPin = useSimulatorStore((state: SimulatorState) => state.selectedPin);
+  const wires = useSimulatorStore((state: SimulatorState) => state.wires);
 
-  const setAddingGateType = useEditorStore((state: SimulatorState) => state.setAddingGateType);
-  const addTerminal = useEditorStore((state: SimulatorState) => state.addTerminal);
-  const setSelectedPin = useEditorStore((state: SimulatorState) => state.setSelectedPin);
-  const selectedGate = useEditorStore((state: SimulatorState) => state.selectedGate);
-  const setSelectedGate = useEditorStore((state: SimulatorState) => state.setSelectedGate);
-  const addGate = useEditorStore((state: SimulatorState) => state.addGate);
-  const removeGate = useEditorStore((state: SimulatorState) => state.removeGate);
-  const addWire = useEditorStore((state: SimulatorState) => state.addWire);
-  const removeWire = useEditorStore((state: SimulatorState) => state.removeWire);
-  const updateActivity = useEditorStore((state: SimulatorState) => state.updateActivity);
-  const updateCurrentTruthTable = useEditorStore(
+  const setAddingGateType = useSimulatorStore((state: SimulatorState) => state.setAddingGateType);
+  const addTerminal = useSimulatorStore((state: SimulatorState) => state.addTerminal);
+  const setSelectedPin = useSimulatorStore((state: SimulatorState) => state.setSelectedPin);
+  const selectedGate = useSimulatorStore((state: SimulatorState) => state.selectedGate);
+  const setSelectedGate = useSimulatorStore((state: SimulatorState) => state.setSelectedGate);
+  const addGate = useSimulatorStore((state: SimulatorState) => state.addGate);
+  const removeGate = useSimulatorStore((state: SimulatorState) => state.removeGate);
+  const addWire = useSimulatorStore((state: SimulatorState) => state.addWire);
+  const removeWire = useSimulatorStore((state: SimulatorState) => state.removeWire);
+  const updateActivity = useSimulatorStore((state: SimulatorState) => state.updateActivity);
+  const updateCurrentTruthTable = useSimulatorStore(
     (state: SimulatorState) => state.updateCurrentTruthTable,
   );
 
@@ -207,7 +211,8 @@ export default function NewEditor() {
   }, []);
 
   return (
-    <div>
+    <div className="flex flex-col space-y-4">
+      <EditorBar project={project} />
       <div ref={ref} className="relative" onDragOver={handleDragOver} onDrop={handleDrop}>
         {newTerminalIO !== null ? (
           <div

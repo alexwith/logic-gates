@@ -24,12 +24,18 @@ export const updateProject = async (
   return Promise.resolve();
 };
 
+export const updateProjectData = async (id: number, data: Uint8Array) => {
+  await axios.post(`/api/v1/projects/${id}/data`, {
+    data: Array.from(data),
+  });
+  return Promise.resolve();
+};
+
 export const createProject = async ({
   name,
   shortDescription,
   description,
   visibility,
-  data,
 }: Project): Promise<void> => {
   await axios.post("/api/v1/projects/create", {
     name,

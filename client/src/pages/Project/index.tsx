@@ -1,4 +1,4 @@
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { deleteProject, getProject } from "../../services/projectService";
 import { useQuery } from "@tanstack/react-query";
 import Markdown from "react-markdown";
@@ -29,10 +29,6 @@ export default function Project() {
 
   const isUserCreator = isLoggedIn && user.id === project!.creatorId;
 
-  const handleEditDetailsClick = () => {
-    navigate(`/projectdetails/${project!.id}`);
-  };
-
   const handleDeleteClick = async () => {
     await deleteProject(project!.id!);
     navigate(`/user/${user.id}`);
@@ -58,13 +54,12 @@ export default function Project() {
               )}
               {isUserCreator && (
                 <>
-                  <BasicButton
-                    name="Edit details"
-                    icon={<EditIcon size={20} />}
-                    hoverable
-                    onClick={handleEditDetailsClick}
-                  />
-                  <BasicButton name="Edit circuit" icon={<CircuitIcon size={20} />} hoverable />
+                  <Link to={`/details/${project!.id}`}>
+                    <BasicButton name="Edit details" icon={<EditIcon size={20} />} hoverable />
+                  </Link>
+                  <Link to={`/editor/${project!.id}`}>
+                    <BasicButton name="Edit circuit" icon={<CircuitIcon size={20} />} hoverable />
+                  </Link>
                   <BasicButton
                     name="Delete"
                     icon={<TrashIcon size={20} />}

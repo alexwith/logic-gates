@@ -36,22 +36,26 @@ export interface SimulatorState {
   setAddingGateType: (type: GateTypeEntity) => void;
   updateCurrentTruthTable: () => void;
   updateActivity: () => void;
-  clear: () => void;
+  reset: () => void;
 }
 
-export const useEditorStore = create<SimulatorState>((set) => {
+const initialSimulatorState = {
+  settings: {
+    grid: true,
+  },
+  gateTypes: BASE_GATES,
+  terminals: [],
+  gates: [],
+  wires: [],
+  selectedGate: null,
+  selectedPin: null,
+  currentTruthTable: [],
+  addingGateType: null,
+};
+
+export const useSimulatorStore = create<SimulatorState>((set) => {
   return {
-    settings: {
-      grid: true,
-    },
-    gateTypes: BASE_GATES,
-    terminals: [],
-    gates: [],
-    wires: [],
-    selectedGate: null,
-    selectedPin: null,
-    currentTruthTable: [],
-    addingGateType: null,
+    ...initialSimulatorState,
     setSettings: (settings: IEditorSettings) => {
       set(() => ({
         settings,
@@ -145,22 +149,14 @@ export const useEditorStore = create<SimulatorState>((set) => {
         return {};
       });
     },
-    clear: () => {
+    reset: () => {
       TerminalEntity.idCounter = 0;
       GateEntity.idCounter = 0;
       PinEntity.idCounter = 0;
 
-      set(() => ({
-        terminals: [],
-        gates: [],
-        wires: [],
-        selectedGate: null,
-        selectedPin: null,
-        currentTruthTable: [],
-        addingGateType: null,
-        activeTerminalPinIds: [],
-        activePinIds: [],
-      }));
+      console.log("reset state");
+
+      set(initialSimulatorState);
     },
   };
 });
