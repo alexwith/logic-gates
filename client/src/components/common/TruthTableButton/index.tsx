@@ -1,6 +1,6 @@
 import { useState } from "react";
 import BasicButton from "../BasicButton";
-import { SimulatorState, useSimulatorStore } from "../../../store";
+import { SimulatorState, useSimulatorStore } from "../../../store/simulatorStore";
 import TruthTable from "../../simulator/TruthTable";
 import { TableIcon } from "../../../common/icons";
 

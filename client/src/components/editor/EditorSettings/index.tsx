@@ -1,9 +1,10 @@
 import { GridIcon } from "../../../common/icons";
-import { SimulatorState, useSimulatorStore } from "../../../store";
+import { SimulatorActions, SimulatorState, useSimulatorStore } from "../../../store/simulatorStore";
 
 export default function EditorSettings() {
   const settings = useSimulatorStore((state: SimulatorState) => state.settings);
-  const setSettings = useSimulatorStore((state: SimulatorState) => state.setSettings);
+
+  const setSettings = useSimulatorStore((actions: SimulatorActions) => actions.setSettings);
 
   const handleToggleGrid = () => {
     setSettings({

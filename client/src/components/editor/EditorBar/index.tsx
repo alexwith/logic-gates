@@ -1,5 +1,5 @@
 import { ChangeEvent, useRef, useState } from "react";
-import { SimulatorState, useSimulatorStore } from "../../../store";
+import { SimulatorActions, SimulatorState, useSimulatorStore } from "../../../store/simulatorStore";
 import TruthTable from "../../simulator/TruthTable";
 import { toast } from "react-toastify";
 import { deserializeCircuit, serializeCircuit } from "../../../libs/circuitFile";
@@ -28,15 +28,15 @@ export default function EditorBar({ project }: Props) {
   const terminals = useSimulatorStore((state: SimulatorState) => state.terminals);
   const currentTruthTable = useSimulatorStore((state: SimulatorState) => state.currentTruthTable);
 
-  const setGateTypes = useSimulatorStore((state: SimulatorState) => state.setGateTypes);
-  const setGates = useSimulatorStore((state: SimulatorState) => state.setGates);
-  const setTerminals = useSimulatorStore((state: SimulatorState) => state.setTerminals);
-  const setWires = useSimulatorStore((state: SimulatorState) => state.setWires);
-  const addGateType = useSimulatorStore((state: SimulatorState) => state.addGateType);
-  const updateActivity = useSimulatorStore((state: SimulatorState) => state.updateActivity);
-  const clearEditor = useSimulatorStore((state: SimulatorState) => state.reset);
+  const setGateTypes = useSimulatorStore((actions: SimulatorActions) => actions.setGateTypes);
+  const setGates = useSimulatorStore((actions: SimulatorActions) => actions.setGates);
+  const setTerminals = useSimulatorStore((actions: SimulatorActions) => actions.setTerminals);
+  const setWires = useSimulatorStore((actions: SimulatorActions) => actions.setWires);
+  const addGateType = useSimulatorStore((actions: SimulatorActions) => actions.addGateType);
+  const updateActivity = useSimulatorStore((actions: SimulatorActions) => actions.updateActivity);
+  const clearEditor = useSimulatorStore((actions: SimulatorActions) => actions.reset);
   const updateCurrentTruthTable = useSimulatorStore(
-    (state: SimulatorState) => state.updateCurrentTruthTable,
+    (actions: SimulatorActions) => actions.updateTruthTable,
   );
 
   const handleSaveChangesClick = () => {

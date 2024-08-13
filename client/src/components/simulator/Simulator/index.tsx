@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useRef, useState, MouseEvent, ReactNode } from "react";
 import { SIMULATOR_HEIGHT, SIMULATOR_WIDTH } from "../../../common/constants";
-import { SimulatorState, useSimulatorStore } from "../../../store";
+import { SimulatorActions, SimulatorState, useSimulatorStore } from "../../../store/simulatorStore";
 import Terminal from "../Terminal";
 import { deserializeCircuit } from "../../../libs/circuitFile";
 import { Project } from "../../../common/types";
@@ -45,12 +45,12 @@ export default function Simulator({
   const gates = useSimulatorStore((state: SimulatorState) => state.gates);
   const wires = useSimulatorStore((state: SimulatorState) => state.wires);
 
-  const reset = useSimulatorStore((state: SimulatorState) => state.reset);
-  const setGateTypes = useSimulatorStore((state: SimulatorState) => state.setGateTypes);
-  const setGates = useSimulatorStore((state: SimulatorState) => state.setGates);
-  const setTerminals = useSimulatorStore((state: SimulatorState) => state.setTerminals);
-  const setWires = useSimulatorStore((state: SimulatorState) => state.setWires);
-  const updateActivity = useSimulatorStore((state: SimulatorState) => state.updateActivity);
+  const reset = useSimulatorStore((actions: SimulatorActions) => actions.reset);
+  const setGateTypes = useSimulatorStore((actions: SimulatorActions) => actions.setGateTypes);
+  const setGates = useSimulatorStore((actions: SimulatorActions) => actions.setGates);
+  const setTerminals = useSimulatorStore((actions: SimulatorActions) => actions.setTerminals);
+  const setWires = useSimulatorStore((actions: SimulatorActions) => actions.setWires);
+  const updateActivity = useSimulatorStore((actions: SimulatorActions) => actions.updateActivity);
 
   useEffect(() => {
     if (!project) {

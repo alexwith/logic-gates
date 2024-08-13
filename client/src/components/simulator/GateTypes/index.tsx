@@ -1,9 +1,11 @@
-import { SimulatorState, useSimulatorStore } from "../../../store";
+import { SimulatorActions, SimulatorState, useSimulatorStore } from "../../../store/simulatorStore";
 
 export default function GateTypes() {
   const gateTypes = useSimulatorStore((state: SimulatorState) => state.gateTypes);
 
-  const setAddingGateType = useSimulatorStore((state: SimulatorState) => state.setAddingGateType);
+  const setAddingGateType = useSimulatorStore(
+    (actions: SimulatorActions) => actions.setAddingGateType,
+  );
 
   return (
     <div className="flex space-x-2 mb-4">

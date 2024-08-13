@@ -1,13 +1,13 @@
 import { create } from "zustand";
-import { BASE_GATES } from "./common/constants";
-import { IEditorSettings, IO } from "./common/types";
-import { createTruthTable } from "./libs/truthTable";
-import { simulate } from "./libs/circuit";
-import GateTypeEntity from "./entities/GateTypeEntity";
-import TerminalEntity from "./entities/TerminalEntity";
-import GateEntity from "./entities/GateEntity";
-import WireEntity from "./entities/WireEntity";
-import PinEntity from "./entities/PinEntity";
+import { BASE_GATES } from "../common/constants";
+import { IEditorSettings, IO } from "../common/types";
+import { createTruthTable } from "../libs/truthTable";
+import { simulate } from "../libs/circuit";
+import GateTypeEntity from "../entities/GateTypeEntity";
+import TerminalEntity from "../entities/TerminalEntity";
+import GateEntity from "../entities/GateEntity";
+import WireEntity from "../entities/WireEntity";
+import PinEntity from "../entities/PinEntity";
 
 export interface SimulatorState {
   settings: IEditorSettings;
@@ -15,10 +15,13 @@ export interface SimulatorState {
   terminals: TerminalEntity[];
   gates: GateEntity[];
   wires: WireEntity[];
-  selectedGate: GateEntity | null;
-  selectedPin: PinEntity | null;
+  currentGate: GateEntity | null;
+  currentPin: PinEntity | null;
   currentTruthTable: boolean[][];
   addingGateType: GateTypeEntity | null;
+}
+
+export interface SimulatorActions {
   setSettings: (settings: IEditorSettings) => void;
   setGateTypes: (gateTypes: GateTypeEntity[]) => void;
   addGateType: (gateType: GateTypeEntity) => void;
@@ -31,15 +34,15 @@ export interface SimulatorState {
   setTerminals: (terminals: TerminalEntity[]) => void;
   addTerminal: (io: IO, yPos: number) => void;
   updateTerminal: (terminal: TerminalEntity) => void;
-  setSelectedPin: (pin: PinEntity | null) => void;
-  setSelectedGate: (gate: GateEntity | null) => void;
+  setCurrentPin: (pin: PinEntity | null) => void;
+  setCurrentGate: (gate: GateEntity | null) => void;
   setAddingGateType: (type: GateTypeEntity) => void;
-  updateCurrentTruthTable: () => void;
+  updateTruthTable: () => void;
   updateActivity: () => void;
   reset: () => void;
 }
 
-const initialSimulatorState = {
+const initialSimulatorState: SimulatorState = {
   settings: {
     grid: true,
   },
@@ -47,13 +50,13 @@ const initialSimulatorState = {
   terminals: [],
   gates: [],
   wires: [],
-  selectedGate: null,
-  selectedPin: null,
+  currentGate: null,
+  currentPin: null,
   currentTruthTable: [],
   addingGateType: null,
 };
 
-export const useSimulatorStore = create<SimulatorState>((set) => {
+export const useSimulatorStore = create<SimulatorState & SimulatorActions>((set) => {
   return {
     ...initialSimulatorState,
     setSettings: (settings: IEditorSettings) => {
@@ -122,14 +125,14 @@ export const useSimulatorStore = create<SimulatorState>((set) => {
         return { terminals };
       });
     },
-    setSelectedPin: (pin: PinEntity | null) => {
+    setCurrentPin: (pin: PinEntity | null) => {
       set(() => ({
-        selectedPin: pin,
+        currentPin: pin,
       }));
     },
-    setSelectedGate: (gate: GateEntity | null) => {
+    setCurrentGate: (gate: GateEntity | null) => {
       set(() => ({
-        selectedGate: gate,
+        currentGate: gate,
       }));
     },
     setAddingGateType: (type: GateTypeEntity) => {
@@ -137,7 +140,7 @@ export const useSimulatorStore = create<SimulatorState>((set) => {
         addingGateType: type,
       }));
     },
-    updateCurrentTruthTable: () => {
+    updateTruthTable: () => {
       set((state) => ({
         currentTruthTable: createTruthTable(state.terminals, state.wires, state.gates),
       }));
@@ -153,8 +156,6 @@ export const useSimulatorStore = create<SimulatorState>((set) => {
       TerminalEntity.idCounter = 0;
       GateEntity.idCounter = 0;
       PinEntity.idCounter = 0;
-
-      console.log("reset state");
 
       set(initialSimulatorState);
     },

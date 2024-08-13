@@ -1,6 +1,6 @@
 import { DragEvent, MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
 import Simulator from "../../simulator/Simulator";
-import { SimulatorState, useSimulatorStore } from "../../../store";
+import { SimulatorActions, SimulatorState, useSimulatorStore } from "../../../store/simulatorStore";
 import { IO, Pos, Project } from "../../../common/types";
 import PinEntity from "../../../entities/PinEntity";
 import GateEntity from "../../../entities/GateEntity";
@@ -34,21 +34,23 @@ export default function Editor({ project }: Props) {
   const gateTypes = useSimulatorStore((state: SimulatorState) => state.gateTypes);
   const addingGateType = useSimulatorStore((state: SimulatorState) => state.addingGateType);
   const terminals = useSimulatorStore((state: SimulatorState) => state.terminals);
-  const selectedPin = useSimulatorStore((state: SimulatorState) => state.selectedPin);
+  const currentPin = useSimulatorStore((state: SimulatorState) => state.currentPin);
   const wires = useSimulatorStore((state: SimulatorState) => state.wires);
+  const currentGate = useSimulatorStore((state: SimulatorState) => state.currentGate);
 
-  const setAddingGateType = useSimulatorStore((state: SimulatorState) => state.setAddingGateType);
-  const addTerminal = useSimulatorStore((state: SimulatorState) => state.addTerminal);
-  const setSelectedPin = useSimulatorStore((state: SimulatorState) => state.setSelectedPin);
-  const selectedGate = useSimulatorStore((state: SimulatorState) => state.selectedGate);
-  const setSelectedGate = useSimulatorStore((state: SimulatorState) => state.setSelectedGate);
-  const addGate = useSimulatorStore((state: SimulatorState) => state.addGate);
-  const removeGate = useSimulatorStore((state: SimulatorState) => state.removeGate);
-  const addWire = useSimulatorStore((state: SimulatorState) => state.addWire);
-  const removeWire = useSimulatorStore((state: SimulatorState) => state.removeWire);
-  const updateActivity = useSimulatorStore((state: SimulatorState) => state.updateActivity);
-  const updateCurrentTruthTable = useSimulatorStore(
-    (state: SimulatorState) => state.updateCurrentTruthTable,
+  const setAddingGateType = useSimulatorStore(
+    (actions: SimulatorActions) => actions.setAddingGateType,
+  );
+  const addTerminal = useSimulatorStore((actions: SimulatorActions) => actions.addTerminal);
+  const setCurrentPin = useSimulatorStore((actions: SimulatorActions) => actions.setCurrentPin);
+  const setCurrentGate = useSimulatorStore((actions: SimulatorActions) => actions.setCurrentGate);
+  const addGate = useSimulatorStore((actions: SimulatorActions) => actions.addGate);
+  const removeGate = useSimulatorStore((actions: SimulatorActions) => actions.removeGate);
+  const addWire = useSimulatorStore((actions: SimulatorActions) => actions.addWire);
+  const removeWire = useSimulatorStore((actions: SimulatorActions) => actions.removeWire);
+  const updateActivity = useSimulatorStore((actions: SimulatorActions) => actions.updateActivity);
+  const updateTruthTable = useSimulatorStore(
+    (actions: SimulatorActions) => actions.updateTruthTable,
   );
 
   const handleMouseMove = () => {
@@ -96,22 +98,22 @@ export default function Editor({ project }: Props) {
 
   const handlePinClick = (event: ReactMouseEvent, pin: PinEntity) => {
     setIsWiring(true);
-    setSelectedPin(pin);
+    setCurrentPin(pin);
     wiringMouseUpdateOrigin(event);
   };
 
   const handleGateClick = (event: ReactMouseEvent, gate: GateEntity) => {
     setIsDraggingGate(true);
-    setSelectedGate(gate);
+    setCurrentGate(gate);
     setGateOrigin(gate.pos);
   };
 
   const handleWiringMove = () => {
-    if (!selectedPin) {
+    if (!currentPin) {
       return;
     }
 
-    const { x, y } = selectedPin.getPos();
+    const { x, y } = currentPin.getPos();
     setWiringEndPoint({
       x: Math.abs(wiringMouseOffset.x - x),
       y: Math.abs(wiringMouseOffset.y - y),
@@ -119,17 +121,17 @@ export default function Editor({ project }: Props) {
   };
 
   const handleWiringClick = () => {
-    if (!selectedPin || !isWiring) {
+    if (!currentPin || !isWiring) {
       return;
     }
 
-    if (lastPin && selectedPin !== lastPin) {
-      addWire(new WireEntity(selectedPin, lastPin, wiringCheckpoints));
+    if (lastPin && currentPin !== lastPin) {
+      addWire(new WireEntity(currentPin, lastPin, wiringCheckpoints));
       setIsWiring(false);
       setWiringEndPoint(null);
       setWiringCheckpoints([]);
 
-      updateCurrentTruthTable();
+      updateTruthTable();
       updateActivity();
       return;
     }
@@ -138,29 +140,29 @@ export default function Editor({ project }: Props) {
   };
 
   const handleGateDraggingMove = () => {
-    if (!selectedGate) {
+    if (!currentGate) {
       return;
     }
 
-    selectedGate.pos = {
+    currentGate.pos = {
       x: Math.abs(mouseDragOffset.x - gateOrigin.x),
       y: Math.abs(mouseDragOffset.y - gateOrigin.y),
     };
   };
 
   const deleteDraggingGate = () => {
-    if (!selectedGate) {
+    if (!currentGate) {
       return;
     }
 
     wires.forEach((wire) => {
-      if (wire.startPin.attached === selectedGate || wire.endPin.attached === selectedGate) {
+      if (wire.startPin.attached === currentGate || wire.endPin.attached === currentGate) {
         removeWire(wire);
       }
     });
 
-    removeGate(selectedGate);
-    setSelectedGate(null);
+    removeGate(currentGate);
+    setCurrentGate(null);
     setIsDraggingGate(false);
   };
 
@@ -255,9 +257,9 @@ export default function Editor({ project }: Props) {
           onPinHover={setLastPin}
           onGateClick={handleGateClick}
         >
-          {isWiring && selectedPin && wiringEndPoint && (
+          {isWiring && currentPin && wiringEndPoint && (
             <Wire
-              points={[selectedPin.getPos(), ...wiringCheckpoints, wiringEndPoint]}
+              points={[currentPin.getPos(), ...wiringCheckpoints, wiringEndPoint]}
               active={false}
             />
           )}
