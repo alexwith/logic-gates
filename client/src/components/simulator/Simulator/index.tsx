@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useRef, useState, MouseEvent, ReactNode } from "react";
 import { SIMULATOR_HEIGHT, SIMULATOR_WIDTH } from "../../../common/constants";
-import { EditorState, useEditorStore } from "../../../store";
+import { SimulatorState, useEditorStore } from "../../../store";
 import Terminal from "../Terminal";
 import { deserializeCircuit } from "../../../libs/circuitFile";
 import { Project } from "../../../common/types";
@@ -40,16 +40,16 @@ export default function Simulator({
   const [render, rerender] = useState<boolean>(false);
   const [expandWarning, setExpandWarning] = useState<boolean>(false);
 
-  const settings = useEditorStore((state: EditorState) => state.settings);
-  const terminals = useEditorStore((state: EditorState) => state.terminals);
-  const gates = useEditorStore((state: EditorState) => state.gates);
-  const wires = useEditorStore((state: EditorState) => state.wires);
+  const settings = useEditorStore((state: SimulatorState) => state.settings);
+  const terminals = useEditorStore((state: SimulatorState) => state.terminals);
+  const gates = useEditorStore((state: SimulatorState) => state.gates);
+  const wires = useEditorStore((state: SimulatorState) => state.wires);
 
-  const setGateTypes = useEditorStore((state: EditorState) => state.setGateTypes);
-  const setGates = useEditorStore((state: EditorState) => state.setGates);
-  const setTerminals = useEditorStore((state: EditorState) => state.setTerminals);
-  const setWires = useEditorStore((state: EditorState) => state.setWires);
-  const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
+  const setGateTypes = useEditorStore((state: SimulatorState) => state.setGateTypes);
+  const setGates = useEditorStore((state: SimulatorState) => state.setGates);
+  const setTerminals = useEditorStore((state: SimulatorState) => state.setTerminals);
+  const setWires = useEditorStore((state: SimulatorState) => state.setWires);
+  const updateActivity = useEditorStore((state: SimulatorState) => state.updateActivity);
 
   useEffect(() => {
     if (!project) {

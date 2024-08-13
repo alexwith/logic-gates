@@ -1,6 +1,6 @@
 import { DragEvent, MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
 import Simulator from "../../components/simulator/Simulator";
-import { EditorState, useEditorStore } from "../../store";
+import { SimulatorState, useEditorStore } from "../../store";
 import { IO, Pos } from "../../common/types";
 import PinEntity from "../../entities/PinEntity";
 import GateEntity from "../../entities/GateEntity";
@@ -27,24 +27,24 @@ export default function NewEditor() {
   const [wiringCheckpoints, setWiringCheckpoints] = useState<Pos[]>([]);
   const [lastPin, setLastPin] = useState<PinEntity | null>(null);
 
-  const gateTypes = useEditorStore((state: EditorState) => state.gateTypes);
-  const addingGateType = useEditorStore((state: EditorState) => state.addingGateType);
-  const terminals = useEditorStore((state: EditorState) => state.terminals);
-  const selectedPin = useEditorStore((state: EditorState) => state.selectedPin);
-  const wires = useEditorStore((state: EditorState) => state.wires);
+  const gateTypes = useEditorStore((state: SimulatorState) => state.gateTypes);
+  const addingGateType = useEditorStore((state: SimulatorState) => state.addingGateType);
+  const terminals = useEditorStore((state: SimulatorState) => state.terminals);
+  const selectedPin = useEditorStore((state: SimulatorState) => state.selectedPin);
+  const wires = useEditorStore((state: SimulatorState) => state.wires);
 
-  const setAddingGateType = useEditorStore((state: EditorState) => state.setAddingGateType);
-  const addTerminal = useEditorStore((state: EditorState) => state.addTerminal);
-  const setSelectedPin = useEditorStore((state: EditorState) => state.setSelectedPin);
-  const selectedGate = useEditorStore((state: EditorState) => state.selectedGate);
-  const setSelectedGate = useEditorStore((state: EditorState) => state.setSelectedGate);
-  const addGate = useEditorStore((state: EditorState) => state.addGate);
-  const removeGate = useEditorStore((state: EditorState) => state.removeGate);
-  const addWire = useEditorStore((state: EditorState) => state.addWire);
-  const removeWire = useEditorStore((state: EditorState) => state.removeWire);
-  const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
+  const setAddingGateType = useEditorStore((state: SimulatorState) => state.setAddingGateType);
+  const addTerminal = useEditorStore((state: SimulatorState) => state.addTerminal);
+  const setSelectedPin = useEditorStore((state: SimulatorState) => state.setSelectedPin);
+  const selectedGate = useEditorStore((state: SimulatorState) => state.selectedGate);
+  const setSelectedGate = useEditorStore((state: SimulatorState) => state.setSelectedGate);
+  const addGate = useEditorStore((state: SimulatorState) => state.addGate);
+  const removeGate = useEditorStore((state: SimulatorState) => state.removeGate);
+  const addWire = useEditorStore((state: SimulatorState) => state.addWire);
+  const removeWire = useEditorStore((state: SimulatorState) => state.removeWire);
+  const updateActivity = useEditorStore((state: SimulatorState) => state.updateActivity);
   const updateCurrentTruthTable = useEditorStore(
-    (state: EditorState) => state.updateCurrentTruthTable,
+    (state: SimulatorState) => state.updateCurrentTruthTable,
   );
 
   const handlePinClick = (event: ReactMouseEvent, pin: PinEntity) => {

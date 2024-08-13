@@ -9,7 +9,7 @@ import GateEntity from "./entities/GateEntity";
 import WireEntity from "./entities/WireEntity";
 import PinEntity from "./entities/PinEntity";
 
-export interface EditorState {
+export interface SimulatorState {
   settings: IEditorSettings;
   gateTypes: GateTypeEntity[];
   terminals: TerminalEntity[];
@@ -39,7 +39,7 @@ export interface EditorState {
   clear: () => void;
 }
 
-export const useEditorStore = create<EditorState>((set) => {
+export const useEditorStore = create<SimulatorState>((set) => {
   return {
     settings: {
       grid: true,

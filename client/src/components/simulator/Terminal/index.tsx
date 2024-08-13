@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import DynamicInput from "../../common/DynamicInput";
-import { EditorState, useEditorStore } from "../../../store";
+import { SimulatorState, useEditorStore } from "../../../store";
 import useMouse from "../../../hooks/useMouse";
 import TerminalEntity from "../../../entities/TerminalEntity";
 import { IO } from "../../../common/types";
@@ -21,8 +21,8 @@ export default function Terminal({ terminal, rerenderParent, editable }: Props) 
 
   const { mouseDragOffset } = useMouse();
 
-  const updateTerminal = useEditorStore((state: EditorState) => state.updateTerminal);
-  const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
+  const updateTerminal = useEditorStore((state: SimulatorState) => state.updateTerminal);
+  const updateActivity = useEditorStore((state: SimulatorState) => state.updateActivity);
 
   useEffect(() => {
     if (dragging) {

@@ -1,9 +1,9 @@
-import { EditorState, useEditorStore } from "../../../store";
+import { SimulatorState, useEditorStore } from "../../../store";
 
 export default function GateTypes() {
-  const gateTypes = useEditorStore((state: EditorState) => state.gateTypes);
+  const gateTypes = useEditorStore((state: SimulatorState) => state.gateTypes);
 
-  const setAddingGateType = useEditorStore((state: EditorState) => state.setAddingGateType);
+  const setAddingGateType = useEditorStore((state: SimulatorState) => state.setAddingGateType);
 
   return (
     <div className="flex space-x-2 mb-4">

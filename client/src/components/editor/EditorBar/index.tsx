@@ -1,5 +1,5 @@
 import { ChangeEvent, useRef, useState } from "react";
-import { EditorState, useEditorStore } from "../../../store";
+import { SimulatorState, useEditorStore } from "../../../store";
 import TruthTable from "../../simulator/TruthTable";
 import { toast } from "react-toastify";
 import { deserializeCircuit, serializeCircuit } from "../../../libs/circuitFile";
@@ -14,21 +14,21 @@ export default function EditorBar() {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [showTruthTable, setShowTruthTable] = useState<boolean>(false);
 
-  const gates = useEditorStore((state: EditorState) => state.gates);
-  const gateTypes = useEditorStore((state: EditorState) => state.gateTypes);
-  const wires = useEditorStore((state: EditorState) => state.wires);
-  const terminals = useEditorStore((state: EditorState) => state.terminals);
-  const currentTruthTable = useEditorStore((state: EditorState) => state.currentTruthTable);
+  const gates = useEditorStore((state: SimulatorState) => state.gates);
+  const gateTypes = useEditorStore((state: SimulatorState) => state.gateTypes);
+  const wires = useEditorStore((state: SimulatorState) => state.wires);
+  const terminals = useEditorStore((state: SimulatorState) => state.terminals);
+  const currentTruthTable = useEditorStore((state: SimulatorState) => state.currentTruthTable);
 
-  const setGateTypes = useEditorStore((state: EditorState) => state.setGateTypes);
-  const setGates = useEditorStore((state: EditorState) => state.setGates);
-  const setTerminals = useEditorStore((state: EditorState) => state.setTerminals);
-  const setWires = useEditorStore((state: EditorState) => state.setWires);
-  const addGateType = useEditorStore((state: EditorState) => state.addGateType);
-  const updateActivity = useEditorStore((state: EditorState) => state.updateActivity);
-  const clearEditor = useEditorStore((state: EditorState) => state.clear);
+  const setGateTypes = useEditorStore((state: SimulatorState) => state.setGateTypes);
+  const setGates = useEditorStore((state: SimulatorState) => state.setGates);
+  const setTerminals = useEditorStore((state: SimulatorState) => state.setTerminals);
+  const setWires = useEditorStore((state: SimulatorState) => state.setWires);
+  const addGateType = useEditorStore((state: SimulatorState) => state.addGateType);
+  const updateActivity = useEditorStore((state: SimulatorState) => state.updateActivity);
+  const clearEditor = useEditorStore((state: SimulatorState) => state.clear);
   const updateCurrentTruthTable = useEditorStore(
-    (state: EditorState) => state.updateCurrentTruthTable,
+    (state: SimulatorState) => state.updateCurrentTruthTable,
   );
 
   const handleImportClick = (event: ChangeEvent<HTMLInputElement>) => {
