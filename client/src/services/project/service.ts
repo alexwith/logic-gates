@@ -1,5 +1,6 @@
 import axios from "axios";
-import { Project } from "../common/types";
+import { Project } from "../../common/types";
+import { UpdateProjectDTO } from "./dto";
 
 export const getProject = async (id: number): Promise<Project> => {
   const response = await axios.get(`/api/v1/projects/${id}`);
@@ -13,20 +14,14 @@ export const deleteProject = async (id: number): Promise<void> => {
 
 export const updateProject = async (
   id: number,
-  { name, shortDescription, description, visibility }: Project,
+  { name, shortDescription, description, visibility, data }: UpdateProjectDTO,
 ): Promise<void> => {
   await axios.post(`/api/v1/projects/${id}`, {
     name,
     shortDescription,
     description,
     visibility,
-  });
-  return Promise.resolve();
-};
-
-export const updateProjectData = async (id: number, data: Uint8Array) => {
-  await axios.post(`/api/v1/projects/${id}/data`, {
-    data: Array.from(data),
+    data: data && Array.from(data),
   });
   return Promise.resolve();
 };

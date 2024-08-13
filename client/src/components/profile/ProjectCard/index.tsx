@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUser } from "../../../hooks/useUser";
-import { getLikes, toggleLike } from "../../../services/projectService";
+import { getLikes, toggleLike } from "../../../services/project/service";
 import { Link } from "react-router-dom";
 import { EmptyLikeIcon, FilledLikeIcon } from "../../../common/icons";
 

@@ -1,8 +1,8 @@
 package com.github.alexwith.gates.controller
 
 import com.github.alexwith.gates.domain.project.ProjectDTO
-import com.github.alexwith.gates.dto.project.ProjectDataDTO
-import com.github.alexwith.gates.dto.project.ProjectDetailsDTO
+import com.github.alexwith.gates.dto.project.ProjectCreateDTO
+import com.github.alexwith.gates.dto.project.ProjectUpdateDTO
 import com.github.alexwith.gates.middleware.getUser
 import com.github.alexwith.gates.service.ProjectService
 import jakarta.servlet.http.HttpServletRequest
@@ -22,60 +22,8 @@ class ProjectController @Autowired constructor(val projectService: ProjectServic
         return ResponseEntity(project.toDTO(), HttpStatus.OK)
     }
 
-    @DeleteMapping("/{id}")
-    fun delete(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<Void> {
-        val user = request.getUser()
-        val project = this@ProjectController.projectService.findById(id.toLong())
-        if (project.creator.id != user.id) {
-            return ResponseEntity(HttpStatus.UNAUTHORIZED)
-        }
-
-        this.projectService.deleteById(id.toLong())
-        return ResponseEntity(HttpStatus.OK)
-    }
-
-    @PostMapping("/{id}")
-    fun update(request: HttpServletRequest, @PathVariable id: String, @RequestBody body: ProjectDetailsDTO): ResponseEntity<Void> {
-        val user = request.getUser()
-        val project = this@ProjectController.projectService.findById(id.toLong())
-        if (project.creator.id != user.id) {
-            return ResponseEntity(HttpStatus.UNAUTHORIZED)
-        }
-
-        this.projectService.update(id.toLong()) {
-            it[name] = body.name
-            it[shortDescription] = body.shortDescription
-            it[description] = body.description
-            it[visibility] = body.visibility
-        }
-
-        return ResponseEntity(HttpStatus.OK)
-    }
-
-    @PostMapping("/{id}/data")
-    fun updateData(request: HttpServletRequest, @PathVariable id: String, @RequestBody body: ProjectDataDTO): ResponseEntity<Void> {
-        val user = request.getUser()
-        val project = this@ProjectController.projectService.findById(id.toLong())
-        if (project.creator.id != user.id) {
-            return ResponseEntity(HttpStatus.UNAUTHORIZED)
-        }
-
-        println("updated to data ${body.data}")
-        this.projectService.update(id.toLong()) {
-            it[data] = body.data.map(Int::toByte).toByteArray()
-        }
-
-        return ResponseEntity(HttpStatus.OK)
-    }
-
-    @GetMapping("/likes/{id}")
-    fun getLikes(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<List<Long>> {
-        val project = this@ProjectController.projectService.findById(id.toLong())
-        return ResponseEntity(project.likes.map { it.id.value }, HttpStatus.OK)
-    }
-
     @PostMapping("/create")
-    fun create(request: HttpServletRequest, @RequestBody body: ProjectDetailsDTO): ResponseEntity<Void> {
+    fun create(request: HttpServletRequest, @RequestBody body: ProjectCreateDTO): ResponseEntity<Void> {
         val user = request.getUser()
 
         if (!PROJECT_VALID_NAME_REGEX.matches(body.name)) {
@@ -92,6 +40,43 @@ class ProjectController @Autowired constructor(val projectService: ProjectServic
         }
 
         return ResponseEntity(HttpStatus.OK)
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<Void> {
+        val user = request.getUser()
+        val project = this@ProjectController.projectService.findById(id.toLong())
+        if (project.creator.id != user.id) {
+            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        }
+
+        this.projectService.deleteById(id.toLong())
+        return ResponseEntity(HttpStatus.OK)
+    }
+
+    @PostMapping("/{id}")
+    fun update(request: HttpServletRequest, @PathVariable id: String, @RequestBody body: ProjectUpdateDTO): ResponseEntity<Void> {
+        val user = request.getUser()
+        val project = this@ProjectController.projectService.findById(id.toLong())
+        if (project.creator.id != user.id) {
+            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        }
+
+        this.projectService.update(id.toLong()) { update ->
+            body.name?.let { update[name] = body.name }
+            body.shortDescription?.let { update[shortDescription] = body.shortDescription }
+            body.description?.let { update[description] = body.description }
+            body.visibility?.let { update[visibility] = body.visibility }
+            body.data?.let { update[data] = body.data.map(Int::toByte).toByteArray() }
+        }
+
+        return ResponseEntity(HttpStatus.OK)
+    }
+
+    @GetMapping("/likes/{id}")
+    fun getLikes(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<List<Long>> {
+        val project = this@ProjectController.projectService.findById(id.toLong())
+        return ResponseEntity(project.likes.map { it.id.value }, HttpStatus.OK)
     }
 
     @PostMapping("/like/{id}")

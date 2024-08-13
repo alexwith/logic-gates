@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createContext, useContext } from "react";
-import { getMe } from "../services/userService";
+import { getMe } from "../services/user/service";
 import { User } from "../common/types";
 import axios from "axios";
 

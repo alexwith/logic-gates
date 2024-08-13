@@ -2,7 +2,7 @@ import { Link, useLoaderData } from "react-router-dom";
 import BasicButton from "../../components/common/BasicButton";
 import ProjectCard from "../../components/profile/ProjectCard";
 import { useQuery } from "@tanstack/react-query";
-import { getProjects, getUser } from "../../services/userService";
+import { getProjects, getUser } from "../../services/user/service";
 import { Project } from "../../common/types";
 import { useUser } from "../../hooks/useUser";
 import { CircuitIcon } from "../../common/icons";

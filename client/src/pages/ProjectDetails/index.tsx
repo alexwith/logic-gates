@@ -1,6 +1,6 @@
 import BasicButton from "../../components/common/BasicButton";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { getProject, updateProject } from "../../services/projectService";
+import { getProject, updateProject } from "../../services/project/service";
 import DetailsForm from "../../components/project/DetailsForm";
 import { useState } from "react";
 import { Project } from "../../common/types";
@@ -27,7 +27,12 @@ export default function EditProjectDetails() {
       return;
     }
 
-    await updateProject(project!.id!, details!);
+    await updateProject(project!.id!, {
+      name: details!.name,
+      shortDescription: details!.shortDescription,
+      description: details!.description,
+      visibility: details!.visibility,
+    });
     navigate(`/project/${project!.id}`);
   };
 

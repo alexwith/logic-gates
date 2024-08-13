@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom";
-import { getProject } from "../../services/projectService";
+import { getProject } from "../../services/project/service";
 import { useQuery } from "@tanstack/react-query";
 import Editor from "../../components/editor/Editor";
 

@@ -8,7 +8,7 @@ import { IO, Project } from "../../../common/types";
 import BasicButton from "../../common/BasicButton";
 import { CreateIcon, MenuIcon, SaveIcon, TableIcon, UploadIcon } from "../../../common/icons";
 import { useNavigate } from "react-router-dom";
-import { updateProjectData } from "../../../services/projectService";
+import { updateProject } from "../../../services/project/service";
 
 interface Props {
   project: Project;
@@ -43,7 +43,7 @@ export default function EditorBar({ project }: Props) {
     navigate(`/project/${project.id}`);
 
     const data = serializeCircuit(gateTypes, gates, terminals, wires);
-    updateProjectData(project.id!, new Uint8Array(data));
+    updateProject(project.id!, { data: new Uint8Array(data) });
   };
 
   const handleImportFileClick = (event: ChangeEvent<HTMLInputElement>) => {

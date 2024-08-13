@@ -1,5 +1,5 @@
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
-import { deleteProject, getProject } from "../../services/projectService";
+import { deleteProject, getProject } from "../../services/project/service";
 import { useQuery } from "@tanstack/react-query";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";

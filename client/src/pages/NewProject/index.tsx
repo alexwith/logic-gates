@@ -1,7 +1,7 @@
 import BasicButton from "../../components/common/BasicButton";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../hooks/useUser";
-import { createProject } from "../../services/projectService";
+import { createProject } from "../../services/project/service";
 import DetailsForm from "../../components/project/DetailsForm";
 import { useState } from "react";
 import { Project } from "../../common/types";

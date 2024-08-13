@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Project, User } from "../common/types";
+import { Project, User } from "../../common/types";
 
 export const getMe = async (): Promise<User> => {
   const response = await axios.get("/api/v1/users/me");
