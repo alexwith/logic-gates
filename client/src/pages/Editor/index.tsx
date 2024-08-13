@@ -47,18 +47,6 @@ export default function NewEditor() {
     (state: SimulatorState) => state.updateCurrentTruthTable,
   );
 
-  const handlePinClick = (event: ReactMouseEvent, pin: PinEntity) => {
-    setIsWiring(true);
-    setSelectedPin(pin);
-    wiringMouseUpdateOrigin(event);
-  };
-
-  const handleGateClick = (event: ReactMouseEvent, gate: GateEntity) => {
-    setIsDraggingGate(true);
-    setSelectedGate(gate);
-    setGateOrigin(gate.pos);
-  };
-
   const handleMouseMove = () => {
     if (isDraggingGate) {
       handleGateDraggingMove();
@@ -74,16 +62,8 @@ export default function NewEditor() {
     }
   };
 
-  const handleWiringMove = () => {
-    if (!selectedPin) {
-      return;
-    }
-
-    const { x, y } = selectedPin.getPos();
-    setWiringEndPoint({
-      x: Math.abs(wiringMouseOffset.x - x),
-      y: Math.abs(wiringMouseOffset.y - y),
-    });
+  const handleMouseDown = () => {
+    handleWiringClick();
   };
 
   const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
@@ -110,30 +90,47 @@ export default function NewEditor() {
     addGate(gate);
   };
 
-  const handleMouseDown = () => {
+  const handlePinClick = (event: ReactMouseEvent, pin: PinEntity) => {
+    setIsWiring(true);
+    setSelectedPin(pin);
+    wiringMouseUpdateOrigin(event);
+  };
+
+  const handleGateClick = (event: ReactMouseEvent, gate: GateEntity) => {
+    setIsDraggingGate(true);
+    setSelectedGate(gate);
+    setGateOrigin(gate.pos);
+  };
+
+  const handleWiringMove = () => {
     if (!selectedPin) {
       return;
     }
 
-    if (isWiring) {
-      if (
-        lastPin &&
-        selectedPin !== lastPin &&
-        (!(selectedPin.attached instanceof TerminalEntity) ||
-          !(lastPin.attached instanceof TerminalEntity))
-      ) {
-        addWire(new WireEntity(selectedPin, lastPin, wiringCheckpoints));
-        setIsWiring(false);
-        setWiringEndPoint(null);
-        setWiringCheckpoints([]);
+    const { x, y } = selectedPin.getPos();
+    setWiringEndPoint({
+      x: Math.abs(wiringMouseOffset.x - x),
+      y: Math.abs(wiringMouseOffset.y - y),
+    });
+  };
 
-        updateCurrentTruthTable();
-        updateActivity();
-        return;
-      }
-
-      setWiringCheckpoints([...wiringCheckpoints, wiringEndPoint!]);
+  const handleWiringClick = () => {
+    if (!selectedPin || !isWiring) {
+      return;
     }
+
+    if (lastPin && selectedPin !== lastPin) {
+      addWire(new WireEntity(selectedPin, lastPin, wiringCheckpoints));
+      setIsWiring(false);
+      setWiringEndPoint(null);
+      setWiringCheckpoints([]);
+
+      updateCurrentTruthTable();
+      updateActivity();
+      return;
+    }
+
+    setWiringCheckpoints([...wiringCheckpoints, wiringEndPoint!]);
   };
 
   const handleGateDraggingMove = () => {
