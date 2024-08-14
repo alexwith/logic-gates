@@ -51,6 +51,9 @@ export default function Simulator({
   const setTerminals = useSimulatorStore((actions: SimulatorActions) => actions.setTerminals);
   const setWires = useSimulatorStore((actions: SimulatorActions) => actions.setWires);
   const updateActivity = useSimulatorStore((actions: SimulatorActions) => actions.updateActivity);
+  const updateTruthTable = useSimulatorStore(
+    (actions: SimulatorActions) => actions.updateTruthTable,
+  );
 
   useEffect(() => {
     if (!project) {
@@ -72,6 +75,7 @@ export default function Simulator({
     setTerminals(terminals);
     setWires(wires);
     updateActivity();
+    updateTruthTable();
   }, []);
 
   useEffect(() => {

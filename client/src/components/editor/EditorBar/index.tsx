@@ -26,7 +26,7 @@ export default function EditorBar({ project }: Props) {
   const gateTypes = useSimulatorStore((state: SimulatorState) => state.gateTypes);
   const wires = useSimulatorStore((state: SimulatorState) => state.wires);
   const terminals = useSimulatorStore((state: SimulatorState) => state.terminals);
-  const currentTruthTable = useSimulatorStore((state: SimulatorState) => state.currentTruthTable);
+  const truthTable = useSimulatorStore((state: SimulatorState) => state.truthTable);
 
   const setGateTypes = useSimulatorStore((actions: SimulatorActions) => actions.setGateTypes);
   const setGates = useSimulatorStore((actions: SimulatorActions) => actions.setGates);
@@ -35,7 +35,7 @@ export default function EditorBar({ project }: Props) {
   const addGateType = useSimulatorStore((actions: SimulatorActions) => actions.addGateType);
   const updateActivity = useSimulatorStore((actions: SimulatorActions) => actions.updateActivity);
   const clearEditor = useSimulatorStore((actions: SimulatorActions) => actions.reset);
-  const updateCurrentTruthTable = useSimulatorStore(
+  const updateTruthTable = useSimulatorStore(
     (actions: SimulatorActions) => actions.updateTruthTable,
   );
 
@@ -63,7 +63,7 @@ export default function EditorBar({ project }: Props) {
       setGates(gates);
       setTerminals(terminals);
       setWires(wires);
-      updateCurrentTruthTable();
+      updateTruthTable();
       updateActivity();
     };
 
@@ -86,7 +86,7 @@ export default function EditorBar({ project }: Props) {
   };
 
   const handleCreateClick = () => {
-    if (currentTruthTable.length === 0) {
+    if (truthTable.length === 0) {
       toast.error("You must first create a valid circuit.");
       return;
     }
@@ -105,7 +105,7 @@ export default function EditorBar({ project }: Props) {
     const inputs: number = terminals.filter((pin) => pin.io === IO.Input).length;
     const outputs: number = terminals.length - inputs;
 
-    const gateType: GateTypeEntity = new GateTypeEntity(name, inputs, outputs, currentTruthTable);
+    const gateType: GateTypeEntity = new GateTypeEntity(name, inputs, outputs, truthTable);
     addGateType(gateType);
     clearEditor();
 
@@ -172,7 +172,7 @@ export default function EditorBar({ project }: Props) {
           <BasicButton name="Truth table" icon={<TableIcon size={20} />} />
           {showTruthTable && (
             <div className="absolute overflow-scroll max-h-44 no-scrollbar z-10 right-0">
-              <TruthTable terminals={terminals} truthTable={currentTruthTable} />
+              <TruthTable terminals={terminals} truthTable={truthTable} />
             </div>
           )}
         </div>

@@ -17,7 +17,7 @@ export interface SimulatorState {
   wires: WireEntity[];
   currentGate: GateEntity | null;
   currentPin: PinEntity | null;
-  currentTruthTable: boolean[][];
+  truthTable: boolean[][];
   addingGateType: GateTypeEntity | null;
 }
 
@@ -52,7 +52,7 @@ const initialSimulatorState: SimulatorState = {
   wires: [],
   currentGate: null,
   currentPin: null,
-  currentTruthTable: [],
+  truthTable: [],
   addingGateType: null,
 };
 
@@ -142,7 +142,7 @@ export const useSimulatorStore = create<SimulatorState & SimulatorActions>((set)
     },
     updateTruthTable: () => {
       set((state) => ({
-        currentTruthTable: createTruthTable(state.terminals, state.wires, state.gates),
+        truthTable: createTruthTable(state.terminals, state.wires, state.gates),
       }));
     },
     updateActivity: () => {

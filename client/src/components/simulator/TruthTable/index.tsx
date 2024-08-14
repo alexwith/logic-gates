@@ -6,7 +6,7 @@ interface Props {
 }
 
 export default function TruthTable({ terminals, truthTable }: Props) {
-  if (terminals.length === 0) {
+  if (truthTable.length === 0) {
     return <h1 className="font-bold">Empty truth table</h1>;
   }
 
