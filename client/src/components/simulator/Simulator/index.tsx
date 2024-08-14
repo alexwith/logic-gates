@@ -74,8 +74,8 @@ export default function Simulator({
     setGates(gates);
     setTerminals(terminals);
     setWires(wires);
-    updateActivity();
     updateTruthTable();
+    updateActivity();
   }, []);
 
   useEffect(() => {
