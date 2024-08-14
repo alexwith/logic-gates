@@ -46,7 +46,7 @@ export default function EditorBar({ project }: Props) {
     updateProject(project.id!, { data: new Uint8Array(data) });
   };
 
-  const handleImportFileClick = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleImportClick = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files) {
       return;
@@ -70,7 +70,7 @@ export default function EditorBar({ project }: Props) {
     reader.readAsArrayBuffer(file);
   };
 
-  const handleSaveFileClick = () => {
+  const handleExportClick = () => {
     const data = serializeCircuit(gateTypes, gates, terminals, wires);
     const fileURL = window.URL.createObjectURL(new Blob([data], { type: "text/plain" }));
 
@@ -131,24 +131,24 @@ export default function EditorBar({ project }: Props) {
             }`}
           >
             <BasicButton
-              name="Save file"
-              icon={<SaveIcon size={20} />}
+              name="Export"
+              icon={<UploadIcon size={20} />}
               hoverable
-              onClick={handleSaveFileClick}
+              onClick={handleExportClick}
             />
             <div>
               <input
                 className="opacity-0 absolute -z-10"
                 type="file"
                 id="import-button"
-                onChange={handleImportFileClick}
+                onChange={handleImportClick}
               />
               <label
                 className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold hover:bg-violet-500 hover:cursor-pointer"
                 htmlFor="import-button"
               >
-                <UploadIcon size={20} />
-                <p>Import file</p>
+                <SaveIcon size={20} />
+                <p>Import</p>
               </label>
             </div>
             <BasicButton
