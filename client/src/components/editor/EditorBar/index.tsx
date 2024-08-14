@@ -157,13 +157,14 @@ export default function EditorBar({ project }: Props) {
               hoverable
               onClick={handleCreateClick}
             />
+            <BasicButton
+              name="Save changes"
+              icon={<SaveIcon size={20} />}
+              hoverable
+              onClick={handleSaveChangesClick}
+            />
           </div>
         </div>
-        <BasicButton
-          name="Save changes"
-          icon={<SaveIcon size={20} />}
-          onClick={handleSaveChangesClick}
-        />
         <div
           onMouseEnter={() => setShowTruthTable(true)}
           onMouseLeave={() => setShowTruthTable(false)}
