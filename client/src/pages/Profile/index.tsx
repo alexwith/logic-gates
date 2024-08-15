@@ -45,14 +45,7 @@ export default function Profile() {
         <div className="grid grid-cols-2 gap-4">
           {projects &&
             projects.map((project: Project) => {
-              return (
-                <ProjectCard
-                  key={project.id}
-                  id={project.id!}
-                  name={project.name}
-                  description={project.shortDescription}
-                />
-              );
+              return <ProjectCard key={project.id} project={project} />;
             })}
         </div>
       </div>

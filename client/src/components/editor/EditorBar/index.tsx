@@ -34,7 +34,7 @@ export default function EditorBar({ project }: Props) {
   const setWires = useSimulatorStore((actions: SimulatorActions) => actions.setWires);
   const addGateType = useSimulatorStore((actions: SimulatorActions) => actions.addGateType);
   const updateActivity = useSimulatorStore((actions: SimulatorActions) => actions.updateActivity);
-  const clearEditor = useSimulatorStore((actions: SimulatorActions) => actions.reset);
+  const reset = useSimulatorStore((actions: SimulatorActions) => actions.reset);
   const updateTruthTable = useSimulatorStore(
     (actions: SimulatorActions) => actions.updateTruthTable,
   );
@@ -107,7 +107,7 @@ export default function EditorBar({ project }: Props) {
 
     const gateType: GateTypeEntity = new GateTypeEntity(name, inputs, outputs, truthTable);
     addGateType(gateType);
-    clearEditor();
+    reset();
 
     circuitNameRef.current.value = "";
 

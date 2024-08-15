@@ -1,5 +1,5 @@
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
-import { deleteProject, getProject } from "../../services/project/service";
+import { deleteProject, getLikes, getProject, toggleLike } from "../../services/project/service";
 import { useQuery } from "@tanstack/react-query";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -7,10 +7,18 @@ import "../../css/markdown.css";
 import { SIMULATOR_WIDTH } from "../../common/constants";
 import Simulator from "../../components/simulator/Simulator";
 import BasicButton from "../../components/common/BasicButton";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TruthTableButton from "../../components/common/TruthTableButton";
 import { useUser } from "../../hooks/useUser";
-import { CircuitIcon, EditIcon, ForkIcon, MenuIcon, TrashIcon } from "../../common/icons";
+import {
+  CircuitIcon,
+  EditIcon,
+  EmptyLikeIcon,
+  FilledLikeIcon,
+  ForkIcon,
+  MenuIcon,
+  TrashIcon,
+} from "../../common/icons";
 
 export default function Project() {
   const navigate = useNavigate();
@@ -22,16 +30,52 @@ export default function Project() {
   });
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
+  const [liked, setLiked] = useState<boolean>(false);
+  const [likes, setLikes] = useState<number[]>([]);
 
-  if (isLoading) {
+  useEffect(() => {
+    if (!project) {
+      return;
+    }
+
+    getLikes(project.id!).then((users) => {
+      setLikes(users);
+    });
+  }, [project]);
+
+  useEffect(() => {
+    setLiked(isLoggedIn && likes.includes(user.id));
+  }, [isLoggedIn, user, likes]);
+
+  if (isLoading || !project) {
     return null;
   }
 
-  const isUserCreator = isLoggedIn && user.id === project!.creatorId;
+  const isUserCreator = isLoggedIn && user.id === project.creatorId;
 
   const handleDeleteClick = async () => {
-    await deleteProject(project!.id!);
+    await deleteProject(project.id!);
     navigate(`/user/${user.id}`);
+  };
+
+  const handleLikeClick = async () => {
+    if (!isLoggedIn) {
+      return;
+    }
+
+    setLiked(!liked);
+
+    if (likes.includes(user!.id)) {
+      setLikes(likes.filter((userId) => userId !== user.id));
+    } else {
+      setLikes([...likes, user!.id]);
+    }
+
+    const success = await toggleLike(project!.id!);
+    if (!success) {
+      setLiked(liked);
+      setLikes(likes);
+    }
   };
 
   return (
@@ -42,6 +86,20 @@ export default function Project() {
           <p className="text-zinc-300 max-w-lg">{project!.shortDescription}</p>
         </div>
         <div className="flex space-x-2 mt-auto">
+          <div
+            className={
+              "group flex space-x-1 items-center px-2 py-1 rounded-md font-bold bg-zinc-700 hover:cursor-pointer"
+            }
+            onClick={handleLikeClick}
+          >
+            {liked ? (
+              <FilledLikeIcon size={20} className="text-violet-500" />
+            ) : (
+              <EmptyLikeIcon size={20} className="text-zinc-400" />
+            )}
+            <p className="group-hover:hidden">{likes.length}</p>
+            <p className="hidden group-hover:block">Like</p>
+          </div>
           <div onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>
             <BasicButton name="Menu" icon={<MenuIcon size={20} />} />
             <div
