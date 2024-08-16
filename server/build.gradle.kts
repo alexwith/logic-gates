@@ -28,7 +28,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0-RC")
 
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.52.0")
+    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.53.0")
 }
 
 tasks.withType<KotlinCompile> {
