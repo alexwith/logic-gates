@@ -39,6 +39,7 @@ export interface SimulatorActions {
   setAddingGateType: (type: GateTypeEntity) => void;
   updateTruthTable: () => void;
   updateActivity: () => void;
+  resetSimulator: () => void;
   reset: () => void;
 }
 
@@ -150,6 +151,17 @@ export const useSimulatorStore = create<SimulatorState & SimulatorActions>((set)
         simulate(state.wires, state.gates);
 
         return {};
+      });
+    },
+    resetSimulator: () => {
+      set({
+        terminals: [],
+        gates: [],
+        wires: [],
+        currentGate: null,
+        currentPin: null,
+        truthTable: [],
+        addingGateType: null,
       });
     },
     reset: () => {
