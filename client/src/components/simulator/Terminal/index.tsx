@@ -97,16 +97,23 @@ export default function Terminal({ terminal, rerenderParent, editable }: Props) 
     setHovering(entered);
   };
 
+  const nameStyle = `absolute font-bold bg-zinc-800 px-1 rounded-md ${
+    terminal.io === IO.Input ? "left-[70px]" : "right-[70px]"
+  } top-1 opacity-70`;
   return (
     <div className="absolute hover:cursor-pointer" ref={setRef} style={computePos()}>
-      <DynamicInput
-        className={`absolute font-bold bg-zinc-800 px-1 rounded-md ${
-          terminal.io === IO.Input ? "left-[70px]" : "right-[70px]"
-        } top-1 opacity-70`}
-        defaultValue={terminal.name}
-        onChange={handleNameChange}
-        maxLength={10}
-      />
+      {editable ? (
+        <DynamicInput
+          className={nameStyle}
+          defaultValue={terminal.name}
+          onChange={handleNameChange}
+          maxLength={10}
+        />
+      ) : (
+        <span className={`bg-transparent outline-none min-w-[20px] text-center ${nameStyle}`}>
+          {terminal.name}
+        </span>
+      )}
       <div className="absolute h-1 w-4 bg-stone-950" style={computeEditorEntryPos()} />
       <div onMouseEnter={() => handleHover(true)} onMouseLeave={() => handleHover(false)}>
         <div

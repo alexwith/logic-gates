@@ -11,12 +11,12 @@ export function createTruthTable(
 ): boolean[][] {
   const truthTable: boolean[][] = [];
 
-  const inputTerminals = terminals.filter((pin) => pin.io === IO.Input).length;
-  const combinationAmount = 1 << inputTerminals; // 2^inputTerminals cause Math#pow is slow
+  const inputTerminals = terminals.filter((pin) => pin.io === IO.Input);
+  const combinationAmount = 1 << inputTerminals.length; // 2^inputTerminals cause Math#pow is slow
   const combinations: boolean[][] = [];
   for (let i = 0; i < combinationAmount; i++) {
     combinations.push([]);
-    for (let j = 0; j < inputTerminals; j++) {
+    for (let j = 0; j < inputTerminals.length; j++) {
       if (((1 << j) & i) > 0) {
         combinations[i][j] = true;
       } else {
@@ -31,7 +31,7 @@ export function createTruthTable(
 
   combinations.forEach((combination) => {
     for (let i = 0; i < combination.length; i++) {
-      terminals[i].pin.active = combination[i];
+      inputTerminals[i].pin.active = combination[i];
     }
 
     simulate(wires, gates);

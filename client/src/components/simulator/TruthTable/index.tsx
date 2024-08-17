@@ -1,3 +1,4 @@
+import { IO } from "../../../common/types";
 import TerminalEntity from "../../../entities/TerminalEntity";
 
 interface Props {
@@ -15,11 +16,20 @@ export default function TruthTable({ terminals, truthTable }: Props) {
       <table className="w-full h-full">
         <thead className="bg-zinc-700">
           <tr>
-            {terminals.map((terminal, i) => (
-              <th className="py-1 px-3" key={i}>
-                {terminal.name}
-              </th>
-            ))}
+            {terminals
+              .filter((pin) => pin.io === IO.Input)
+              .map((terminal, i) => (
+                <th className="py-1 px-3" key={i}>
+                  {terminal.name}
+                </th>
+              ))}
+            {terminals
+              .filter((pin) => pin.io === IO.Output)
+              .map((terminal, i) => (
+                <th className="py-1 px-3" key={i}>
+                  {terminal.name}
+                </th>
+              ))}
           </tr>
         </thead>
         <tbody>
