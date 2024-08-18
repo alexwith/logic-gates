@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/v1/projects")
 class ProjectController @Autowired constructor(val projectService: ProjectService) {
 
-    @GetMapping("/{id}") // TODO require auth if private project
+    @GetMapping("/{id}")
     fun get(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<ProjectDTO> {
         val project = this@ProjectController.projectService.findById(id.toLong())
         if (project.visibility == ProjectVisibility.PRIVATE) {

@@ -76,7 +76,7 @@ export default function Simulator({
     setWires(wires);
     updateTruthTable();
     updateActivity();
-  }, []);
+  }, [project]);
 
   useEffect(() => {
     const handleResize = () => {

@@ -35,11 +35,11 @@ export default function EditorBar({ project }: Props) {
     (actions: SimulatorActions) => actions.updateTruthTable,
   );
 
-  const handleSaveChangesClick = () => {
-    navigate(`/project/${project.id}`);
-
+  const handleSaveChangesClick = async () => {
     const data = serializeCircuit(gateTypes, gates, terminals, wires);
-    updateProject(project.id!, { data: new Uint8Array(data) });
+    await updateProject(project.id!, { data: new Uint8Array(data) });
+
+    navigate(`/project/${project.id}`);
   };
 
   const handleImportClick = (event: ChangeEvent<HTMLInputElement>) => {
