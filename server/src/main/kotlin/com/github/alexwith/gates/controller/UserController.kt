@@ -3,6 +3,7 @@ package com.github.alexwith.gates.controller
 import com.github.alexwith.gates.domain.project.Project
 import com.github.alexwith.gates.domain.project.ProjectDTO
 import com.github.alexwith.gates.domain.user.UserDTO
+import com.github.alexwith.gates.enums.ProjectVisibility
 import com.github.alexwith.gates.exception.ResourceNotFoundException
 import com.github.alexwith.gates.middleware.getUser
 import com.github.alexwith.gates.service.ProjectService
@@ -41,8 +42,22 @@ class UserController @Autowired constructor(val userService: UserService, val pr
         }
     }
 
-    @GetMapping("/{id}/projects")
-    fun get(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<List<ProjectDTO>> {
+    @GetMapping("/{id}/projects/public")
+    fun getPublicProjects(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<List<ProjectDTO>> {
+        return ResponseEntity(this.projectService
+            .findByUserId(id.toLong())
+            .filter { it.visibility == ProjectVisibility.PUBLIC }
+            .map(Project::toDTO), HttpStatus.OK
+        )
+    }
+
+    @GetMapping("/{id}/projects/all")
+    fun getAllProjects(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<List<ProjectDTO>> {
+        val user = request.getUser()
+        if (user.id.value != id.toLong()) {
+            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        }
+
         return ResponseEntity(this.projectService.findByUserId(id.toLong()).map(Project::toDTO), HttpStatus.OK)
     }
 }

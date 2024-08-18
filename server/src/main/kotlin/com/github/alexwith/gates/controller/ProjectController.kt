@@ -3,6 +3,7 @@ package com.github.alexwith.gates.controller
 import com.github.alexwith.gates.domain.project.ProjectDTO
 import com.github.alexwith.gates.dto.project.ProjectCreateDTO
 import com.github.alexwith.gates.dto.project.ProjectUpdateDTO
+import com.github.alexwith.gates.enums.ProjectVisibility
 import com.github.alexwith.gates.middleware.getUser
 import com.github.alexwith.gates.service.ProjectService
 import jakarta.servlet.http.HttpServletRequest
@@ -15,9 +16,15 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/v1/projects")
 class ProjectController @Autowired constructor(val projectService: ProjectService) {
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") // TODO require auth if private project
     fun get(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<ProjectDTO> {
         val project = this@ProjectController.projectService.findById(id.toLong())
+        if (project.visibility == ProjectVisibility.PRIVATE) {
+            val user = request.getUser()
+            if (project.creator.id != user.id) {
+                return ResponseEntity(HttpStatus.UNAUTHORIZED)
+            }
+        }
 
         return ResponseEntity(project.toDTO(), HttpStatus.OK)
     }

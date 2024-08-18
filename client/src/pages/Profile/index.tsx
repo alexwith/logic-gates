@@ -2,7 +2,7 @@ import { Link, useLoaderData } from "react-router-dom";
 import BasicButton from "../../components/common/BasicButton";
 import ProjectCard from "../../components/profile/ProjectCard";
 import { useQuery } from "@tanstack/react-query";
-import { getProjects, getUser } from "../../services/user/service";
+import { getAllProjects, getPublicProjects, getUser } from "../../services/user/service";
 import { Project } from "../../common/types";
 import { useUser } from "../../hooks/useUser";
 import { CircuitIcon } from "../../common/icons";
@@ -15,10 +15,14 @@ export default function Profile() {
     queryFn: () => getUser(userId),
   });
   const { isLoading: isProjectsLoading, data: projects } = useQuery({
-    queryKey: ["projects"],
-    queryFn: () => getProjects(userId),
+    queryKey: ["projects", meUser],
+    queryFn: () => {
+      if (meUser.id !== userId) {
+        return getPublicProjects(userId);
+      }
+      return getAllProjects(userId);
+    },
   });
-
   if (isUserLoading || isProjectsLoading) {
     return <h1>Loading...</h1>;
   }
