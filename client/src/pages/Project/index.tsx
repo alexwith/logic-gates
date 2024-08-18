@@ -133,11 +133,15 @@ export default function Project() {
       </div>
       <Simulator project={project!} />
       <div className="border-4 border-zinc-800 rounded-lg my-4">
-        <h1 className="leading-tight border-b-4 text-xl font-bold mb-4 p-2 border-zinc-800">
-          Description
-        </h1>
+        <div className="leading-tight border-b-4 text-xl font-bold mb-4 p-2 border-zinc-800">
+          <h1 className="ml-2">Description</h1>
+        </div>
         <div className="prose prose-invert markdown px-4" style={{ maxWidth: SIMULATOR_WIDTH }}>
-          <Markdown remarkPlugins={[remarkGfm]}>{project!.description}</Markdown>
+          {project!.description ? (
+            <Markdown remarkPlugins={[remarkGfm]}>{project!.description}</Markdown>
+          ) : (
+            <p className="mb-4 text-zinc-500">This project does not have a description.</p>
+          )}
         </div>
       </div>
     </div>
