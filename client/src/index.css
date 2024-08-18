@@ -14,7 +14,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     color: white;
     color-scheme: dark;
-    @apply bg-neutral-900;
+    @apply bg-midnight;
 }
 
 ::-webkit-scrollbar {
