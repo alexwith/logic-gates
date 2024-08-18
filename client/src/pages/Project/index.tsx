@@ -147,10 +147,3 @@ export default function Project() {
     </div>
   );
 }
-
-export const handleProjectLoader = async ({ params }: any): Promise<number> => {
-  const { projectId } = params;
-
-  const project = await getProject(projectId);
-  return project.id!;
-};

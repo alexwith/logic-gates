@@ -52,10 +52,3 @@ export default function Profile() {
     </div>
   );
 }
-
-export const handleProfileLoader = async ({ params }: any): Promise<number> => {
-  const { userId } = params;
-
-  const user = await getUser(userId);
-  return user.id;
-};

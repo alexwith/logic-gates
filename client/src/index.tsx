@@ -5,76 +5,11 @@ import "react-toastify/dist/ReactToastify.css";
 import reportWebVitals from "./reportWebVitals";
 import { UserProvider } from "./hooks/useUser";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Layout from "./components/common/Layout";
-import Profile, { handleProfileLoader } from "./pages/Profile";
-import NotFound from "./pages/NotFound";
-import NewProject from "./pages/NewProject";
-import ProtectedRoute from "./components/common/ProtectedRoute";
-import Home from "./pages/Home";
+import { RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import Project, { handleProjectLoader } from "./pages/Project";
-import ProjectEditor from "./pages/ProjectEditor";
-import ProjectDetails from "./pages/ProjectDetails";
+import { router } from "./routes/routes";
 
 const queryClient = new QueryClient();
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Layout />,
-    children: [
-      {
-        path: "/",
-        element: <Home />,
-      },
-      {
-        path: "/newproject",
-        element: (
-          <ProtectedRoute>
-            <NewProject />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "/editor/:projectId",
-        element: (
-          <ProtectedRoute>
-            <ProjectEditor />
-          </ProtectedRoute>
-        ),
-        loader: handleProjectLoader,
-        errorElement: <NotFound />,
-      },
-      {
-        path: "/details/:projectId",
-        element: (
-          <ProtectedRoute>
-            <ProjectDetails />
-          </ProtectedRoute>
-        ),
-        loader: handleProjectLoader,
-        errorElement: <NotFound />,
-      },
-      {
-        path: "/project/:projectId",
-        element: <Project />,
-        loader: handleProjectLoader,
-        errorElement: <NotFound />,
-      },
-      {
-        path: "/user/:userId",
-        element: <Profile />,
-        loader: handleProfileLoader,
-        errorElement: <NotFound />,
-      },
-    ],
-  },
-  {
-    path: "*",
-    element: <NotFound />,
-  },
-]);
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
