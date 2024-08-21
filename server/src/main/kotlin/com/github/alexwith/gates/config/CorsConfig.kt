@@ -17,7 +17,8 @@ class CorsConfig {
 
         val config = CorsConfiguration()
         config.allowCredentials = true
-        config.addAllowedOrigin("http://localhost:3000")
+        //config.addAllowedOrigin("http://localhost:3000")
+        config.addAllowedOrigin("https://logicgates.alexwith.com")
         config.addAllowedHeader("*")
         config.addAllowedMethod("*")
         source.registerCorsConfiguration("/**", config)

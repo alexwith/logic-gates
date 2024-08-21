@@ -20,7 +20,8 @@ class AuthController @Autowired constructor(val authService: AuthService) {
             response.addCookie(sessionCookie)
         }
 
-        return RedirectView("http://localhost:3000")
+        return RedirectView("https://logicgates.alexwith.com")
+        //return RedirectView("http://localhost:3000")
     }
 
     @PostMapping("/logout")
