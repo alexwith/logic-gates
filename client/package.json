@@ -2,7 +2,6 @@
     "name": "gates",
     "version": "0.1.0",
     "private": true,
-    "proxy": "https://logicgates.alexwith.com/",
     "dependencies": {
         "@tailwindcss/typography": "^0.5.13",
         "@tanstack/react-query": "^5.37.1",

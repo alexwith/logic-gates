@@ -1,4 +1,7 @@
-**/bin
-**/obj
-**/node_modules
-.git
+*/node_modules
+*/build/
+*/.git/
+.env
+.dockerignore
+.gitignore
+Dockerfile

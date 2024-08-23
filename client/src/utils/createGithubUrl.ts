@@ -3,8 +3,8 @@ export function createGithubUrl(from: string) {
 
   const options = {
     client_id: process.env.REACT_APP_GITHUB_CLIENT_ID as string,
-    redirect_uri: process.env.REACT_APP_GITHUB_REDIRECT_URI as string,    
-    state: from
+    redirect_uri: `${process.env.REACT_APP_BASE_URI as string}/api/v1/auth/login/github`,
+    state: from,
   };
 
   return `${rootURL}?${new URLSearchParams(options).toString()}`;
