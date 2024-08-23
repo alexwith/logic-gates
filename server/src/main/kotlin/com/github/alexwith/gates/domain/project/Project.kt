@@ -17,6 +17,7 @@ class Project(id: EntityID<Long>) : LongEntity(id) {
     var creator by User referencedOn ProjectEntity.creator
     var likes by User via ProjectLikeEntity
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     fun toDTO(): ProjectDTO {
         return ProjectDTO(
             id.value,

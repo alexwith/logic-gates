@@ -1,1 +1,1 @@
-rootProject.name = "gates"
+rootProject.name = "logic-gates"

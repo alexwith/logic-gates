@@ -1,4 +1,4 @@
-name: Build Client
+name: Build Server
 
 on:
     push:
@@ -7,7 +7,7 @@ on:
 
 env:
     REGISTRY: ghcr.io
-    IMAGE_NAME: alexwith/logic-gates-client
+    IMAGE_NAME: alexwith/logic-gates-server
 
 jobs:
     build-and-push-image:
@@ -38,8 +38,10 @@ jobs:
               id: push
               uses: docker/build-push-action@v6
               with:
-                  context: ./client
+                  context: ./server
                   push: true
                   platforms: linux/amd64
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
+                  build-args: |
+                      "GITHUB_CLIENT_SECRET=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}"
