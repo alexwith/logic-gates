@@ -1,8 +1,8 @@
 FROM node:latest as build-stage
 
 ENV REACT_APP_GITHUB_CLIENT_ID=Ov23liLCaGD0wQUlBANE
-ENV REACT_APP_BASE_URI=https://logicgates.alexwith.com/
-ENV PROXY=https://logicgates.alexwith.com/
+ENV REACT_APP_BASE_URI=https://logicgates.alexwith.com
+ENV PROXY=https://logicgates.alexwith.com
 
 WORKDIR /app
 
