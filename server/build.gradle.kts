@@ -47,5 +47,5 @@ tasks.withType<Test> {
 }
 
 tasks.jar {
-    archiveFileName = "logic-gates.jar"
+    version="" // don't include version in jar name
 }

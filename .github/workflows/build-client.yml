@@ -4,6 +4,8 @@ on:
     push:
         branches:
             - dockerizing
+        paths:
+            - client/**
 
 env:
     REGISTRY: ghcr.io
