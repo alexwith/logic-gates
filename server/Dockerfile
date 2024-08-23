@@ -15,4 +15,8 @@ FROM openjdk:17-oracle
 WORKDIR /usr/app/
 COPY --from=BUILD /usr/app/ .
 
+ARG GITHUB_CLIENT_SECRET
+ENV GITHUB_CLIENT_ID=Ov23liLCaGD0wQUlBANE
+ENV GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+
 ENTRYPOINT exec java -jar /usr/app/build/libs/logic-gates.jar
