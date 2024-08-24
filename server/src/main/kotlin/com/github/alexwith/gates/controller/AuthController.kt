@@ -5,6 +5,7 @@ import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.view.RedirectView
@@ -13,6 +14,9 @@ import org.springframework.web.servlet.view.RedirectView
 @RequestMapping("/api/v1/auth")
 class AuthController @Autowired constructor(val authService: AuthService) {
 
+    @Value("\${base.uri}")
+    lateinit var baseURI: String
+
     @GetMapping("/login/github")
     fun github(response: HttpServletResponse, @RequestParam("code") code: String): RedirectView {
         val sessionCookie: Cookie? = this.authService.tryApplyGithubSession(code)
@@ -20,7 +24,7 @@ class AuthController @Autowired constructor(val authService: AuthService) {
             response.addCookie(sessionCookie)
         }
 
-        return RedirectView("http://localhost:3000")
+        return RedirectView(this.baseURI)
     }
 
     @PostMapping("/logout")

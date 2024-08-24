@@ -1,0 +1,49 @@
+name: Build Server
+
+on:
+    push:
+        branches: [main]
+        paths: [server/**]
+env:
+    REGISTRY: ghcr.io
+    IMAGE_NAME: alexwith/logic-gates-server
+
+jobs:
+    build-and-push-image:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+            attestations: write
+            id-token: write
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Log in to the Container registry
+              uses: docker/login-action@v3
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Extract metadata (tags, labels) for Docker
+              id: meta
+              uses: docker/metadata-action@v5
+              with:
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+            - name: Build and push Docker image
+              id: push
+              uses: docker/build-push-action@v6
+              with:
+                  context: ./server
+                  push: true
+                  platforms: linux/amd64
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
+                  build-args: |
+                      "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}"
+                      "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}"
+                      "GITHUB_CLIENT_ID=${{ secrets.OAUTH_GITHUB_CLIENT_ID }}"
+                      "GITHUB_CLIENT_SECRET=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}"
