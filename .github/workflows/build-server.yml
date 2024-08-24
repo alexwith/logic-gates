@@ -2,10 +2,8 @@ name: Build Server
 
 on:
     push:
-        branches:
-            - dockerizing
-        paths:
-            - server/**
+        branches: [main]
+        paths: [server/**]
 env:
     REGISTRY: ghcr.io
     IMAGE_NAME: alexwith/logic-gates-server

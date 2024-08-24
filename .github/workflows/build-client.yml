@@ -2,10 +2,8 @@ name: Build Client
 
 on:
     push:
-        branches:
-            - dockerizing
-        paths:
-            - client/**
+        branches: [main]
+        paths: [client/**]
 
 env:
     REGISTRY: ghcr.io
