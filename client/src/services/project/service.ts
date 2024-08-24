@@ -50,3 +50,8 @@ export const toggleLike = async (id: number): Promise<boolean> => {
   const response = await axios.post(`/api/v1/projects/like/${id}/toggle`);
   return response.status === 200;
 };
+
+export const getDiscovery = async (): Promise<Project[]> => {
+  const response = await axios.get("/api/v1/projects/discovery");
+  return response.data;
+};

@@ -1,5 +1,6 @@
 package com.github.alexwith.gates.controller
 
+import com.github.alexwith.gates.domain.project.Project
 import com.github.alexwith.gates.domain.project.ProjectDTO
 import com.github.alexwith.gates.dto.project.ProjectCreateDTO
 import com.github.alexwith.gates.dto.project.ProjectUpdateDTO
@@ -78,6 +79,12 @@ class ProjectController @Autowired constructor(val projectService: ProjectServic
         }
 
         return ResponseEntity(HttpStatus.OK)
+    }
+
+    @GetMapping("/discovery")
+    fun discovery(request: HttpServletRequest): ResponseEntity<List<ProjectDTO>> {
+        val projects = this@ProjectController.projectService.findTop12Liked().map { it.toDTO() }
+        return ResponseEntity(projects, HttpStatus.OK)
     }
 
     @GetMapping("/likes/{id}")
