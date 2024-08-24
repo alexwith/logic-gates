@@ -45,4 +45,7 @@ jobs:
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
                   build-args: |
+                      "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}"
+                      "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}"
+                      "GITHUB_CLIENT_ID=${{ secrets.OAUTH_GITHUB_CLIENT_ID }}"
                       "GITHUB_CLIENT_SECRET=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}"
