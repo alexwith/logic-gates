@@ -9,7 +9,7 @@ class JedisClientProvider private constructor() {
 
         fun provide(): JedisPooled {
             synchronized(this) {
-                return jedisInstance ?: JedisPooled("0.0.0.0", 6379).also { jedisInstance = it }
+                return jedisInstance ?: JedisPooled("localhost", 6379).also { jedisInstance = it }
             }
         }
     }

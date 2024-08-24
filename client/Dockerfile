@@ -1,6 +1,7 @@
 FROM node:latest as build-stage
 
 ARG GITHUB_CLIENT_ID
+ENV REACT_APP_PROXY=https://logicgates.alexwith.com
 ENV REACT_APP_GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
 ENV REACT_APP_BASE_URI=https://logicgates.alexwith.com
 ENV PROXY=https://logicgates.alexwith.com
