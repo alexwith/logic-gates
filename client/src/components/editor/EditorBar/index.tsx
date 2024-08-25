@@ -75,7 +75,7 @@ export default function EditorBar({ project }: Props) {
     const fileURL = window.URL.createObjectURL(new Blob([data], { type: "text/plain" }));
 
     const downloadElement = document.createElement("a");
-    downloadElement.setAttribute("download", "test.circuit");
+    downloadElement.setAttribute("download", `${project ? project.name : "playground"}.circuit`);
     downloadElement.href = fileURL;
     document.body.appendChild(downloadElement);
 

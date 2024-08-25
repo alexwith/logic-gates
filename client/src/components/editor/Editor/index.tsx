@@ -250,6 +250,7 @@ export default function Editor({ project }: Props) {
         )}
         <Simulator
           editable
+          project={project}
           onMouseMove={handleMouseMove}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
