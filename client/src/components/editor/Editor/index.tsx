@@ -11,7 +11,7 @@ import { TrashIcon, AddIcon } from "../../../common/icons";
 import EditorBar from "../EditorBar";
 
 interface Props {
-  project: Project;
+  project?: Project;
 }
 
 export default function Editor({ project }: Props) {

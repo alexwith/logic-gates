@@ -9,12 +9,12 @@ export default function Home() {
         <span className="text-green-400">simulate</span> and{" "}
         <span className="text-sky-400">share</span> circuits
       </h1>
-      <p className="text-white-300 text-xl text-center max-w-2xl p-2">
+      <p className="text-xl text-center max-w-2xl p-2">
         Easily create and simulate logic gate circuits, then share your designs for collaboration
         and learning.
       </p>
       <Link to="/playground">
-        <div className="bg-violet-500 px-4 py-2 font-bold text-xl rounded-md m-6 shadow-[0_0px_20px_0px_rgba(139,92,246,0.9)] hover:cursor-pointer">
+        <div className="bg-midnight border-[3px] border-violet-500 px-4 py-2 font-bold text-xl rounded-md m-6 shadow-[0_0px_15px_0px_rgba(139,92,246,0.9)] hover:cursor-pointer hover:bg-violet-500">
           Try playground
         </div>
       </Link>

@@ -10,6 +10,7 @@ import Project from "../pages/Project";
 import ProjectEditor from "../pages/ProjectEditor";
 import ProjectDetails from "../pages/ProjectDetails";
 import { getUser } from "../services/user/service";
+import Playground from "../pages/Playground";
 
 const handleProjectLoader = async ({ params }: any): Promise<number> => {
   const { projectId } = params;
@@ -33,6 +34,10 @@ export const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/playground",
+        element: <Playground />,
       },
       {
         path: "/newproject",
