@@ -46,7 +46,7 @@ export default function Profile() {
             </Link>
           )}
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {projects?.length === 0 && <p className="w-96 text-zinc-400">No projects</p>}
           {projects!.map((project: Project) => {
             return <ProjectCard key={project.id} project={project} />;

@@ -37,7 +37,7 @@ export default function EditProjectDetails() {
   };
 
   return (
-    <div className="flex flex-col space-y-4 w-1/3 mt-12">
+    <div className="flex flex-col space-y-4 max-w-1/3 mt-12 mx-6">
       <h1 className="font-bold text-2xl">
         Editing <span className="text-violet-500">{project!.name}</span>
       </h1>

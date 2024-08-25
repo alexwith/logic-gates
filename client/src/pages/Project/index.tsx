@@ -80,7 +80,7 @@ export default function Project() {
 
   return (
     <div className="flex flex-col">
-      <div className="flex justify-between mb-4">
+      <div className="flex flex-col space-y-2 justify-between mb-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="font-bold text-2xl">{project!.name}</h1>
           <p className="text-zinc-300 max-w-lg">{project!.shortDescription}</p>
@@ -132,7 +132,7 @@ export default function Project() {
         </div>
       </div>
       <Simulator project={project!} />
-      <div className="border-4 border-zinc-800 rounded-lg my-4">
+      <div className="border-4 border-zinc-800 rounded-lg my-4 sm:mx-0">
         <div className="leading-tight border-b-4 text-xl font-bold mb-4 p-2 border-zinc-800">
           <h1 className="ml-2">Description</h1>
         </div>

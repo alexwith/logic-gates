@@ -96,7 +96,7 @@ export default function Simulator({
 
   if (expandWarning) {
     return (
-      <div className="border-zinc-800 border-4 rounded-lg p-8 mt-20 text-center">
+      <div className="border-zinc-800 border-4 rounded-lg p-8 sm:mt-20 text-center">
         <h1 className="font-bold text-2xl">Expand your window</h1>
         <div className="flex justify-center py-2">
           <ExpandIcon size={40} className="animate-ping" />

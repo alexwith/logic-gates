@@ -8,7 +8,9 @@ export default function Playground() {
         Build and simulate circuits, no login required. To save your work, simply export or import
         them as files. Log in for the full experience.
       </p>
-      <Editor />
+      <div className="mt-5 mx-4">
+        <Editor />
+      </div>
     </div>
   );
 }

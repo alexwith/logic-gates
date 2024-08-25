@@ -53,7 +53,7 @@ export default function GlobalSearch() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative hidden sm:block">
       <input
         ref={inputRef}
         className="border-zinc-800 border-[3px] bg-transparent rounded-md px-2 py-1 outline-none focus:border-violet-500"
