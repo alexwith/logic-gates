@@ -1,4 +1,4 @@
-![Logo](../assets/logo.png "Logic Gates")
+![Logo](assets/logo.png "Logic Gates")
 
 Logic Gates is a web app for building, simulating and sharding circuits.
 
