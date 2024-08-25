@@ -128,6 +128,12 @@ class ProjectController @Autowired constructor(val projectService: ProjectServic
         return ResponseEntity(HttpStatus.OK)
     }
 
+    @GetMapping("/search/name/{query}")
+    fun searchName(request: HttpServletRequest, @PathVariable query: String): ResponseEntity<List<ProjectDTO>> {
+        val projects = this@ProjectController.projectService.searchByName(query).map { it.toDTO() }
+        return ResponseEntity(projects, HttpStatus.OK)
+    }
+
     companion object {
         val PROJECT_VALID_NAME_REGEX = Regex("^[a-zA-Z0-9]+(?: [a-zA-Z0-9]+)*\$")
     }

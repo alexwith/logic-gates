@@ -55,3 +55,8 @@ export const getDiscovery = async (): Promise<Project[]> => {
   const response = await axios.get("/api/v1/projects/discovery");
   return response.data;
 };
+
+export const searchName = async (query: string): Promise<Project[]> => {
+  const response = await axios.get(`/api/v1/projects/search/name/${query}`);
+  return response.data;
+};

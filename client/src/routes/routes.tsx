@@ -1,4 +1,4 @@
-import Layout from "../components/common/Layout";
+import Layout from "../components/layout/Layout";
 import Profile from "../pages/Profile";
 import NotFound from "../pages/NotFound";
 import NewProject from "../pages/NewProject";

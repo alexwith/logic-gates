@@ -67,4 +67,14 @@ class ProjectService {
             .limit(12)
             .map(Project::wrapRow)
     }
+
+    fun searchByName(name: String): List<Project> {
+        return ProjectEntity
+            .selectAll()
+            .where {
+                ProjectEntity.visibility eq ProjectVisibility.PUBLIC and(ProjectEntity.name.lowerCase() like ("%${name.lowercase()}%"))
+            }
+            .limit(6)
+            .map(Project::wrapRow)
+    }
 }
