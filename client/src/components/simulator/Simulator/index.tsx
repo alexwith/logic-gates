@@ -56,11 +56,11 @@ export default function Simulator({
   );
 
   useEffect(() => {
+    reset();
+
     if (!project) {
       return;
     }
-
-    reset();
 
     const buffer = Uint8Array.from(project.data!).buffer;
     const deserializedData = deserializeCircuit(buffer);
@@ -110,7 +110,7 @@ export default function Simulator({
   return (
     <div className="flex-col space-y-3">
       <div
-        className="relative border-zinc-800 border-4 rounded-lg grow"
+        className="relative border-zinc-800 border-4 rounded-lg grow shadow-[0_0px_15px_0px_rgba(139,92,246,0.1)]"
         style={{ height: SIMULATOR_HEIGHT, width: SIMULATOR_WIDTH }}
         ref={ref}
       >

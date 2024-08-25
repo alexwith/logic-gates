@@ -20,3 +20,8 @@ export const getAllProjects = async (userId: number): Promise<Project[]> => {
   const response = await axios.get(`/api/v1/users/${userId}/projects/all`);
   return response.data;
 };
+
+export const searchUsername = async (query: string): Promise<User[]> => {
+  const response = await axios.get(`/api/v1/users/search/username/${query}`);
+  return response.data;
+};

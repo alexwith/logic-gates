@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { SimulatorActions, SimulatorState, useSimulatorStore } from "../../../store/simulatorStore";
 import TruthTable from "../../simulator/TruthTable";
 import { deserializeCircuit, serializeCircuit } from "../../../libs/circuitFile";
@@ -10,7 +10,7 @@ import { updateProject } from "../../../services/project/service";
 import CreateLogicGate from "../CreateLogicGate";
 
 interface Props {
-  project: Project;
+  project?: Project;
 }
 
 export default function EditorBar({ project }: Props) {
@@ -36,6 +36,10 @@ export default function EditorBar({ project }: Props) {
   );
 
   const handleSaveChangesClick = async () => {
+    if (!project) {
+      return;
+    }
+
     const data = serializeCircuit(gateTypes, gates, terminals, wires);
     await updateProject(project.id!, { data: new Uint8Array(data) });
 
@@ -118,12 +122,14 @@ export default function EditorBar({ project }: Props) {
             hoverable
             onClick={() => setCreatingCircuit(true)}
           />
-          <BasicButton
-            name="Save changes"
-            icon={<SaveIcon size={20} />}
-            hoverable
-            onClick={handleSaveChangesClick}
-          />
+          {project && (
+            <BasicButton
+              name="Save changes"
+              icon={<SaveIcon size={20} />}
+              hoverable
+              onClick={handleSaveChangesClick}
+            />
+          )}
         </div>
       </div>
       <div

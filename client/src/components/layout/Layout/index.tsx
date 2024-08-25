@@ -1,5 +1,6 @@
-import MiniProfile from "../../profile/MiniProfile";
 import { Link, Outlet } from "react-router-dom";
+import MiniProfile from "../MiniProfile";
+import GlobalSearch from "../GlobalSearch";
 
 export default function Layout() {
   return (
@@ -8,6 +9,7 @@ export default function Layout() {
         <Link to="/">
           <h1 className="font-black text-3xl hover:cursor-pointer">Logic Gates</h1>
         </Link>
+        <GlobalSearch />
         <MiniProfile />
       </div>
       <Outlet />

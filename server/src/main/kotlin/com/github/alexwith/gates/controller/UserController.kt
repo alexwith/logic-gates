@@ -60,4 +60,10 @@ class UserController @Autowired constructor(val userService: UserService, val pr
 
         return ResponseEntity(this.projectService.findByUserId(id.toLong()).map(Project::toDTO), HttpStatus.OK)
     }
+
+    @GetMapping("/search/username/{query}")
+    fun searchUsername(request: HttpServletRequest, @PathVariable query: String): ResponseEntity<List<UserDTO>> {
+        val users = this@UserController.userService.searchByUsername(query).map { it.toDTO() }
+        return ResponseEntity(users, HttpStatus.OK)
+    }
 }
