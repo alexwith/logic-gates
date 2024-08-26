@@ -60,9 +60,9 @@ class ProjectService {
     fun findTop12Liked(): List<Project> {
         return ProjectEntity
             .join(ProjectLikeEntity, JoinType.LEFT, ProjectEntity.id, ProjectLikeEntity.project)
-            .selectAll()
+            .select(ProjectEntity.columns)
             .where { ProjectEntity.visibility eq ProjectVisibility.PUBLIC }
-            .groupBy(ProjectEntity.id, ProjectLikeEntity.user, ProjectLikeEntity.project)
+            .groupBy(ProjectEntity.id)
             .orderBy(ProjectLikeEntity.project.count(), SortOrder.DESC)
             .limit(12)
             .map(Project::wrapRow)
