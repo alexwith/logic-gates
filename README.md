@@ -1,6 +1,6 @@
 ![Logo](assets/logo.png "Logic Gates")
 
-Logic Gates is a web app for building, simulating and sharding circuits.
+Logic Gates is a web app for building, simulating and sharing circuits.
 
 Visit the website at [logicgates.alexwith.com](https://logicgates.alexwith.com/)
 
