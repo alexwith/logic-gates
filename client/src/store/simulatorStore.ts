@@ -33,6 +33,7 @@ export interface SimulatorActions {
   removeWire: (wire: WireEntity) => void;
   setTerminals: (terminals: TerminalEntity[]) => void;
   addTerminal: (io: IO, yPos: number) => void;
+  removeTerminal: (terminal: TerminalEntity) => void;
   updateTerminal: (terminal: TerminalEntity) => void;
   setCurrentPin: (pin: PinEntity | null) => void;
   setCurrentGate: (gate: GateEntity | null) => void;
@@ -116,6 +117,11 @@ export const useSimulatorStore = create<SimulatorState & SimulatorActions>((set)
 
         return { terminals: [...state.terminals, terminal] };
       });
+    },
+    removeTerminal: (terminal: TerminalEntity) => {
+      set((state) => ({
+        terminals: state.terminals.filter((value) => value !== terminal),
+      }));
     },
     updateTerminal: (terminal: TerminalEntity) => {
       set((state) => {

@@ -16,7 +16,7 @@ export default function Layout() {
         <MiniProfile />
       </div>
       <Outlet />
-      <div className="absolute bottom-0 p-5">
+      <div className="margip-5">
         <div className="flex space-x-2 items-center">
           <GithubIcon size={20} />
           <a href="https://github.com/alexwith/logic-gates" className="font-bold">

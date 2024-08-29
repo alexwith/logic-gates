@@ -7,7 +7,7 @@ import GateEntity from "../../../entities/GateEntity";
 import useMouse from "../../../hooks/useMouse";
 import Wire from "../../simulator/Wire";
 import WireEntity from "../../../entities/WireEntity";
-import { TrashIcon, AddIcon } from "../../../common/icons";
+import { AddIcon } from "../../../common/icons";
 import EditorBar from "../EditorBar";
 
 interface Props {
@@ -35,7 +35,6 @@ export default function Editor({ project }: Props) {
   const addingGateType = useSimulatorStore((state: SimulatorState) => state.addingGateType);
   const terminals = useSimulatorStore((state: SimulatorState) => state.terminals);
   const currentPin = useSimulatorStore((state: SimulatorState) => state.currentPin);
-  const wires = useSimulatorStore((state: SimulatorState) => state.wires);
   const currentGate = useSimulatorStore((state: SimulatorState) => state.currentGate);
 
   const setAddingGateType = useSimulatorStore(
@@ -45,9 +44,7 @@ export default function Editor({ project }: Props) {
   const setCurrentPin = useSimulatorStore((actions: SimulatorActions) => actions.setCurrentPin);
   const setCurrentGate = useSimulatorStore((actions: SimulatorActions) => actions.setCurrentGate);
   const addGate = useSimulatorStore((actions: SimulatorActions) => actions.addGate);
-  const removeGate = useSimulatorStore((actions: SimulatorActions) => actions.removeGate);
   const addWire = useSimulatorStore((actions: SimulatorActions) => actions.addWire);
-  const removeWire = useSimulatorStore((actions: SimulatorActions) => actions.removeWire);
   const updateActivity = useSimulatorStore((actions: SimulatorActions) => actions.updateActivity);
   const updateTruthTable = useSimulatorStore(
     (actions: SimulatorActions) => actions.updateTruthTable,
@@ -68,8 +65,8 @@ export default function Editor({ project }: Props) {
     }
   };
 
-  const handleMouseDown = () => {
-    handleWiringClick();
+  const handleMouseDown = (event: ReactMouseEvent) => {
+    handleWiringClick(event);
   };
 
   const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
@@ -120,7 +117,7 @@ export default function Editor({ project }: Props) {
     });
   };
 
-  const handleWiringClick = () => {
+  const handleWiringClick = (event: ReactMouseEvent) => {
     if (!currentPin || !isWiring) {
       return;
     }
@@ -148,22 +145,6 @@ export default function Editor({ project }: Props) {
       x: Math.abs(mouseDragOffset.x - gateOrigin.x),
       y: Math.abs(mouseDragOffset.y - gateOrigin.y),
     };
-  };
-
-  const deleteDraggingGate = () => {
-    if (!currentGate) {
-      return;
-    }
-
-    wires.forEach((wire) => {
-      if (wire.startPin.attached === currentGate || wire.endPin.attached === currentGate) {
-        removeWire(wire);
-      }
-    });
-
-    removeGate(currentGate);
-    setCurrentGate(null);
-    setIsDraggingGate(false);
   };
 
   useEffect(() => {
@@ -207,9 +188,20 @@ export default function Editor({ project }: Props) {
       setWiringCheckpoints([]);
     };
 
-    window.addEventListener("keyup", handleEscape);
+    const handleContextMenu = () => {
+      // disable current edits while in context menu
+      setIsWiring(false);
+      setWiringEndPoint(null);
+      setWiringCheckpoints([]);
+    };
 
-    return () => window.removeEventListener("keyup", handleEscape);
+    window.addEventListener("keyup", handleEscape);
+    window.addEventListener("contextmenu", handleContextMenu);
+
+    return () => {
+      window.removeEventListener("keyup", handleEscape);
+      window.removeEventListener("contextmenu", handleContextMenu);
+    };
   }, []);
 
   return (
@@ -239,14 +231,6 @@ export default function Editor({ project }: Props) {
             Press <span className="bg-zinc-800 p-1 rounded-md font-bold">Escape</span> to stop
             wiring
           </h1>
-        )}
-        {isDraggingGate && (
-          <div
-            className="absolute bg-zinc-800 p-2 z-10 left-0 bottom-0 m-2 rounded-md hover:cursor-pointer hover:text-red-500"
-            onMouseUp={deleteDraggingGate}
-          >
-            <TrashIcon size={20} />
-          </div>
         )}
         <Simulator
           editable
