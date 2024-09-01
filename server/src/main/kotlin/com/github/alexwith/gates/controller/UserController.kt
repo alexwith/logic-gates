@@ -4,7 +4,6 @@ import com.github.alexwith.gates.domain.project.Project
 import com.github.alexwith.gates.domain.project.ProjectDTO
 import com.github.alexwith.gates.domain.user.UserDTO
 import com.github.alexwith.gates.enums.ProjectVisibility
-import com.github.alexwith.gates.exception.ResourceNotFoundException
 import com.github.alexwith.gates.middleware.getUser
 import com.github.alexwith.gates.service.ProjectService
 import com.github.alexwith.gates.service.UserService
@@ -24,21 +23,13 @@ class UserController @Autowired constructor(val userService: UserService, val pr
 
     @GetMapping("/me")
     fun me(request: HttpServletRequest): ResponseEntity<UserDTO> {
-        return try {
-            ResponseEntity(request.getUser().toDTO(), HttpStatus.OK)
-        } catch (e: ResourceNotFoundException) {
-            ResponseEntity(null, HttpStatus.NOT_FOUND)
-        }
+        return ResponseEntity(request.getUser().toDTO(), HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
     fun get(@PathVariable id: String): ResponseEntity<UserDTO> {
-        return try {
-            transaction {
-                ResponseEntity(this@UserController.userService.findById(id.toLong()).toDTO(), HttpStatus.OK)
-            }
-        } catch (e: ResourceNotFoundException) {
-            return ResponseEntity(null, HttpStatus.NOT_FOUND)
+        return transaction {
+            ResponseEntity(this@UserController.userService.findById(id.toLong()).toDTO(), HttpStatus.OK)
         }
     }
 

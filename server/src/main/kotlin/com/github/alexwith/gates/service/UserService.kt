@@ -15,7 +15,7 @@ class UserService {
             .selectAll()
             .where { UserEntity.id eq id }
             .map(User::wrapRow)
-            .firstOrNull() ?: throw ResourceNotFoundException("Not found")
+            .firstOrNull() ?: throw ResourceNotFoundException("User not found")
     }
 
     fun findByGithubId(githubId: Long): User {
@@ -23,7 +23,7 @@ class UserService {
             .selectAll()
             .where { UserEntity.githubId eq githubId }
             .map(User::wrapRow)
-            .firstOrNull() ?: throw ResourceNotFoundException("Not found")
+            .firstOrNull() ?: throw ResourceNotFoundException("User not found")
     }
 
     fun create(init: User.() -> Unit): User {

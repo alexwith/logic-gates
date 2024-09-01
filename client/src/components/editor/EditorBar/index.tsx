@@ -12,6 +12,7 @@ import {
   subscribeEditorChanges,
   unsubscribeEditorChanges,
 } from "../../../utils/editorChangesEvent";
+import { toast } from "react-toastify";
 
 interface Props {
   project?: Project;
@@ -52,13 +53,17 @@ export default function EditorBar({ project }: Props) {
     const reader = new FileReader();
     reader.onload = () => {
       const buffer: ArrayBuffer = reader.result as ArrayBuffer;
-      const [gateTypes, gates, terminals, wires] = deserializeCircuit(buffer)!;
-      setGateTypes(gateTypes);
-      setGates(gates);
-      setTerminals(terminals);
-      setWires(wires);
-      updateTruthTable();
-      updateActivity();
+      try {
+        const [gateTypes, gates, terminals, wires] = deserializeCircuit(buffer)!;
+        setGateTypes(gateTypes);
+        setGates(gates);
+        setTerminals(terminals);
+        setWires(wires);
+        updateTruthTable();
+        updateActivity();
+      } catch {
+        toast.error("You can only import valid circuit files.");
+      }
     };
 
     reader.readAsArrayBuffer(file);
@@ -128,45 +133,65 @@ export default function EditorBar({ project }: Props) {
   }, [project, unsavedChanges]);
 
   return (
-    <div className="relative flex">
+    <div className="relative flex justify-between">
       {creatingCircuit && <CreateLogicGate onClose={() => setCreatingCircuit(false)} />}
-      <div className="flex space-x-2">
-        <div onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>
-          <BasicButton name="Menu" icon={<MenuIcon size={20} />} />
-          <div
-            className={`absolute flex flex-col space-y-1 bg-zinc-800 p-2 w-44 rounded-md z-10 ${
-              showMenu ? "" : "hidden"
-            }`}
-          >
-            <BasicButton
-              name="Export"
-              icon={<UploadIcon size={20} />}
-              hoverable
-              onClick={handleExportClick}
+      <div onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>
+        <BasicButton name="Menu" icon={<MenuIcon size={20} />} />
+        <div
+          className={`absolute flex flex-col space-y-1 bg-zinc-800 p-2 w-44 rounded-md z-10 ${
+            showMenu ? "" : "hidden"
+          }`}
+        >
+          <BasicButton
+            name="Export"
+            icon={<UploadIcon size={20} />}
+            hoverable
+            onClick={handleExportClick}
+          />
+          <div>
+            <input
+              className="opacity-0 absolute -z-10"
+              type="file"
+              id="import-button"
+              onChange={handleImportClick}
             />
-            <div>
-              <input
-                className="opacity-0 absolute -z-10"
-                type="file"
-                id="import-button"
-                onChange={handleImportClick}
-              />
-              <label
-                className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold hover:bg-violet-500 hover:cursor-pointer"
-                htmlFor="import-button"
+            <label
+              className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold hover:bg-violet-500 hover:cursor-pointer"
+              htmlFor="import-button"
+            >
+              <SaveIcon size={20} />
+              <p>Import</p>
+            </label>
+          </div>
+          <BasicButton
+            name="New logic gate"
+            icon={<CircuitIcon size={20} />}
+            hoverable
+            onClick={() => setCreatingCircuit(true)}
+          />
+        </div>
+      </div>
+      <div className="flex space-x-2">
+        {project && (
+          <div className="group ml-auto">
+            {unsavedChanges ? (
+              <div
+                className={`flex space-x-1 items-center px-2 py-1 rounded-md font-bold hover:cursor-pointer bg-red-400 hover:bg-violet-500`}
+                onClick={handleSaveChanges}
               >
                 <SaveIcon size={20} />
-                <p>Import</p>
-              </label>
-            </div>
-            <BasicButton
-              name="New logic gate"
-              icon={<CircuitIcon size={20} />}
-              hoverable
-              onClick={() => setCreatingCircuit(true)}
-            />
+                <p className="group-hover:hidden">Unsaved changes</p>
+                <p className="hidden group-hover:block">Save changes</p>
+              </div>
+            ) : (
+              <BasicButton
+                name="Back to project"
+                icon={<CircuitIcon size={20} />}
+                onClick={() => project && navigate(`/project/${project.id}`)}
+              />
+            )}
           </div>
-        </div>
+        )}
         <div
           onMouseEnter={() => setShowTruthTable(true)}
           onMouseLeave={() => setShowTruthTable(false)}
@@ -179,26 +204,6 @@ export default function EditorBar({ project }: Props) {
           )}
         </div>
       </div>
-      {project && (
-        <div className="group ml-auto">
-          {unsavedChanges ? (
-            <div
-              className={`flex space-x-1 items-center px-2 py-1 rounded-md font-bold hover:cursor-pointer bg-red-400 hover:bg-violet-500`}
-              onClick={handleSaveChanges}
-            >
-              <SaveIcon size={20} />
-              <p className="group-hover:hidden">Unsaved changes</p>
-              <p className="hidden group-hover:block">Save changes</p>
-            </div>
-          ) : (
-            <BasicButton
-              name="Back to project"
-              icon={<CircuitIcon size={20} />}
-              onClick={() => project && navigate(`/project/${project.id}`)}
-            />
-          )}
-        </div>
-      )}
     </div>
   );
 }

@@ -15,7 +15,6 @@ import {
   EditIcon,
   EmptyLikeIcon,
   FilledLikeIcon,
-  ForkIcon,
   MenuIcon,
   TrashIcon,
 } from "../../common/icons";
@@ -100,17 +99,14 @@ export default function Project() {
             <p className="group-hover:hidden">{likes.length}</p>
             <p className="hidden group-hover:block">Like</p>
           </div>
-          <div onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>
-            <BasicButton name="Menu" icon={<MenuIcon size={20} />} />
-            <div
-              className={`absolute flex flex-col space-y-1 bg-zinc-800 p-2 w-44 rounded-md z-10 ${
-                showMenu ? "" : "hidden"
-              }`}
-            >
-              {!isUserCreator && (
-                <BasicButton name="Fork" icon={<ForkIcon size={20} />} hoverable />
-              )}
-              {isUserCreator && (
+          {isUserCreator && (
+            <div onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>
+              <BasicButton name="Menu" icon={<MenuIcon size={20} />} />
+              <div
+                className={`absolute flex flex-col space-y-1 bg-zinc-800 p-2 w-44 rounded-md z-10 ${
+                  showMenu ? "" : "hidden"
+                }`}
+              >
                 <>
                   <Link to={`/details/${project!.id}`}>
                     <BasicButton name="Edit details" icon={<EditIcon size={20} />} hoverable />
@@ -125,9 +121,9 @@ export default function Project() {
                     onClick={handleDeleteClick}
                   />
                 </>
-              )}
+              </div>
             </div>
-          </div>
+          )}
           <TruthTableButton />
         </div>
       </div>
