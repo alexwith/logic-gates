@@ -20,7 +20,7 @@ class ProjectService {
             .selectAll()
             .where { ProjectEntity.id eq id }
             .map(Project::wrapRow)
-            .firstOrNull() ?: throw ResourceNotFoundException("Not found")
+            .firstOrNull() ?: throw ResourceNotFoundException("Project not found")
     }
 
     fun findByUserId(userId: Long): List<Project> {
