@@ -7,6 +7,7 @@ import { IO } from "../../../common/types";
 import { SIMULATOR_HEIGHT } from "../../../common/constants";
 import useContextMenu from "../../../hooks/useContextMenu";
 import ElementContextMenu from "../ElementContextMenu";
+import { dispatchEditorChanges } from "../../../utils/editorChangesEvent";
 
 interface Props {
   terminal: TerminalEntity;
@@ -42,7 +43,12 @@ export default function Terminal({ terminal, rerenderParent, editable }: Props) 
 
   useEffect(() => {
     const handleMouseUp = () => {
+      if (!dragging) {
+        return;
+      }
+
       setDragging(false);
+      dispatchEditorChanges();
     };
 
     // we need to use document.body so this event is called before the useMouse's mouseup event
@@ -50,7 +56,7 @@ export default function Terminal({ terminal, rerenderParent, editable }: Props) 
     return () => {
       document.body.removeEventListener("mouseup", handleMouseUp);
     };
-  }, []);
+  }, [dragging]);
 
   const computePos = (): any => {
     if (!ref) {

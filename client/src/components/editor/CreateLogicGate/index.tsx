@@ -6,6 +6,7 @@ import { SimulatorActions, SimulatorState, useSimulatorStore } from "../../../st
 import GateTypeEntity from "../../../entities/GateTypeEntity";
 import { IO } from "../../../common/types";
 import TextInput from "../../common/TextInput";
+import { dispatchEditorChanges } from "../../../utils/editorChangesEvent";
 
 interface Props {
   onClose: () => void;
@@ -59,6 +60,7 @@ export default function CreateCircuit({ onClose }: Props) {
 
     const gateType: GateTypeEntity = new GateTypeEntity(name, inputs, outputs, truthTable);
     addGateType(gateType);
+    dispatchEditorChanges();
     resetSimulator();
 
     toast.success("Created new circuit.");

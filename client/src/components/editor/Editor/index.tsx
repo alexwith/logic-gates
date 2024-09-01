@@ -9,6 +9,7 @@ import Wire from "../../simulator/Wire";
 import WireEntity from "../../../entities/WireEntity";
 import { AddIcon } from "../../../common/icons";
 import EditorBar from "../EditorBar";
+import { dispatchEditorChanges } from "../../../utils/editorChangesEvent";
 
 interface Props {
   project?: Project;
@@ -91,6 +92,7 @@ export default function Editor({ project }: Props) {
     gate.pos.y -= gate.height / 2;
 
     addGate(gate);
+    dispatchEditorChanges();
   };
 
   const handlePinClick = (event: ReactMouseEvent, pin: PinEntity) => {
@@ -127,6 +129,7 @@ export default function Editor({ project }: Props) {
       setIsWiring(false);
       setWiringEndPoint(null);
       setWiringCheckpoints([]);
+      dispatchEditorChanges();
 
       updateTruthTable();
       updateActivity();
@@ -145,6 +148,7 @@ export default function Editor({ project }: Props) {
       x: Math.abs(mouseDragOffset.x - gateOrigin.x),
       y: Math.abs(mouseDragOffset.y - gateOrigin.y),
     };
+    dispatchEditorChanges();
   };
 
   useEffect(() => {
@@ -219,6 +223,7 @@ export default function Editor({ project }: Props) {
             onClick={() => {
               addTerminal(newTerminalIO, newTerminalY + 16);
               setNewTerminalIO(null);
+              dispatchEditorChanges();
             }}
           >
             <AddIcon color="#94a3b8" />

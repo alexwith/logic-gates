@@ -1,4 +1,5 @@
 import { MouseEvent } from "react";
+import { dispatchEditorChanges } from "../../../utils/editorChangesEvent";
 
 interface Props {
   name: string;
@@ -16,7 +17,10 @@ export default function ElementContextMenu({ name, show, handleDeleteClick }: Pr
       <div className="m-2">
         <div
           className="px-2 rounded-md font-bold hover:bg-violet-500 hover:cursor-pointer"
-          onClick={handleDeleteClick}
+          onClick={(event) => {
+            handleDeleteClick(event);
+            dispatchEditorChanges();
+          }}
         >
           Delete
         </div>
