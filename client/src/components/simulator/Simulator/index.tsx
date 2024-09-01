@@ -19,7 +19,7 @@ interface Props {
   onMouseUp?: (event: MouseEvent) => void;
   onMouseMove?: (event: MouseEvent) => void;
   onMouseDown?: (event: MouseEvent) => void;
-  onGateClick?: (event: MouseEvent, pin: GateEntity) => void;
+  onGateClick?: (event: MouseEvent, gate: GateEntity) => void;
   onPinClick?: (event: MouseEvent, pin: PinEntity) => void;
   onPinHover?: (pin: PinEntity | null) => void;
 }
@@ -151,13 +151,15 @@ export default function Simulator({
           {wires.map((wire, i) => (
             <Wire
               key={i}
+              wire={wire}
               points={[wire.startPin.getPos(), ...wire.checkpoints, wire.endPin.getPos()]}
               active={wire.startPin.active || wire.endPin.active}
+              editable={editable}
             />
           ))}
           {gates.map((gate: GateEntity, i) => (
             <Fragment key={i}>
-              <Gate key={i} gate={gate} onClick={onGateClick} />
+              <Gate key={i} gate={gate} onClick={onGateClick} editable={editable} />
               {gate.inputPins.map((pin, j) => {
                 return (
                   <Pin

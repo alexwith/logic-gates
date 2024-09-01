@@ -14,8 +14,8 @@ export default function Home() {
         and learning.
       </p>
       <Link to="/playground">
-        <div className="bg-midnight border-[3px] border-violet-500 px-4 py-2 font-bold text-xl rounded-md m-6 shadow-[0_0px_15px_0px_rgba(139,92,246,0.9)] hover:cursor-pointer hover:bg-violet-500">
-          Try playground
+        <div className="bg-violet-500 px-4 py-2 font-bold text-xl rounded-md m-6 shadow-[0_0px_15px_0px_rgba(139,92,246,0.9)] hover:cursor-pointer hover:bg-violet-400">
+          Go to playground
         </div>
       </Link>
       <div className="w-fit pt-10">
