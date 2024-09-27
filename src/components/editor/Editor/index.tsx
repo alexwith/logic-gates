@@ -10,6 +10,7 @@ import WireEntity from "../../../entities/WireEntity";
 import { AddIcon } from "../../../common/icons";
 import EditorBar from "../EditorBar";
 import { dispatchEditorChanges } from "../../../utils/editorChangesEvent";
+import { tryStraightenWire } from "../../../libs/wires";
 
 export default function Editor() {
   const ref = useRef<HTMLDivElement>(null);
@@ -33,6 +34,8 @@ export default function Editor() {
   const terminals = useSimulatorStore((state: SimulatorState) => state.terminals);
   const currentPin = useSimulatorStore((state: SimulatorState) => state.currentPin);
   const currentGate = useSimulatorStore((state: SimulatorState) => state.currentGate);
+  const wires = useSimulatorStore((state: SimulatorState) => state.wires);
+  const settings = useSimulatorStore((state: SimulatorState) => state.settings);
 
   const setAddingGateType = useSimulatorStore(
     (actions: SimulatorActions) => actions.setAddingGateType,
@@ -120,6 +123,10 @@ export default function Editor() {
     }
 
     if (lastPin && currentPin !== lastPin) {
+      if (settings.autoStraightWires) {
+        tryStraightenWire(currentPin.getPos(), lastPin.getPos(), wiringCheckpoints);
+      }
+
       addWire(new WireEntity(currentPin, lastPin, wiringCheckpoints));
       setIsWiring(false);
       setWiringEndPoint(null);
@@ -142,6 +149,20 @@ export default function Editor() {
       x: Math.abs(mouseDragOffset.x - gateOrigin.x),
       y: Math.abs(mouseDragOffset.y - gateOrigin.y),
     };
+
+    if (settings.autoStraightWires) {
+      wires.forEach((wire) => {
+        if (
+          currentGate.inputPins.includes(wire.startPin) ||
+          currentGate.inputPins.includes(wire.endPin) ||
+          currentGate.outputPins.includes(wire.startPin) ||
+          currentGate.outputPins.includes(wire.endPin)
+        ) {
+          tryStraightenWire(wire.startPin.getPos(), wire.endPin.getPos(), wire.checkpoints);
+        }
+      });
+    }
+
     dispatchEditorChanges();
   };
 

@@ -48,6 +48,7 @@ export interface SimulatorActions {
 const initialSimulatorState: SimulatorState = {
   settings: {
     grid: true,
+    autoStraightWires: true,
   },
   gateTypes: BASE_GATES,
   terminals: [],

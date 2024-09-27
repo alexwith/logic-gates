@@ -20,6 +20,7 @@ export default function Wire({ wire, points, active, editable }: Props) {
 
   const [path, setPath] = useState<string>("");
   const [pathStyle, setPathStyle] = useState<string>("");
+  const [hovering, setHovering] = useState<boolean>(false);
 
   const removeWire = useSimulatorStore((actions: SimulatorActions) => actions.removeWire);
 
@@ -53,7 +54,19 @@ export default function Wire({ wire, points, active, editable }: Props) {
 
   return (
     <g>
-      <path className={pathStyle} fill="none" d={path} onContextMenu={handleContextMenu} />
+      <path
+        className={pathStyle}
+        fill="none"
+        d={path}
+        onContextMenu={handleContextMenu}
+        onMouseEnter={() => setHovering(true)}
+        onMouseLeave={() => setHovering(false)}
+      />
+      {wire &&
+        hovering &&
+        points.map((pos) => {
+          return <circle cx={pos.x} cy={pos.y} r={7} fill="#0ea5e9" />;
+        })}
       <foreignObject
         x={(points[0].x + points[points.length - 1].x) / 2}
         y={(points[0].y + points[points.length - 1].y) / 2}

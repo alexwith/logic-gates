@@ -8,6 +8,7 @@ export interface Pos {
 
 export interface IEditorSettings {
   grid: boolean;
+  autoStraightWires: boolean;
 }
 
 export enum IO {

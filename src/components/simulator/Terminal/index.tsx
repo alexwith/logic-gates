@@ -8,6 +8,7 @@ import { SIMULATOR_HEIGHT } from "../../../common/constants";
 import useContextMenu from "../../../hooks/useContextMenu";
 import ElementContextMenu from "../ElementContextMenu";
 import { dispatchEditorChanges } from "../../../utils/editorChangesEvent";
+import { tryStraightenWire } from "../../../libs/wires";
 
 interface Props {
   terminal: TerminalEntity;
@@ -26,6 +27,7 @@ export default function Terminal({ terminal, rerenderParent, editable }: Props) 
   const [originY, setOriginY] = useState<number>(terminal.yPos);
 
   const wires = useSimulatorStore((state: SimulatorState) => state.wires);
+  const settings = useSimulatorStore((state: SimulatorState) => state.settings);
 
   const removeTerminal = useSimulatorStore((actions: SimulatorActions) => actions.removeTerminal);
   const removeWire = useSimulatorStore((actions: SimulatorActions) => actions.removeWire);
@@ -38,6 +40,14 @@ export default function Terminal({ terminal, rerenderParent, editable }: Props) 
         Math.max(originY - mouseDragOffset.y, ref?.getBoundingClientRect().height || 0),
         SIMULATOR_HEIGHT || Number.MAX_SAFE_INTEGER,
       );
+
+      if (settings.autoStraightWires) {
+        wires.forEach((wire) => {
+          if (terminal.pin === wire.startPin || terminal.pin === wire.endPin) {
+            tryStraightenWire(wire.startPin.getPos(), wire.endPin.getPos(), wire.checkpoints);
+          }
+        });
+      }
     }
   }, [dragging, mouseDragOffset, originY, terminal, ref]);
 
