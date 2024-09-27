@@ -1,6 +1,7 @@
 import { GridIcon, StraightLinesIcon } from "../../../common/icons";
 import { tryStraightenWire } from "../../../libs/wires";
 import { SimulatorActions, SimulatorState, useSimulatorStore } from "../../../store/simulatorStore";
+import { dispatchEditorChanges } from "../../../utils/editorChangesEvent";
 
 export default function Settings() {
   const settings = useSimulatorStore((state: SimulatorState) => state.settings);
@@ -20,6 +21,7 @@ export default function Settings() {
       wires.forEach((wire) => {
         tryStraightenWire(wire.startPin.getPos(), wire.endPin.getPos(), wire.checkpoints);
       });
+      dispatchEditorChanges();
     }
 
     setSettings({
