@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import reportWebVitals from "./reportWebVitals";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ToastContainer } from "react-toastify";
-import Playground from "./pages/Playground";
+import Editor from "./components/editor/Editor";
 
 const queryClient = new QueryClient();
 
@@ -13,7 +13,12 @@ const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <Playground />
+      <div className="flex flex-col items-center mt-5">
+        <h1 className="text-4xl font-bold">Logic Gates</h1>
+        <div className="mt-5 mx-4">
+          <Editor />
+        </div>
+      </div>
       <ToastContainer
         position="top-right"
         autoClose={2000}

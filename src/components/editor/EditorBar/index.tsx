@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { SimulatorActions, SimulatorState, useSimulatorStore } from "../../../store/simulatorStore";
 import TruthTable from "../../simulator/TruthTable";
 import { deserializeCircuit, serializeCircuit } from "../../../libs/circuitFile";
@@ -11,13 +11,10 @@ import {
 } from "../../../utils/editorChangesEvent";
 import { toast } from "react-toastify";
 
-interface Props {}
-
-export default function EditorBar({}: Props) {
+export default function EditorBar() {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [showTruthTable, setShowTruthTable] = useState<boolean>(false);
   const [creatingCircuit, setCreatingCircuit] = useState<boolean>(false);
-  const [unsavedChanges, setUnsavedChanges] = useState<boolean>(false);
 
   const gates = useSimulatorStore((state: SimulatorState) => state.gates);
   const gateTypes = useSimulatorStore((state: SimulatorState) => state.gateTypes);
@@ -72,50 +69,55 @@ export default function EditorBar({}: Props) {
     document.body.appendChild(downloadElement);
 
     window.requestAnimationFrame(() => {
-      downloadElement.dispatchEvent(new MouseEvent("click"));
+      downloadElement.click();
       document.body.removeChild(downloadElement);
     });
   };
 
-  const handleSaveChanges = async () => {
-    /*if (!project) {
-      return;
-    }
-
-    const data = serializeCircuit(gateTypes, gates, terminals, wires);
-    await updateProject(project.id!, { data: new Uint8Array(data) });
-
-    setUnsavedChanges(false);*/
-  };
-
-  useEffect(() => {
-    const handleSaveKey = (event: KeyboardEvent) => {
-      if (!unsavedChanges) {
-        return;
-      }
-
-      if ((event.ctrlKey || event.metaKey) && event.key === "s") {
-        event.preventDefault();
-        handleSaveChanges();
-      }
+  const saveToLocalStorage = useCallback(() => {
+    const reader = new FileReader();
+    reader.onload = (event: any) => {
+      localStorage.setItem("current-data", event.target.result);
     };
 
-    document.addEventListener("keydown", handleSaveKey);
-    return () => document.removeEventListener("keydown", handleSaveKey);
-  }, [unsavedChanges, gateTypes, gates, terminals, wires]);
+    const data = serializeCircuit(gateTypes, gates, terminals, wires);
+    reader.readAsDataURL(new Blob([data], { type: "text/plain" }));
+  }, [gateTypes, gates, terminals, wires]);
 
   useEffect(() => {
     const handleEditorChange = () => {
-      if (unsavedChanges) {
-        return;
-      }
-
-      setUnsavedChanges(true);
+      saveToLocalStorage();
     };
 
     subscribeEditorChanges(handleEditorChange);
     return () => unsubscribeEditorChanges(handleEditorChange);
-  }, [unsavedChanges]);
+  }, [saveToLocalStorage]);
+
+  useEffect(() => {
+    saveToLocalStorage();
+  }, [saveToLocalStorage]);
+
+  useEffect(() => {
+    const dataURI = localStorage.getItem("current-data") as string;
+    const byteString = atob(dataURI.split(",")[1]);
+    const buffer = new ArrayBuffer(byteString.length);
+    const data = new Uint8Array(buffer);
+    for (let i = 0; i < byteString.length; i++) {
+      data[i] = byteString.charCodeAt(i);
+    }
+
+    try {
+      const [gateTypes, gates, terminals, wires] = deserializeCircuit(buffer)!;
+      setGateTypes(gateTypes);
+      setGates(gates);
+      setTerminals(terminals);
+      setWires(wires);
+      updateTruthTable();
+      updateActivity();
+    } catch {
+      toast.error("You can only import valid circuit files.");
+    }
+  }, []);
 
   return (
     <div className="relative flex justify-between">
@@ -127,12 +129,6 @@ export default function EditorBar({}: Props) {
             showMenu ? "" : "hidden"
           }`}
         >
-          <BasicButton
-            name="Export"
-            icon={<UploadIcon size={20} />}
-            hoverable
-            onClick={handleExportClick}
-          />
           <div>
             <input
               className="opacity-0 absolute -z-10"
@@ -149,6 +145,12 @@ export default function EditorBar({}: Props) {
             </label>
           </div>
           <BasicButton
+            name="Export"
+            icon={<UploadIcon size={20} />}
+            hoverable
+            onClick={handleExportClick}
+          />
+          <BasicButton
             name="New logic gate"
             icon={<CircuitIcon size={20} />}
             hoverable
@@ -157,22 +159,6 @@ export default function EditorBar({}: Props) {
         </div>
       </div>
       <div className="flex space-x-2">
-        {true && (
-          <div className="group ml-auto">
-            {unsavedChanges ? (
-              <div
-                className={`flex space-x-1 items-center px-2 py-1 rounded-md font-bold hover:cursor-pointer bg-red-400 hover:bg-violet-500`}
-                onClick={handleSaveChanges}
-              >
-                <SaveIcon size={20} />
-                <p className="group-hover:hidden">Unsaved changes</p>
-                <p className="hidden group-hover:block">Save changes</p>
-              </div>
-            ) : (
-              <div></div>
-            )}
-          </div>
-        )}
         <div
           onMouseEnter={() => setShowTruthTable(true)}
           onMouseLeave={() => setShowTruthTable(false)}

@@ -11,9 +11,7 @@ import { AddIcon } from "../../../common/icons";
 import EditorBar from "../EditorBar";
 import { dispatchEditorChanges } from "../../../utils/editorChangesEvent";
 
-interface Props {}
-
-export default function Editor({}: Props) {
+export default function Editor() {
   const ref = useRef<HTMLDivElement>(null);
   const { mouseDragOffset } = useMouse();
   const { mouseDragOffset: wiringMouseOffset, updateOrigin: wiringMouseUpdateOrigin } = useMouse(
@@ -90,7 +88,6 @@ export default function Editor({}: Props) {
     gate.pos.y -= gate.height / 2;
 
     addGate(gate);
-    dispatchEditorChanges();
   };
 
   const handlePinClick = (event: ReactMouseEvent, pin: PinEntity) => {
@@ -127,7 +124,6 @@ export default function Editor({}: Props) {
       setIsWiring(false);
       setWiringEndPoint(null);
       setWiringCheckpoints([]);
-      dispatchEditorChanges();
 
       updateTruthTable();
       updateActivity();
