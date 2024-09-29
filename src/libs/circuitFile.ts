@@ -16,9 +16,18 @@ export const serializeCircuit = (
 
   gateTypes.forEach((gateType) => {
     size +=
-      4 +
+      10 +
       (gateType.name.length + 1) +
-      Math.ceil(((gateType.inputs + gateType.outputs) * gateType.truthTable.length) / 8) * 2; // see spec
+      Math.ceil(((gateType.inputs + gateType.outputs) * gateType.truthTable.length) / 8) * 2 +
+      gateType.gates.length * 8; // see spec
+
+    gateType.terminals.forEach((terminal) => {
+      size += 5 + (terminal.name.length + 1); // see spec
+    });
+
+    gateType.wires.forEach((wire) => {
+      size += 12 + 4 * wire.checkpoints.length; // see spec
+    });
   });
 
   gates.forEach(() => {
@@ -63,8 +72,22 @@ export const serializeCircuit = (
     if (truthValueBitset !== 0) {
       buffer.writeUInt16(truthValueBitset);
     }
+
+    serializeElements(buffer, gateTypes, gateType.gates, gateType.terminals, gateType.wires);
   });
 
+  serializeElements(buffer, gateTypes, gates, terminals, wires);
+
+  return buffer.buffer;
+};
+
+const serializeElements = (
+  buffer: OffsetBuffer,
+  gateTypes: GateTypeEntity[],
+  gates: GateEntity[],
+  terminals: TerminalEntity[],
+  wires: WireEntity[],
+) => {
   buffer.writeUInt16(gates.length);
   gates.forEach((gate) => {
     buffer.writeUInt16(gate.id);
@@ -113,8 +136,6 @@ export const serializeCircuit = (
       buffer.writeUInt16(checkpoint.y);
     });
   });
-
-  return buffer.buffer;
 };
 
 export const deserializeCircuit = (
@@ -164,9 +185,19 @@ export const deserializeCircuit = (
       }
     }
 
-    gateTypes.push(new GateTypeEntity(name, inputs, outputs, truthTable));
+    const [gates, terminals, wires] = deserializeElements(gateTypes, buffer);
+    gateTypes.push(new GateTypeEntity(name, inputs, outputs, truthTable, gates, terminals, wires));
   }
 
+  const [gates, terminals, wires] = deserializeElements(gateTypes, buffer);
+
+  return [gateTypes, gates, terminals, wires];
+};
+
+const deserializeElements = (
+  gateTypes: GateTypeEntity[],
+  buffer: OffsetBuffer,
+): [GateEntity[], TerminalEntity[], WireEntity[]] => {
   const gatesSize = buffer.readUInt16();
   const gates: GateEntity[] = [];
   for (let i = 0; i < gatesSize; i++) {
@@ -250,5 +281,5 @@ export const deserializeCircuit = (
     wires.push(new WireEntity(startPin, endPin, checkpoints));
   }
 
-  return [gateTypes, gates, terminals, wires];
+  return [gates, terminals, wires];
 };

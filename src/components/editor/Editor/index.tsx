@@ -11,6 +11,7 @@ import { AddIcon } from "../../../common/icons";
 import EditorBar from "../EditorBar";
 import { dispatchEditorChanges } from "../../../utils/editorChangesEvent";
 import { tryStraightenWire } from "../../../libs/wires";
+import GateType from "../GateType";
 
 export default function Editor() {
   const ref = useRef<HTMLDivElement>(null);
@@ -37,6 +38,9 @@ export default function Editor() {
   const wires = useSimulatorStore((state: SimulatorState) => state.wires);
   const settings = useSimulatorStore((state: SimulatorState) => state.settings);
 
+  const setGates = useSimulatorStore((actions: SimulatorActions) => actions.setGates);
+  const setTerminals = useSimulatorStore((actions: SimulatorActions) => actions.setTerminals);
+  const setWires = useSimulatorStore((actions: SimulatorActions) => actions.setWires);
   const setAddingGateType = useSimulatorStore(
     (actions: SimulatorActions) => actions.setAddingGateType,
   );
@@ -271,16 +275,7 @@ export default function Editor() {
       </div>
       <div className="flex space-x-2 mb-4">
         {gateTypes.map((type, i) => (
-          <div
-            className="bg-violet-500 w-fit p-2 font-bold rounded-md select-none"
-            key={i}
-            draggable
-            onDragStart={() => {
-              setAddingGateType(type);
-            }}
-          >
-            {type.name}
-          </div>
+          <GateType type={type} key={i} />
         ))}
       </div>
     </div>

@@ -9,6 +9,7 @@ import WireEntity from "../entities/WireEntity";
 import PinEntity from "../entities/PinEntity";
 import { createTruthTable } from "../libs/truthTable";
 import { simulate } from "../libs/circuit";
+import { GateTypeEditEntity } from "../entities/GateTypeEditEntity";
 
 export interface SimulatorState {
   settings: IEditorSettings;
@@ -16,6 +17,7 @@ export interface SimulatorState {
   terminals: TerminalEntity[];
   gates: GateEntity[];
   wires: WireEntity[];
+  editingGateType: GateTypeEditEntity | null;
   currentGate: GateEntity | null;
   currentPin: PinEntity | null;
   truthTable: boolean[][];
@@ -36,11 +38,13 @@ export interface SimulatorActions {
   addTerminal: (io: IO, yPos: number) => void;
   removeTerminal: (terminal: TerminalEntity) => void;
   updateTerminal: (terminal: TerminalEntity) => void;
+  setEditingGateType: (gateType: GateTypeEntity | null) => void;
   setCurrentPin: (pin: PinEntity | null) => void;
   setCurrentGate: (gate: GateEntity | null) => void;
   setAddingGateType: (type: GateTypeEntity) => void;
   updateTruthTable: () => void;
   updateActivity: () => void;
+  updateSimulator: (gates: GateEntity[], terminals: TerminalEntity[], wires: WireEntity[]) => void;
   resetSimulator: () => void;
   reset: () => void;
 }
@@ -54,6 +58,7 @@ const initialSimulatorState: SimulatorState = {
   terminals: [],
   gates: [],
   wires: [],
+  editingGateType: null,
   currentGate: null,
   currentPin: null,
   truthTable: [],
@@ -135,6 +140,17 @@ export const useSimulatorStore = create(
           return { terminals };
         });
       },
+      setEditingGateType: (gateType: GateTypeEntity | null) => {
+        set((state) => ({
+          editingGateType:
+            gateType == null
+              ? null
+              : new GateTypeEditEntity(gateType, [state.gates, state.terminals, state.wires]),
+          terminals: gateType?.terminals,
+          wires: gateType?.wires,
+          gates: gateType?.gates,
+        }));
+      },
       setCurrentPin: (pin: PinEntity | null) => {
         set(() => ({
           currentPin: pin,
@@ -171,6 +187,19 @@ export const useSimulatorStore = create(
           currentPin: null,
           truthTable: [],
           addingGateType: null,
+        });
+      },
+      updateSimulator: (gates, terminals, wires) => {
+        set(() => {
+          const truthTable = createTruthTable(terminals, wires, gates);
+          simulate(wires, gates);
+
+          return {
+            gates,
+            terminals,
+            wires,
+            truthTable,
+          };
         });
       },
       reset: () => {

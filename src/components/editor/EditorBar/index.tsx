@@ -3,7 +3,14 @@ import { SimulatorActions, SimulatorState, useSimulatorStore } from "../../../st
 import TruthTable from "../../simulator/TruthTable";
 import { deserializeCircuit, serializeCircuit } from "../../../libs/circuitFile";
 import BasicButton from "../../common/BasicButton";
-import { CircuitIcon, MenuIcon, SaveIcon, TableIcon, UploadIcon } from "../../../common/icons";
+import {
+  CircuitIcon,
+  LogInIcon,
+  MenuIcon,
+  SaveIcon,
+  TableIcon,
+  UploadIcon,
+} from "../../../common/icons";
 import CreateLogicGate from "../CreateLogicGate";
 import {
   subscribeEditorChanges,
@@ -21,58 +28,13 @@ export default function EditorBar() {
   const wires = useSimulatorStore((state: SimulatorState) => state.wires);
   const terminals = useSimulatorStore((state: SimulatorState) => state.terminals);
   const truthTable = useSimulatorStore((state: SimulatorState) => state.truthTable);
+  const editingGateType = useSimulatorStore((state: SimulatorState) => state.editingGateType);
 
   const setGateTypes = useSimulatorStore((actions: SimulatorActions) => actions.setGateTypes);
-  const setGates = useSimulatorStore((actions: SimulatorActions) => actions.setGates);
-  const setTerminals = useSimulatorStore((actions: SimulatorActions) => actions.setTerminals);
-  const setWires = useSimulatorStore((actions: SimulatorActions) => actions.setWires);
-  const updateActivity = useSimulatorStore((actions: SimulatorActions) => actions.updateActivity);
-  const updateTruthTable = useSimulatorStore(
-    (actions: SimulatorActions) => actions.updateTruthTable,
+  const updateSimulator = useSimulatorStore((actions: SimulatorActions) => actions.updateSimulator);
+  const setEditingGateType = useSimulatorStore(
+    (actions: SimulatorActions) => actions.setEditingGateType,
   );
-
-  const handleImportClick = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files) {
-      return;
-    }
-
-    const file = files[0];
-    event.target.value = "";
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const buffer: ArrayBuffer = reader.result as ArrayBuffer;
-      try {
-        const [gateTypes, gates, terminals, wires] = deserializeCircuit(buffer)!;
-        setGateTypes(gateTypes);
-        setGates(gates);
-        setTerminals(terminals);
-        setWires(wires);
-        updateTruthTable();
-        updateActivity();
-      } catch {
-        toast.error("You can only import valid circuit files.");
-      }
-    };
-
-    reader.readAsArrayBuffer(file);
-  };
-
-  const handleExportClick = () => {
-    const data = serializeCircuit(gateTypes, gates, terminals, wires);
-    const fileURL = window.URL.createObjectURL(new Blob([data], { type: "text/plain" }));
-
-    const downloadElement = document.createElement("a");
-    downloadElement.href = fileURL;
-    downloadElement.setAttribute("download", `playground.circuit`);
-    document.body.appendChild(downloadElement);
-
-    window.requestAnimationFrame(() => {
-      downloadElement.click();
-      document.body.removeChild(downloadElement);
-    });
-  };
 
   const saveToLocalStorage = useCallback(() => {
     const reader = new FileReader();
@@ -109,15 +71,61 @@ export default function EditorBar() {
     try {
       const [gateTypes, gates, terminals, wires] = deserializeCircuit(buffer)!;
       setGateTypes(gateTypes);
-      setGates(gates);
-      setTerminals(terminals);
-      setWires(wires);
-      updateTruthTable();
-      updateActivity();
+      updateSimulator(gates, terminals, wires);
     } catch {
       toast.error("You can only import valid circuit files.");
     }
   }, []);
+
+  const handleImportClick = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) {
+      return;
+    }
+
+    const file = files[0];
+    event.target.value = "";
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const buffer: ArrayBuffer = reader.result as ArrayBuffer;
+      try {
+        const [gateTypes, gates, terminals, wires] = deserializeCircuit(buffer)!;
+        setGateTypes(gateTypes);
+        updateSimulator(gates, terminals, wires);
+      } catch {
+        toast.error("You can only import valid circuit files.");
+      }
+    };
+
+    reader.readAsArrayBuffer(file);
+  };
+
+  const handleExportClick = () => {
+    const data = serializeCircuit(gateTypes, gates, terminals, wires);
+    const fileURL = window.URL.createObjectURL(new Blob([data], { type: "text/plain" }));
+
+    const downloadElement = document.createElement("a");
+    downloadElement.href = fileURL;
+    downloadElement.setAttribute("download", `playground.circuit`);
+    document.body.appendChild(downloadElement);
+
+    window.requestAnimationFrame(() => {
+      downloadElement.click();
+      document.body.removeChild(downloadElement);
+    });
+  };
+
+  const handleSaveEditing = () => {
+    if (!editingGateType) {
+      return;
+    }
+
+    setEditingGateType(null);
+
+    const [gates, terminals, wires] = editingGateType.parentSnapshot;
+    updateSimulator(gates, terminals, wires);
+  };
 
   return (
     <div className="relative flex justify-between">
@@ -129,35 +137,60 @@ export default function EditorBar() {
             showMenu ? "" : "hidden"
           }`}
         >
-          <div>
-            <input
-              className="opacity-0 absolute -z-10"
-              type="file"
-              id="import-button"
-              onChange={handleImportClick}
-            />
-            <label
-              className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold hover:bg-violet-500 hover:cursor-pointer"
-              htmlFor="import-button"
-            >
-              <SaveIcon size={20} />
-              <p>Import</p>
-            </label>
-          </div>
-          <BasicButton
-            name="Export"
-            icon={<UploadIcon size={20} />}
-            hoverable
-            onClick={handleExportClick}
-          />
-          <BasicButton
-            name="New logic gate"
-            icon={<CircuitIcon size={20} />}
-            hoverable
-            onClick={() => setCreatingCircuit(true)}
-          />
+          {editingGateType ? (
+            <>
+              <BasicButton
+                name="Save changes"
+                icon={<SaveIcon size={20} />}
+                hoverable
+                onClick={handleSaveEditing}
+              />
+              <BasicButton
+                name="Go back"
+                icon={<LogInIcon size={20} />}
+                hoverable
+                onClick={handleExportClick}
+              />
+            </>
+          ) : (
+            <>
+              <div>
+                <input
+                  className="opacity-0 absolute -z-10"
+                  type="file"
+                  id="import-button"
+                  onChange={handleImportClick}
+                />
+                <label
+                  className="flex space-x-1 items-center px-2 py-1 rounded-md font-bold hover:bg-violet-500 hover:cursor-pointer"
+                  htmlFor="import-button"
+                >
+                  <SaveIcon size={20} />
+                  <p>Import</p>
+                </label>
+              </div>
+              <BasicButton
+                name="Export"
+                icon={<UploadIcon size={20} />}
+                hoverable
+                onClick={handleExportClick}
+              />
+              <BasicButton
+                name="New logic gate"
+                icon={<CircuitIcon size={20} />}
+                hoverable
+                onClick={() => setCreatingCircuit(true)}
+              />
+            </>
+          )}
         </div>
       </div>
+      {editingGateType && (
+        <p className="font-bold text-lg">
+          Editing the <span className="text-violet-500">{editingGateType.gateType.name}</span>{" "}
+          circuit...
+        </p>
+      )}
       <div className="flex space-x-2">
         <div
           onMouseEnter={() => setShowTruthTable(true)}

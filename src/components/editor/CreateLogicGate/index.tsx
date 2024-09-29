@@ -18,7 +18,9 @@ export default function CreateCircuit({ onClose }: Props) {
   const [name, setName] = useState<string>("");
 
   const truthTable = useSimulatorStore((state: SimulatorState) => state.truthTable);
+  const gates = useSimulatorStore((state: SimulatorState) => state.gates);
   const terminals = useSimulatorStore((state: SimulatorState) => state.terminals);
+  const wires = useSimulatorStore((state: SimulatorState) => state.wires);
 
   const addGateType = useSimulatorStore((actions: SimulatorActions) => actions.addGateType);
   const resetSimulator = useSimulatorStore((actions: SimulatorActions) => actions.resetSimulator);
@@ -58,7 +60,15 @@ export default function CreateCircuit({ onClose }: Props) {
     const inputs: number = terminals.filter((pin) => pin.io === IO.Input).length;
     const outputs: number = terminals.length - inputs;
 
-    const gateType: GateTypeEntity = new GateTypeEntity(name, inputs, outputs, truthTable);
+    const gateType: GateTypeEntity = new GateTypeEntity(
+      name,
+      inputs,
+      outputs,
+      truthTable,
+      gates,
+      terminals,
+      wires,
+    );
     addGateType(gateType);
     dispatchEditorChanges();
     resetSimulator();
@@ -69,11 +79,11 @@ export default function CreateCircuit({ onClose }: Props) {
   return (
     <div className="fixed w-full h-full right-0 top-0 backdrop-blur-[3px] z-20">
       <div
-        className="absolute w-80 bg-zinc-800 top-1/3 left-1/2 transform -translate-x-1/2 rounded-md p-4 flex flex-col justify-between"
+        className="absolute w-80 bg-midnight border-violet-500 border-[1px] top-1/3 left-1/2 transform -translate-x-1/2 rounded-md p-4 flex flex-col justify-between"
         ref={ref}
       >
         <div>
-          <h1 className="font-bold text-lg">Create circuit</h1>
+          <h1 className="font-bold text-lg">Create logic gate</h1>
           <p className="text-zinc-400 text-sm">
             Convert your current logic into a logic gate that you can re-use within this project.
           </p>
