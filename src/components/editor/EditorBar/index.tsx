@@ -121,10 +121,27 @@ export default function EditorBar() {
       return;
     }
 
+    const { gateType } = editingGateType;
+    gateType.truthTable = truthTable;
+    gateType.terminals = terminals;
+    gateType.gates = gates;
+    gateType.wires = wires;
+
     setEditingGateType(null);
 
-    const [gates, terminals, wires] = editingGateType.parentSnapshot;
-    updateSimulator(gates, terminals, wires);
+    const [parentGates, parentTerminals, parentWires] = editingGateType.parentSnapshot;
+    updateSimulator(parentGates, parentTerminals, parentWires);
+  };
+
+  const handleGoBackEditing = () => {
+    if (!editingGateType) {
+      return;
+    }
+
+    setEditingGateType(null);
+
+    const [parentGates, parentTerminals, parentWires] = editingGateType.parentSnapshot;
+    updateSimulator(parentGates, parentTerminals, parentWires);
   };
 
   return (
@@ -149,7 +166,7 @@ export default function EditorBar() {
                 name="Go back"
                 icon={<LogInIcon size={20} />}
                 hoverable
-                onClick={handleExportClick}
+                onClick={handleGoBackEditing}
               />
             </>
           ) : (
