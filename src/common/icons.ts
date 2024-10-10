@@ -15,6 +15,7 @@ import { LuCircuitBoard } from "react-icons/lu";
 import { FaCodeFork } from "react-icons/fa6";
 import { BiEditAlt } from "react-icons/bi";
 import { MdOutlineStraight } from "react-icons/md";
+import { PiFileJpgDuotone } from "react-icons/pi";
 
 export const TrashIcon = LuTrash2;
 export const AddIcon = FaPlus;
@@ -37,3 +38,4 @@ export const ForkIcon = FaCodeFork;
 export const EditIcon = BiEditAlt;
 export const GithubIcon = FaGithub;
 export const StraightLinesIcon = MdOutlineStraight;
+export const JPEGIcon = PiFileJpgDuotone;

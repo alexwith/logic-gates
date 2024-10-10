@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, RefObject, useCallback, useEffect, useState } from "react";
 import { SimulatorActions, SimulatorState, useSimulatorStore } from "../../../store/simulatorStore";
 import TruthTable from "../../simulator/TruthTable";
 import { deserializeCircuit, serializeCircuit } from "../../../libs/circuitFile";
@@ -11,17 +11,23 @@ import {
   TableIcon,
   UploadIcon,
 } from "../../../common/icons";
-import CreateLogicGate from "../CreateLogicGate";
+import CreateGateMenu from "../CreateGateMenu";
+import ExportMenu from "../ExportMenu";
 import {
   subscribeEditorChanges,
   unsubscribeEditorChanges,
 } from "../../../utils/editorChangesEvent";
 import { toast } from "react-toastify";
 
-export default function EditorBar() {
+interface Props {
+  displayRef: RefObject<SVGSVGElement>;
+}
+
+export default function EditorBar({ displayRef }: Props) {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [showTruthTable, setShowTruthTable] = useState<boolean>(false);
   const [creatingCircuit, setCreatingCircuit] = useState<boolean>(false);
+  const [exporting, setExporting] = useState<boolean>(false);
 
   const gates = useSimulatorStore((state: SimulatorState) => state.gates);
   const gateTypes = useSimulatorStore((state: SimulatorState) => state.gateTypes);
@@ -102,18 +108,7 @@ export default function EditorBar() {
   };
 
   const handleExportClick = () => {
-    const data = serializeCircuit(gateTypes, gates, terminals, wires);
-    const fileURL = window.URL.createObjectURL(new Blob([data], { type: "text/plain" }));
-
-    const downloadElement = document.createElement("a");
-    downloadElement.href = fileURL;
-    downloadElement.setAttribute("download", `playground.circuit`);
-    document.body.appendChild(downloadElement);
-
-    window.requestAnimationFrame(() => {
-      downloadElement.click();
-      document.body.removeChild(downloadElement);
-    });
+    setExporting(true);
   };
 
   const handleSaveEditing = () => {
@@ -146,7 +141,8 @@ export default function EditorBar() {
 
   return (
     <div className="relative flex justify-between">
-      {creatingCircuit && <CreateLogicGate onClose={() => setCreatingCircuit(false)} />}
+      {creatingCircuit && <CreateGateMenu onClose={() => setCreatingCircuit(false)} />}
+      {exporting && <ExportMenu displayRef={displayRef} onClose={() => setExporting(false)} />}
       <div onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>
         <BasicButton name="Menu" icon={<MenuIcon size={20} />} />
         <div

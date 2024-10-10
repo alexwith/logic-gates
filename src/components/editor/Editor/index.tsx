@@ -15,6 +15,8 @@ import GateType from "../GateType";
 
 export default function Editor() {
   const ref = useRef<HTMLDivElement>(null);
+  const displayRef = useRef<SVGSVGElement>(null);
+
   const { mouseDragOffset } = useMouse();
   const { mouseDragOffset: wiringMouseOffset, updateOrigin: wiringMouseUpdateOrigin } = useMouse(
     true,
@@ -38,12 +40,6 @@ export default function Editor() {
   const wires = useSimulatorStore((state: SimulatorState) => state.wires);
   const settings = useSimulatorStore((state: SimulatorState) => state.settings);
 
-  const setGates = useSimulatorStore((actions: SimulatorActions) => actions.setGates);
-  const setTerminals = useSimulatorStore((actions: SimulatorActions) => actions.setTerminals);
-  const setWires = useSimulatorStore((actions: SimulatorActions) => actions.setWires);
-  const setAddingGateType = useSimulatorStore(
-    (actions: SimulatorActions) => actions.setAddingGateType,
-  );
   const addTerminal = useSimulatorStore((actions: SimulatorActions) => actions.addTerminal);
   const setCurrentPin = useSimulatorStore((actions: SimulatorActions) => actions.setCurrentPin);
   const setCurrentGate = useSimulatorStore((actions: SimulatorActions) => actions.setCurrentGate);
@@ -229,7 +225,7 @@ export default function Editor() {
 
   return (
     <div className="flex flex-col space-y-4">
-      <EditorBar />
+      <EditorBar displayRef={displayRef} />
       <div ref={ref} className="relative" onDragOver={handleDragOver} onDrop={handleDrop}>
         {newTerminalIO !== null ? (
           <div
@@ -258,6 +254,7 @@ export default function Editor() {
         )}
         <Simulator
           editable
+          ref={displayRef}
           onMouseMove={handleMouseMove}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}

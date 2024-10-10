@@ -1,8 +1,7 @@
-import { Fragment, useEffect, useRef, useState, MouseEvent, ReactNode } from "react";
+import { Fragment, useEffect, useRef, useState, MouseEvent, ReactNode, forwardRef } from "react";
 import { SIMULATOR_HEIGHT, SIMULATOR_WIDTH } from "../../../common/constants";
-import { SimulatorActions, SimulatorState, useSimulatorStore } from "../../../store/simulatorStore";
+import { SimulatorState, useSimulatorStore } from "../../../store/simulatorStore";
 import Terminal from "../Terminal";
-import { deserializeCircuit } from "../../../libs/circuitFile";
 import Wire from "../Wire";
 import GateEntity from "../../../entities/GateEntity";
 import Gate from "../Gate";
@@ -10,6 +9,7 @@ import Pin from "../Pin";
 import Settings from "../Settings";
 import PinEntity from "../../../entities/PinEntity";
 import { ExpandIcon } from "../../../common/icons";
+import { downloadSVGImage } from "../../../libs/svgImageExport";
 
 interface Props {
   children?: ReactNode;
@@ -22,16 +22,19 @@ interface Props {
   onPinHover?: (pin: PinEntity | null) => void;
 }
 
-export default function Simulator({
-  children,
-  editable,
-  onMouseUp,
-  onMouseMove,
-  onMouseDown,
-  onGateClick,
-  onPinClick,
-  onPinHover,
-}: Props) {
+export default forwardRef(function Simulator(
+  {
+    children,
+    editable,
+    onMouseUp,
+    onMouseMove,
+    onMouseDown,
+    onGateClick,
+    onPinClick,
+    onPinHover,
+  }: Props,
+  displayRef: any,
+) {
   const ref = useRef<HTMLDivElement>(null);
 
   const [render, rerender] = useState<boolean>(false);
@@ -41,35 +44,6 @@ export default function Simulator({
   const terminals = useSimulatorStore((state: SimulatorState) => state.terminals);
   const gates = useSimulatorStore((state: SimulatorState) => state.gates);
   const wires = useSimulatorStore((state: SimulatorState) => state.wires);
-
-  const reset = useSimulatorStore((actions: SimulatorActions) => actions.reset);
-  const setGateTypes = useSimulatorStore((actions: SimulatorActions) => actions.setGateTypes);
-  const setGates = useSimulatorStore((actions: SimulatorActions) => actions.setGates);
-  const setTerminals = useSimulatorStore((actions: SimulatorActions) => actions.setTerminals);
-  const setWires = useSimulatorStore((actions: SimulatorActions) => actions.setWires);
-  const updateActivity = useSimulatorStore((actions: SimulatorActions) => actions.updateActivity);
-  const updateTruthTable = useSimulatorStore(
-    (actions: SimulatorActions) => actions.updateTruthTable,
-  );
-
-  /*useEffect(() => {
-    reset();
-
-    const buffer = Uint8Array.from(project.data!).buffer;
-    const deserializedData = deserializeCircuit(buffer);
-    if (!deserializedData) {
-      return;
-    }
-
-    const [gateTypes, gates, terminals, wires] = deserializedData!;
-
-    setGateTypes(gateTypes);
-    setGates(gates);
-    setTerminals(terminals);
-    setWires(wires);
-    updateTruthTable();
-    updateActivity();
-    }, [project]);*/
 
   useEffect(() => {
     const handleResize = () => {
@@ -119,6 +93,7 @@ export default function Simulator({
           );
         })}
         <svg
+          ref={displayRef}
           className="w-full h-full"
           onMouseUp={onMouseUp}
           onMouseMove={onMouseMove}
@@ -192,4 +167,4 @@ export default function Simulator({
       </div>
     </div>
   );
-}
+});
