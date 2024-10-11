@@ -6,7 +6,7 @@ on:
 
 env:
     REGISTRY: ghcr.io
-    IMAGE_NAME: alexwith/logic-gates-learning
+    IMAGE_NAME: alexwith/logic-gates
 
 jobs:
     build-and-push-image:
