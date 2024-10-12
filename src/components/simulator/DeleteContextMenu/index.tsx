@@ -1,4 +1,5 @@
 import { MouseEvent } from "react";
+import { SimulatorActions, useSimulatorStore } from "../../../store/simulatorStore";
 import { dispatchEditorChanges } from "../../../utils/editorChangesEvent";
 
 interface Props {
@@ -8,6 +9,11 @@ interface Props {
 }
 
 export default function ElementContextMenu({ name, show, handleDeleteClick }: Props) {
+  const updateActivity = useSimulatorStore((actions: SimulatorActions) => actions.updateActivity);
+  const updateTruthTable = useSimulatorStore(
+    (actions: SimulatorActions) => actions.updateTruthTable,
+  );
+
   return (
     <div
       className="absolute bg-zinc-800 rounded-md flex flex-col overflow-hidden text-center z-30"
@@ -20,6 +26,8 @@ export default function ElementContextMenu({ name, show, handleDeleteClick }: Pr
           onClick={(event) => {
             handleDeleteClick(event);
             dispatchEditorChanges();
+            updateTruthTable();
+            updateActivity();
           }}
         >
           Delete

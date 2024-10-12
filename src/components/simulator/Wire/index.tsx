@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import useContextMenu from "../../../hooks/useContextMenu";
 import { SimulatorActions, useSimulatorStore } from "../../../store/simulatorStore";
 import WireEntity from "../../../entities/WireEntity";
-import ElementContextMenu from "../ElementContextMenu";
+import DeleteContextMenu from "../DeleteContextMenu";
 
 interface Props {
   wire?: WireEntity; // wire won't be present while wiring, only the points
@@ -74,7 +74,7 @@ export default function Wire({ wire, points, active, editable }: Props) {
         height={1}
         className="overflow-visible"
       >
-        <ElementContextMenu
+        <DeleteContextMenu
           name="Wire"
           show={showContextMenu}
           handleDeleteClick={handleDeleteClick}

@@ -6,7 +6,7 @@ import TerminalEntity from "../../../entities/TerminalEntity";
 import { IO } from "../../../common/types";
 import { SIMULATOR_HEIGHT } from "../../../common/constants";
 import useContextMenu from "../../../hooks/useContextMenu";
-import ElementContextMenu from "../ElementContextMenu";
+import ElementContextMenu from "../DeleteContextMenu";
 import { dispatchEditorChanges } from "../../../utils/editorChangesEvent";
 import { tryStraightenWire } from "../../../libs/wires";
 

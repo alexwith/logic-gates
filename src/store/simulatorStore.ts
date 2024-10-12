@@ -173,7 +173,7 @@ export const useSimulatorStore = create(
       },
       updateActivity: () => {
         set((state) => {
-          simulate(state.wires, state.gates);
+          simulate(state.terminals, state.wires, state.gates);
 
           return {};
         });
@@ -192,7 +192,7 @@ export const useSimulatorStore = create(
       updateSimulator: (gates, terminals, wires) => {
         set(() => {
           const truthTable = createTruthTable(terminals, wires, gates);
-          simulate(wires, gates);
+          simulate(terminals, wires, gates);
 
           return {
             gates,

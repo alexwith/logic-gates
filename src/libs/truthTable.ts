@@ -34,7 +34,7 @@ export function createTruthTable(
       inputTerminals[i].pin.active = combination[i];
     }
 
-    simulate(wires, gates);
+    simulate(terminals, wires, gates);
 
     const outputValues: boolean[] = [];
     terminals

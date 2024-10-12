@@ -2,7 +2,7 @@ import { MouseEvent } from "react";
 import GateEntity from "../../../entities/GateEntity";
 import useContextMenu from "../../../hooks/useContextMenu";
 import { SimulatorActions, SimulatorState, useSimulatorStore } from "../../../store/simulatorStore";
-import ElementContextMenu from "../ElementContextMenu";
+import ElementContextMenu from "../DeleteContextMenu";
 
 interface Props {
   gate: GateEntity;
