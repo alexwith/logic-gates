@@ -9,6 +9,7 @@ import {
   MenuIcon,
   SaveIcon,
   TableIcon,
+  TrashIcon,
   UploadIcon,
 } from "../../../common/icons";
 import CreateGateMenu from "../CreateGateMenu";
@@ -41,6 +42,7 @@ export default function EditorBar({ displayRef }: Props) {
   const setEditingGateType = useSimulatorStore(
     (actions: SimulatorActions) => actions.setEditingGateType,
   );
+  const reset = useSimulatorStore((actions: SimulatorActions) => actions.reset);
 
   const saveToLocalStorage = useCallback(() => {
     const reader = new FileReader();
@@ -139,6 +141,10 @@ export default function EditorBar({ displayRef }: Props) {
     updateSimulator(parentGates, parentTerminals, parentWires);
   };
 
+  const handleClearEditorClick = () => {
+    reset();
+  };
+
   return (
     <div className="relative flex justify-between">
       {creatingCircuit && <CreateGateMenu onClose={() => setCreatingCircuit(false)} />}
@@ -193,6 +199,12 @@ export default function EditorBar({ displayRef }: Props) {
                 icon={<CircuitIcon size={20} />}
                 hoverable
                 onClick={() => setCreatingCircuit(true)}
+              />
+              <BasicButton
+                name="Clear editor"
+                icon={<TrashIcon size={20} />}
+                hoverable
+                onClick={handleClearEditorClick}
               />
             </>
           )}
