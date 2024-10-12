@@ -9,6 +9,7 @@ import useContextMenu from "../../../hooks/useContextMenu";
 import ElementContextMenu from "../DeleteContextMenu";
 import { dispatchEditorChanges } from "../../../utils/editorChangesEvent";
 import { tryStraightenWire } from "../../../libs/wires";
+import { MouseEvent } from "react";
 
 interface Props {
   terminal: TerminalEntity;
@@ -28,6 +29,7 @@ export default function Terminal({ terminal, rerenderParent, editable }: Props) 
 
   const wires = useSimulatorStore((state: SimulatorState) => state.wires);
   const settings = useSimulatorStore((state: SimulatorState) => state.settings);
+  const editingGateType = useSimulatorStore((state: SimulatorState) => state.editingGateType);
 
   const removeTerminal = useSimulatorStore((actions: SimulatorActions) => actions.removeTerminal);
   const removeWire = useSimulatorStore((actions: SimulatorActions) => actions.removeWire);
@@ -139,7 +141,13 @@ export default function Terminal({ terminal, rerenderParent, editable }: Props) 
         className="absolute hover:cursor-pointer"
         ref={setRef}
         style={computePos()}
-        onContextMenu={handleContextMenu}
+        onContextMenu={(event: MouseEvent) => {
+          if (editingGateType) {
+            return;
+          }
+
+          handleContextMenu(event);
+        }}
       >
         {editable ? (
           <DynamicInput

@@ -39,6 +39,7 @@ export default function Editor() {
   const currentGate = useSimulatorStore((state: SimulatorState) => state.currentGate);
   const wires = useSimulatorStore((state: SimulatorState) => state.wires);
   const settings = useSimulatorStore((state: SimulatorState) => state.settings);
+  const editingGateType = useSimulatorStore((state: SimulatorState) => state.editingGateType);
 
   const addTerminal = useSimulatorStore((actions: SimulatorActions) => actions.addTerminal);
   const setCurrentPin = useSimulatorStore((actions: SimulatorActions) => actions.setCurrentPin);
@@ -271,9 +272,11 @@ export default function Editor() {
         </Simulator>
       </div>
       <div className="flex space-x-2 mb-4">
-        {gateTypes.map((type, i) => (
-          <GateType type={type} key={i} />
-        ))}
+        {gateTypes
+          .filter((gateType) => gateType !== editingGateType?.gateType)
+          .map((gateType, i) => (
+            <GateType type={gateType} key={i} />
+          ))}
       </div>
     </div>
   );
