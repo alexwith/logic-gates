@@ -1,6 +1,7 @@
 import { MouseEvent } from "react";
 import GateEntity from "../../../entities/GateEntity";
 import useContextMenu from "../../../hooks/useContextMenu";
+import { svgGates } from "../../../libs/svgGates";
 import { SimulatorActions, SimulatorState, useSimulatorStore } from "../../../store/simulatorStore";
 import ElementContextMenu from "../DeleteContextMenu";
 
@@ -32,18 +33,27 @@ export default function Gate({ gate, onClick, editable }: Props) {
     removeGate(gate);
   };
 
+  const svgGate = svgGates.get(gate.type.name);
   return (
     <>
       <g onMouseDown={handleMouseDown} onContextMenu={handleContextMenu}>
-        <rect
-          className="fill-violet-500"
-          x={gate.pos.x}
-          y={gate.pos.y}
-          width={gate.width}
-          height={gate.height}
-          rx={5}
-          ry={5}
-        />
+        {svgGate ? (
+          <g
+            transform={`translate(${gate.pos.x + gate.width / 2 - svgGate.width / 2}, ${gate.pos.y + gate.height / 2 - svgGate.height / 2})`}
+          >
+            {svgGate.svg}
+          </g>
+        ) : (
+          <rect
+            className="fill-violet-500"
+            x={gate.pos.x}
+            y={gate.pos.y}
+            width={gate.width}
+            height={gate.height}
+            rx={5}
+            ry={5}
+          />
+        )}
         <text
           className="fill-indigo-950 select-none"
           x={gate.pos.x + gate.width / 2}

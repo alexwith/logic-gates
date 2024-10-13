@@ -1,4 +1,5 @@
 import { IO, Pos } from "../common/types";
+import { svgGates } from "../libs/svgGates";
 import GateTypeEntity from "./GateTypeEntity";
 import PinEntity from "./PinEntity";
 
@@ -18,11 +19,13 @@ class GateEntity {
       GateEntity.idCounter = id + 1;
     }
 
+    const svgGate = svgGates.get(type.name);
+
     this.id = id || GateEntity.idCounter++;
     this.pos = pos;
     this.type = type;
     this.height = 32 + Math.max(this.type.inputs, this.type.outputs) * 16;
-    this.width = 30 + 15 * this.type.name.length;
+    this.width = svgGate ? svgGate.width : 30 + 15 * this.type.name.length;
     this.inputPins = this.populatePins(IO.Input);
     this.outputPins = this.populatePins(IO.Output);
   }
