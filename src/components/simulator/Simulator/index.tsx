@@ -9,7 +9,6 @@ import Pin from "../Pin";
 import Settings from "../Settings";
 import PinEntity from "../../../entities/PinEntity";
 import { ExpandIcon } from "../../../common/icons";
-import { downloadSVGImage } from "../../../libs/svgImageExport";
 
 interface Props {
   children?: ReactNode;

@@ -64,8 +64,8 @@ export default function Wire({ wire, points, active, editable }: Props) {
       />
       {wire &&
         hovering &&
-        points.map((pos) => {
-          return <circle cx={pos.x} cy={pos.y} r={7} fill="#0ea5e9" />;
+        points.map((pos, i) => {
+          return <circle key={i} cx={pos.x} cy={pos.y} r={7} fill="#0ea5e9" />;
         })}
       <foreignObject
         x={(points[0].x + points[points.length - 1].x) / 2}

@@ -56,16 +56,24 @@ export default function EditorBar({ displayRef }: Props) {
 
   useEffect(() => {
     const handleEditorChange = () => {
+      if (editingGateType) {
+        return;
+      }
+
       saveToLocalStorage();
     };
 
     subscribeEditorChanges(handleEditorChange);
     return () => unsubscribeEditorChanges(handleEditorChange);
-  }, [saveToLocalStorage]);
+  }, [editingGateType, saveToLocalStorage]);
 
   useEffect(() => {
+    if (editingGateType) {
+      return;
+    }
+
     saveToLocalStorage();
-  }, [saveToLocalStorage]);
+  }, [editingGateType, saveToLocalStorage]);
 
   useEffect(() => {
     const dataURI = localStorage.getItem("current-data") as string;
