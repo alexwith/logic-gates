@@ -56,12 +56,16 @@ export default function Gate({ gate, onClick, editable }: Props) {
         )}
         <text
           className="fill-indigo-950 select-none"
-          x={gate.pos.x + gate.width / 2}
+          x={
+            gate.pos.x +
+            gate.width / 2 +
+            (svgGate ? (svgGate?.textOffset ? svgGate.textOffset : 0) : 0)
+          }
           y={gate.pos.y + gate.height / 2 + 2}
           dominantBaseline="middle"
           textAnchor="middle"
           fontWeight={"bold"}
-          fontSize={20}
+          fontSize={18}
           fontFamily={"Inter"}
         >
           {gate.type.name}
