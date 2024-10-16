@@ -32,9 +32,6 @@ const copyToCanvas = (source: Element, target: SVGSVGElement): Promise<string | 
     return Promise.resolve(null);
   }
 
-  context.fillStyle = "white";
-  context.fillRect(0, 0, canvas.width, canvas.height);
-
   const image = document.createElement("img");
   image.setAttribute(
     "src",
@@ -43,7 +40,7 @@ const copyToCanvas = (source: Element, target: SVGSVGElement): Promise<string | 
   return new Promise((resolve) => {
     image.onload = () => {
       context.drawImage(image, 0, 0);
-      resolve(canvas.toDataURL("image/jpeg", 1));
+      resolve(canvas.toDataURL("image/png", 1));
     };
   });
 };
@@ -67,6 +64,11 @@ export const downloadSVGImage = async (svg: SVGElement, fileName: string) => {
 
   copyStyles(svg, target);
 
+  const gridElement = target.querySelector("#grid");
+  if (gridElement) {
+    gridElement.parentNode?.removeChild(gridElement);
+  }
+
   const file = await copyToCanvas(svg, target);
   if (!file) {
     return;
@@ -74,7 +76,7 @@ export const downloadSVGImage = async (svg: SVGElement, fileName: string) => {
 
   const downloadElement = document.createElement("a");
   downloadElement.href = file;
-  downloadElement.download = `${fileName}.jpg`;
+  downloadElement.download = `${fileName}.png`;
   document.body.appendChild(downloadElement);
 
   window.requestAnimationFrame(() => {

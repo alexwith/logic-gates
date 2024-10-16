@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useRef, useState } from "react";
-import { CircuitIcon, JPEGIcon } from "../../../common/icons";
+import { CircuitIcon, PNGIcon } from "../../../common/icons";
 import BasicButton from "../../common/BasicButton";
 import { serializeCircuit } from "../../../libs/circuitFile";
 import { SimulatorState, useSimulatorStore } from "../../../store/simulatorStore";
@@ -87,8 +87,8 @@ export default function ExportMenu({ displayRef, onClose }: Props) {
             onClick={handleCircuitFileClick}
           />
           <BasicButton
-            name="Export as JPEG"
-            icon={<JPEGIcon size={20} />}
+            name="Export as PNG"
+            icon={<PNGIcon size={20} />}
             hoverable
             onClick={handleJPEGFileClick}
           />
