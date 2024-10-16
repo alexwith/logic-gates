@@ -5,6 +5,7 @@ import { deserializeCircuit, serializeCircuit } from "../../../libs/circuitFile"
 import BasicButton from "../../common/BasicButton";
 import {
   CircuitIcon,
+  CommonsIcon,
   LogInIcon,
   MenuIcon,
   SaveIcon,
@@ -19,6 +20,7 @@ import {
   unsubscribeEditorChanges,
 } from "../../../utils/editorChangesEvent";
 import { toast } from "react-toastify";
+import { COMMON_GATES } from "../../../common/constants";
 
 interface Props {
   displayRef: RefObject<SVGSVGElement>;
@@ -37,6 +39,7 @@ export default function EditorBar({ displayRef }: Props) {
   const truthTable = useSimulatorStore((state: SimulatorState) => state.truthTable);
   const editingGateType = useSimulatorStore((state: SimulatorState) => state.editingGateType);
 
+  const addGateType = useSimulatorStore((actions: SimulatorActions) => actions.addGateType);
   const setGateTypes = useSimulatorStore((actions: SimulatorActions) => actions.setGateTypes);
   const updateSimulator = useSimulatorStore((actions: SimulatorActions) => actions.updateSimulator);
   const setEditingGateType = useSimulatorStore(
@@ -149,6 +152,10 @@ export default function EditorBar({ displayRef }: Props) {
     updateSimulator(parentGates, parentTerminals, parentWires);
   };
 
+  const handleImportCommonsClick = () => {
+    COMMON_GATES.forEach((gateType) => addGateType(gateType));
+  };
+
   const handleClearEditorClick = () => {
     reset();
   };
@@ -160,7 +167,7 @@ export default function EditorBar({ displayRef }: Props) {
       <div onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>
         <BasicButton name="Menu" icon={<MenuIcon size={20} />} />
         <div
-          className={`absolute flex flex-col space-y-1 bg-zinc-800 p-2 w-44 rounded-md z-10 ${
+          className={`absolute flex flex-col space-y-1 bg-zinc-800 p-2 w-48 rounded-md z-10 ${
             showMenu ? "" : "hidden"
           }`}
         >
@@ -207,6 +214,12 @@ export default function EditorBar({ displayRef }: Props) {
                 icon={<CircuitIcon size={20} />}
                 hoverable
                 onClick={() => setCreatingCircuit(true)}
+              />
+              <BasicButton
+                name="Import commons"
+                icon={<CommonsIcon size={20} />}
+                hoverable
+                onClick={handleImportCommonsClick}
               />
               <BasicButton
                 name="Clear editor"

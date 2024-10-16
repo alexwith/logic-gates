@@ -271,7 +271,7 @@ export default function Editor() {
           )}
         </Simulator>
       </div>
-      <div className="flex space-x-2 mb-4">
+      <div className="flex gap-2 mb-4 flex-wrap w-11/12">
         {gateTypes
           .filter((gateType) => gateType !== editingGateType?.gateType)
           .map((gateType, i) => (

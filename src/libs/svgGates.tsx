@@ -11,7 +11,7 @@ export const svgGates = new Map<string, SVGGate>();
 svgGates.set("AND", {
   width: 100,
   height: 60,
-  textOffset: 0,
+  textOffset: -1,
   svg: (
     <>
       <path
@@ -97,6 +97,28 @@ svgGates.set("XOR", {
         className="fill-violet-500"
         d="M 40 0 C 57.47 0.56 73.06 12.25 80 30 C 73.06 47.75 57.47 59.44 40 60 L 15 60 C 25.72 41.44 25.72 18.56 15 0 Z"
       />
+    </>
+  ),
+});
+svgGates.set("XNOR", {
+  width: 100,
+  height: 60,
+  textOffset: 0,
+  svg: (
+    <>
+      <path
+        className="stroke-violet-500 stroke-[5] fill-none"
+        d="M 80 30 L 100 30 M 0 15 L 23 15 M 0 45 L 23 45"
+      />
+      <path
+        className="stroke-violet-500 stroke-[5] fill-none"
+        d="M 10 0 C 20.72 18.56 20.72 41.44 10 60"
+      />
+      <path
+        className="fill-violet-500"
+        d="M 40 0 C 57.47 0.56 73.06 12.25 80 30 C 73.06 47.75 57.47 59.44 40 60 L 15 60 C 25.72 41.44 25.72 18.56 15 0 Z"
+      />
+      <ellipse className="fill-violet-500" cx="83.75" cy="30" rx="5" ry="5" />
     </>
   ),
 });

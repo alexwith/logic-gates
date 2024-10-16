@@ -16,6 +16,7 @@ import { FaCodeFork } from "react-icons/fa6";
 import { BiEditAlt } from "react-icons/bi";
 import { MdOutlineStraight } from "react-icons/md";
 import { PiFileJpgDuotone } from "react-icons/pi";
+import { LuPackageOpen } from "react-icons/lu";
 
 export const TrashIcon = LuTrash2;
 export const AddIcon = FaPlus;
@@ -39,3 +40,4 @@ export const EditIcon = BiEditAlt;
 export const GithubIcon = FaGithub;
 export const StraightLinesIcon = MdOutlineStraight;
 export const JPEGIcon = PiFileJpgDuotone;
+export const CommonsIcon = LuPackageOpen;
