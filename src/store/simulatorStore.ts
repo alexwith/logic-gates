@@ -151,15 +151,23 @@ export const useSimulatorStore = create(
         });
       },
       setEditingGateType: (gateType: GateTypeEntity | null) => {
-        set((state) => ({
-          editingGateType:
-            gateType == null
-              ? null
-              : new GateTypeEditEntity(gateType, [state.gates, state.terminals, state.wires]),
-          terminals: gateType?.terminals,
-          wires: gateType?.wires,
-          gates: gateType?.gates,
-        }));
+        set((state) => {
+          let editingGateType = null;
+          if (gateType) {
+            editingGateType = new GateTypeEditEntity(
+              gateType,
+              state.editingGateType
+                ? state.editingGateType.parentSnapshot
+                : [state.gates, state.terminals, state.wires],
+            );
+          }
+          return {
+            editingGateType,
+            terminals: gateType?.terminals,
+            wires: gateType?.wires,
+            gates: gateType?.gates,
+          };
+        });
       },
       setCurrentPin: (pin: PinEntity | null) => {
         set(() => ({
