@@ -24,8 +24,8 @@ class GateEntity {
     this.id = id || GateEntity.idCounter++;
     this.pos = pos;
     this.type = type;
-    this.height = 32 + Math.max(this.type.inputs, this.type.outputs) * 16;
-    this.width = svgGate ? svgGate.width : 30 + 15 * this.type.name.length;
+    this.height = 32 + Math.max(this.type.inputs, this.type.outputs) * 8;
+    this.width = svgGate ? svgGate.width : 20 + 13 * this.type.name.length;
     this.inputPins = this.populatePins(IO.Input);
     this.outputPins = this.populatePins(IO.Output);
   }

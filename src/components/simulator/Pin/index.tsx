@@ -9,7 +9,7 @@ interface Props {
   onHover?: (pin: PinEntity | null) => void;
 }
 
-const PIN_RADIUS = 10;
+const PIN_RADIUS = 8;
 
 export default function Pin({ pin, pos, onMouseDown, onHover }: Props) {
   return (

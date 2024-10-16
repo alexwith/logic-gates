@@ -16,7 +16,7 @@ svgGates.set("AND", {
     <>
       <path
         className="stroke-violet-500 stroke-[5] fill-none"
-        d="M 80 30 L 100 30 M 0 15 L 20 15 M 0 45 L 20 45"
+        d="M 80 30 L 100 30 M 0 18 L 20 18 M 0 42 L 20 42"
         strokeWidth={5}
       />
       <path
@@ -34,7 +34,7 @@ svgGates.set("NAND", {
     <>
       <path
         className="stroke-violet-500 stroke-[5] fill-none"
-        d="M 80 30 L 100 30 M 0 15 L 20 15 M 0 45 L 20 45"
+        d="M 80 30 L 100 30 M 0 18 L 20 18 M 0 42 L 20 42"
       />
       <path
         className="fill-violet-500"
@@ -52,7 +52,7 @@ svgGates.set("OR", {
     <>
       <path
         className="stroke-violet-500 stroke-[5] fill-none"
-        d="M 80 30 L 100 30 M 0 15 L 23 15 M 0 45 L 23 45"
+        d="M 80 30 L 100 30 M 0 18 L 23 18 M 0 42 L 23 42"
       />
       <path
         className="fill-violet-500"
@@ -69,7 +69,7 @@ svgGates.set("NOR", {
     <>
       <path
         className="stroke-violet-500 stroke-[5] fill-none"
-        d="M 80 30 L 100 30 M 0 15 L 23 15 M 0 45 L 23 45"
+        d="M 80 30 L 100 30 M 0 18 L 23 18 M 0 42 L 23 42"
       />
       <path
         className="fill-violet-500"
@@ -87,7 +87,7 @@ svgGates.set("XOR", {
     <>
       <path
         className="stroke-violet-500 stroke-[5] fill-none"
-        d="M 80 30 L 100 30 M 0 15 L 23 15 M 0 45 L 23 45"
+        d="M 80 30 L 100 30 M 0 18 L 23 18 M 0 42 L 23 42"
       />
       <path
         className="stroke-violet-500 stroke-[5] fill-none"
@@ -108,7 +108,7 @@ svgGates.set("XNOR", {
     <>
       <path
         className="stroke-violet-500 stroke-[5] fill-none"
-        d="M 80 30 L 100 30 M 0 15 L 23 15 M 0 45 L 23 45"
+        d="M 80 30 L 100 30 M 0 18 L 23 18 M 0 42 L 23 42"
       />
       <path
         className="stroke-violet-500 stroke-[5] fill-none"
