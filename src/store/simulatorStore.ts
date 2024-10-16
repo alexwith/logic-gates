@@ -80,9 +80,19 @@ export const useSimulatorStore = create(
         }));
       },
       addGateType: (type: GateTypeEntity) => {
-        set((state) => ({
-          gateTypes: [...state.gateTypes, type],
-        }));
+        set((state) => {
+          if (
+            state.gateTypes.find(
+              (otherType) => otherType.name.toUpperCase() === type.name.toUpperCase(),
+            )
+          ) {
+            return {};
+          }
+
+          return {
+            gateTypes: [...state.gateTypes, type],
+          };
+        });
       },
       setGates: (gates: GateEntity[]) => {
         set(() => ({

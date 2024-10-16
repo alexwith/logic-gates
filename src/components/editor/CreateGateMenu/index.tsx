@@ -18,6 +18,7 @@ export default function CreateCircuit({ onClose }: Props) {
   const [name, setName] = useState<string>("");
 
   const truthTable = useSimulatorStore((state: SimulatorState) => state.truthTable);
+  const gateTypes = useSimulatorStore((state: SimulatorState) => state.gateTypes);
   const gates = useSimulatorStore((state: SimulatorState) => state.gates);
   const terminals = useSimulatorStore((state: SimulatorState) => state.terminals);
   const wires = useSimulatorStore((state: SimulatorState) => state.wires);
@@ -42,18 +43,28 @@ export default function CreateCircuit({ onClose }: Props) {
   const handleCreateClick = () => {
     onClose();
 
-    if (truthTable.length === 0) {
-      toast.error("You must first create a valid circuit.");
+    if (
+      wires.length === 0 ||
+      gates.length === 0 ||
+      terminals.filter((terminal) => terminal.io === IO.Input).length === 0 ||
+      terminals.filter((terminal) => terminal.io === IO.Output).length === 0
+    ) {
+      toast.error("You must first create a valid logic gate.");
       return;
     }
 
     if (name == null || name.length < 1) {
-      toast.error("You must provide a name for the circuit.");
+      toast.error("You must provide a name for the logic gate.");
       return;
     }
 
     if (!/^[a-zA-Z0-9]+(?: [a-zA-Z0-9]+)*$/.test(name)) {
       toast.error("The name can only contain letters, numbers and single spaces.");
+      return;
+    }
+
+    if (gateTypes.find((otherType) => otherType.name.toUpperCase() === name.toUpperCase())) {
+      toast.error("There's already a logic gate with this name.");
       return;
     }
 
