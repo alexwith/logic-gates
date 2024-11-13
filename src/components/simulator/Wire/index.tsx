@@ -34,7 +34,7 @@ export default function Wire({ wire, points, active, editable }: Props) {
 
   useEffect(() => {
     setPathStyle(
-      `stroke-[4px] ${active ? "stroke-red-500" : "stroke-zinc-700"} ${wire && "hover:stroke-violet-500"}`,
+      `stroke-[4px] ${active ? "stroke-red-500" : "stroke-zinc-600"} ${wire && "hover:stroke-violet-500"}`,
     );
   }, [active, wire]);
 
